@@ -9,7 +9,8 @@ Currently, two official plugins are available:
 
 
 - purple-600: #2a2136
-- purple-400: #8e65c0
+- purple-400: #8e65c0 
+- purple-200: #67616b
 - green: #00cab6
 - red : #de1651
 - white-600: #edecef
@@ -21,3 +22,6 @@ Currently, two official plugins are available:
 - yellow-400: #fff2ce
 - gray-600: #9195ab
 - gray-500: e4e3e4
+- gray-400: #201e21
+- gray-200: #919191
+- black : #201e21
