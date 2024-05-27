@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import './Footer.css'; // Tạo file CSS để tùy chỉnh thêm
+ // Tạo file CSS để tùy chỉnh thêm
 
 const Footer = () => {
   return (
