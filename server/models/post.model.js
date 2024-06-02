@@ -23,6 +23,12 @@ const postSchema = new mongoose.Schema({
     default: 'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png'
   },
 
+  minReadMs: {
+    type: Number,
+    required: true,
+    default: 10 * 60 * 1000 // ten minutes in milliseconds 
+  },
+
   category: {
     type: String,
     default: 'uncategorized'
