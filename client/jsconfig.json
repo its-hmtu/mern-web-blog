@@ -8,7 +8,7 @@
       "styles/*": ["./src/assets/styles/*"],
       "assets/*": ["./src/assets/*"],
       "images/*": ["./src/assets/images/*"],
-      "layout/*": ["./src/layout/*"],
+      "layouts/*": ["./src/layouts/*"],
       "pages/*": ["./src/pages/*"],
       "svg/*": ["./src/assets/svg/*"],
     }

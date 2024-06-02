@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <header className="custom-header">
       <Navbar bg="dark" variant="dark" expand="lg">
-        <Container>
+        <Container fluid>
           <Navbar.Brand href="#">upstairs</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

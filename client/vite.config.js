@@ -10,7 +10,7 @@ export default defineConfig({
       components: "/src/components",
       pages: "/src/pages",
       assets: "/src/assets",
-      layout: "/src/layout",
+      layouts: "/src/layouts",
       utils: "/src/utils",
       styles: "/src/assets/styles",
       images: "/src/assets/images",
