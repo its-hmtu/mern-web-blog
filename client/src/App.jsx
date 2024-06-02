@@ -1,14 +1,15 @@
-import Header from './components/Header';
-import Footer from './components/Footer';
-import BlogContent from './components/BlogContent';
+import React from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouteList } from "./routes";
 
 const App = () => {
+  const routeList = RouteList();
+  const router = createBrowserRouter([...routeList])
+
   return (
-    <>
-      <Header />
-      <BlogContent />
-      <Footer />
-    </>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
   );
 };
 
