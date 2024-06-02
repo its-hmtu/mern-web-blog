@@ -1,0 +1,25 @@
+config:
+  target: "https://localhost:5000/api"
+  phases:
+    - duration: 60
+      arrivalRate: 2
+scenarios:
+  - flow:
+    - post:
+        url: "/users/register"
+        json: 
+          user: "AdminTest1"
+          email: "adminTest1@email.com"
+          password: "12345679"
+    - post:
+        url: "users/auth"
+        json: 
+          email: "adminTest1@email.com"
+          password: "12345679"
+    - loop:
+      - post:
+          url: "/create"
+          json:
+            title: "Test Post"
+            content: "This is a test post."
+      count: 100

@@ -1,11 +1,10 @@
 import express from 'express'
 import path from 'path'
-import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import connectDb from './config/db.js'
 import userRoutes from './routes/user.route.js'
+import postRoutes from './routes/post.route.js'
 import { notFound, errorHandler } from './middlewares/error.js'
 
 dotenv.config()
@@ -22,6 +21,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 app.use(cookieParser())
 
 app.use('/api/users', userRoutes)
+app.use('/api/posts', postRoutes)
 
 if (process.env.NODE_ENV === 'development') { // change to 'production' later
   const __dirname = path.resolve()
