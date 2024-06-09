@@ -1,0 +1,21 @@
+.back-to-sign-in {
+  margin-top: 20px;
+  display: block;
+  text-decoration: none;
+  font-size: 18px;
+  color: $gray-200;
+
+  &:hover {
+    color: $purple-400;
+    text-decoration: underline;
+  }
+
+  .btn-link {
+    text-decoration: inherit;
+  }
+
+  .btn {
+    font-size: inherit;
+    color: inherit;
+  }
+}

@@ -1,0 +1,24 @@
+.custom-logo {
+  .dot {
+    transform: translateY(10px);
+    transition: all .2s cubic-bezier(.645, .045, .355, 1);
+    opacity: 1;
+  }
+  .shade {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .2s cubic-bezier(.645, .045, .355, 1);
+    -webkit-transition: all .2s cubic-bezier(.645, .045, .355, 1);
+  }
+
+  &:hover .shade, &:hover .dot {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.custom-logo__light {
+  color: white;
+
+  
+}
