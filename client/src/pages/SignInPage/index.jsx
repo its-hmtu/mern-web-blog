@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { LogoSvg } from 'svg/Logo';
+// import { LogoSvg } from 'svg/Logo';
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -11,62 +11,67 @@ const SignInPage = () => {
     setShowPassword(!showPassword);
   }
 
-  useEffect(() => {
-    ref.current.focus()
-  }, [])
+  // useEffect(() => {
+  //   ref.current.focus()
+  // }, [])
 
   return (
     <div className='sign-in-wrapper'>
       <Container fluid className="sign-in-container">
         <div className='logo-wrapper'>
-          <LogoSvg />
+          <h1>DEV</h1>  
         </div>
         <div className="sign-in-container-inner">
           <Col sm={12}>
             <div className="sign-in-box">
-              <h1 className="text-start">Sign in</h1>
-              <p className="text-start">You know how much a squirrel misses his nuts? Yep, that is how much we missed you. <strong>Welcome back.</strong></p>
+              <h1 className="text-start">Join the DEV Community</h1>
+              <p className="text-start">DEV Community is a community of 1,625,044 amazing developers</p>
+              <Button variant="light" className="login-button" block>
+                Continue with Google
+              </Button>
+            
+              <div className="separator-top">
+                <hr className="left-line" />
+                  <span>or</span>
+                <hr className="right-line" />
+              </div>
               <Form>
                 <Form.Group>
-                  {/* <Form.Label>Username or Email Address</Form.Label> */}
-                  <Form.Control type="email" placeholder="Enter username or email address" ref={ref}/>
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" ref={ref} />
                 </Form.Group>
 
                 <Form.Group className='password-group'>
-                  {/* <Form.Label>Password</Form.Label> */}
+                  <Form.Label>Password</Form.Label>
                   <InputGroup>
-                    <Form.Control type={showPassword ? 'text' : 'password'} placeholder="Enter password" />
+                    <Form.Control type={showPassword ? 'text' : 'password'} />
                     <Button variant="dark" onClick={handleShowPassword}>
                       {showPassword ? 'Hide' : 'Show'}
                     </Button>
                   </InputGroup>
                 </Form.Group>
 
-                <Form.Group>
-                  <Form.Check type="checkbox" label="Stay signed in for longer" />
+                <Form.Group className="checkbox-group">
+                  <Form.Check type="checkbox" label="Remember me" />
+                  <a href="#" className="text-end">Forgot password?</a>
                 </Form.Group>
 
                 <Button className='sign-in-btn' variant="primary" type="submit" block>
-                  Sign into your account →
+                  Log in
                 </Button>
               </Form>
-
               <div className="alternative-login text-center">
-                  <div className="separator">
-                      <hr className="left-line" />
-                      <span>or</span>
-                      <hr className="right-line" />
-                  </div>
-                  <Button variant="light" block>
-                      Continue with Google
-                  </Button>
+                <p>
+                  By signing in, you are agreeing to our <a href="#">privacy policy</a>, <a href="#">terms of use</a> and <a href="#">code of conduct</a>.
+                </p>
+                <div className="separator-under">
+                  <hr />
+                </div>
+                <div className="new-account">
                   <p>
-                    <Link to="/register">
-                      Sign up for free
-                    </Link>
-                    <span className='dot-seperator'></span>
-                    <a href="#">Forgot password?</a>
+                    New to DEV Community? <Link to="/register">Create account</Link>.
                   </p>
+                </div>
               </div>
             </div>
           </Col>
