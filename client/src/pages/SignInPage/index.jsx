@@ -24,8 +24,10 @@ const SignInPage = () => {
         <div className="sign-in-container-inner">
           <Col sm={12}>
             <div className="sign-in-box">
-              <h1 className="text-start">Join the DEV Community</h1>
-              <p className="text-start">DEV Community is a community of 1,625,044 amazing developers</p>
+              <div className="text-start">
+                <h1 >Join the DEV Community</h1>
+                <p >DEV Community is a community of 1,625,044 amazing developers</p>
+              </div>
               <Button variant="light" className="login-button" block>
                 Continue with Google
               </Button>
@@ -45,9 +47,9 @@ const SignInPage = () => {
                   <Form.Label>Password</Form.Label>
                   <InputGroup>
                     <Form.Control type={showPassword ? 'text' : 'password'} />
-                    <Button variant="dark" onClick={handleShowPassword}>
+                    {/* <Button variant="dark" onClick={handleShowPassword}>
                       {showPassword ? 'Hide' : 'Show'}
-                    </Button>
+                    </Button> */}
                   </InputGroup>
                 </Form.Group>
 
