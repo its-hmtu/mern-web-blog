@@ -1,8 +1,9 @@
 import asyncHandler from 'express-async-handler'
-import genToken from "../utils/genToken.js"
+import {generateAccessToken} from "../utils/genToken.js"
 import User from '../models/user.model.js'
+import jwt from 'jsonwebtoken'
 
-const authUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
   // res.status(200).json({ message: 'Auth' })
 
   const {email, password} = req.body;
@@ -10,11 +11,13 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({email});
 
   if (user && (await user.matchPassword(password))) {
-    genToken(res, user._id)
+    const accessToken = generateAccessToken(res, user._id)
+    const { exp } = jwt.decode(accessToken)
     res.status(201).json({
-      _id: user._id,
-      name: user.username,
-      email: user.email
+      status: 'success',
+      message: 'User logged in successfully',
+      access_token: accessToken,
+      expires_in: exp
     })
   } else {
     res.status(400)
@@ -23,7 +26,7 @@ const authUser = asyncHandler(async (req, res) => {
 })
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body
+  const {name, username, email, password, is_admin } = req.body
 
   const isUserExists = await User.findOne({email})
 
@@ -33,17 +36,19 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
+    name,
     username, 
     email,
-    password
+    password,
+    is_admin
   })
 
   if (user) {
-    genToken(res, user._id)
+    const accessToken = generateAccessToken(res, user._id)
     res.status(201).json({
-      _id: user._id,
-      name: user.username,
-      email: user.email
+      status: 'success',
+      message: 'User registered successfully',
+      accessToken
     })
   } else {
     res.status(400)
@@ -102,7 +107,7 @@ const updateUser = asyncHandler(async (req, res) => {
 })
 
 export {
-  authUser,
+  loginUser,
   registerUser,
   logoutUser,
   getUser,

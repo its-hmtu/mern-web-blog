@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  authUser,
+  loginUser,
   registerUser,
   logoutUser,
   getUser,
@@ -10,7 +10,7 @@ import { protect } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/auth", authUser);
+router.post("/login", loginUser);
 router.post("/register", registerUser);
 router.post("/logout", logoutUser);
 

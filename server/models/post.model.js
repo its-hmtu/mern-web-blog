@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 import slugify from "slugify";
 
 const postSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   
   title: {
     type: String,
     required: true,
-    // unique: true,
   },
 
   content: {
@@ -18,35 +18,62 @@ const postSchema = new mongoose.Schema({
     required: true,
   },
 
-  image: {
+  images: [
+    {
+      type: String,
+      default: ''
+    }
+  ],
+
+  main_image: {
     type: String,
-    default: 'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png'
+    default: ''
   },
 
-  minReadMs: {
+  reading_time: {
     type: Number,
-    required: true,
-    default: 10 * 60 * 1000 // ten minutes in milliseconds 
+    required: true
   },
 
   category: {
     type: String,
     default: 'uncategorized'
-  }, 
+  },
+  
+  comments_count: {
+    type: Number,
+    default: 0
+  },
+
+  likes_count: {
+    type: Number,
+    default: 0
+  },
+
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ],
+
+  publish_timestamp: {
+    type: Date,
+    default: Date.now
+  },
 
   slug: {
     type: String,
     required: true,
     unique: true,
-    // default: function() {
-    //   return slugify(this.title, {lower: true, strict: true}) + '-' + Date.now()
-    // }
   }
 }, {timestamps: true})
 
 postSchema.pre('validate', function(next) {
   if (this.title) {
-    this.slug = slugify(this.title, {lower: true, strict: true}) + '-' + Date.now();
+    // get last 4 characters from _id.
+    const id = this._id.toString().substr(this._id.length - 4);
+    this.slug = slugify(this.title, {lower: true, strict: true}) + '-' + id;
   }
 
   next()
