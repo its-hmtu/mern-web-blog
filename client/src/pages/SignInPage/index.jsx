@@ -1,85 +1,103 @@
-import logo from 'images/logo.png'
-import google from 'images/gog.png'
-import React, { useEffect, useRef } from 'react';
-import { Container, Col, Form, Button, InputGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import logo from "images/logo.png";
+import React, { useEffect, useRef } from "react";
+import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const ref = useRef()
+  const ref = useRef();
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
-  }
+  };
 
   useEffect(() => {
-    ref.current.focus()
-  }, [])
+    ref.current.focus();
+  }, []);
 
   return (
-    <div className='sign-in-wrapper'>
-      <Container fluid className="sign-in-container">
-        <div className='signin-content'>
-          <a href="" >
-            <img className='signin-logo' src={logo} alt="DEV comunity" />
-          </a>
-          <h1 className='signin-title'>Join the DEV Community</h1>
-          <p className='signin-description'>DEV Community is a community of 1,625,044 amazing developers</p>
-        </div>
-        <div className="sign-in-container-inner">
-          <Col sm={12}>
-            <div className="sign-in-box">
-              <Button variant="light" className="login-button" block>
-                <p><img src={google} alt="" /></p>
-                <p>Continue with Google</p>
+    <Container fluid className="sign-in-container">
+      <Row className="sign-in-container__inner justify-content-center">
+        <img
+          className="signin-logo"
+          src={logo}
+          alt="DEV comunity"
+          style={{ width: "auto", height: "48px" }}
+        />
+
+        <Row className="justify-content-center text-center">
+          <h3 className="signin-title fw-bold">Join the DEV Community</h3>
+          <p className="signin-description">
+            DEV Community is a community of 1,625,044 amazing developers
+          </p>
+        </Row>
+
+        <Row sm={12} className="sign-in-form__wrapper">
+          <Form className="px-0">
+            <Form.Group>
+              <Form.Label className="fw-semibold">Email</Form.Label>
+              <Form.Control type="email" ref={ref} />
+            </Form.Group>
+
+            <Form.Group className="password-group">
+              <Form.Label className="fw-semibold">Password</Form.Label>
+              <InputGroup>
+                <Form.Control type={showPassword ? "text" : "password"} />
+                <Button variant="primary" onClick={handleShowPassword} style={{minWidth: "50px"}}>{
+                  showPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} /> 
+                  }</Button>
+              </InputGroup>
+            </Form.Group>
+
+            <Form.Group className="checkbox-group d-flex justify-content-between">
+              <Form.Check type="checkbox" label="Remember me" />
+              <a href="#" className="text-end">
+                Forgot password?
+              </a>
+            </Form.Group>
+
+            <Row className="px-3 flex-column gap-3">
+              <Button
+                className="sign-in-btn"
+                variant="primary"
+                type="submit"
+                block
+              >
+                Log in
               </Button>
-            
-              <div className="separator-top">
-                <hr className="left-line" />
-                  <span>OR</span>
-                <hr className="right-line" />
-              </div>
 
-              <Form>
-                <Form.Group>
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" ref={ref} />
-                </Form.Group>
-
-                <Form.Group className='password-group'>
-                  <Form.Label>Password</Form.Label>
-                  <InputGroup>
-                    <Form.Control type={showPassword ? 'text' : 'password'} />
-                  </InputGroup>
-                </Form.Group>
-
-                <Form.Group className="checkbox-group">
-                  <Form.Check type="checkbox" label="Remember me" />
-                  <a href="#" className="text-end">Forgot password?</a>
-                </Form.Group>
-
-                <Button className='sign-in-btn' variant="primary" type="submit" block>
-                  Log in
-                </Button>
-              </Form>
-              <div className="alternative-login text-center">
-                <p>
-                  By signing in, you are agreeing to our <a href="#">privacy policy</a>, <a href="#">terms of use</a> and <a href="#">code of conduct</a>.
-                </p>
-                <div className="separator-under">
-                  <hr />
-                </div>
-                <div className="new-account">
-                  <p>
-                    New to DEV Community? <Link to="/register">Create account</Link>.
-                  </p>
-                </div>
-              </div>
+              <Button variant="outline-dark" className="sign-in-btn__google" block>
+                <Col className="d-flex align-items-center ">
+                  <FontAwesomeIcon icon={faGoogle} />
+                  <span className="d-flex w-100 justify-content-center">
+                    Continue with Google
+                  </span>
+                </Col>
+              </Button>
+            </Row>
+          </Form>
+          <div className="sign-in-misc text-center my-4">
+            <p className="fst-italic sign-in-misc__terms">
+              By signing in, you are agreeing to our{" "}
+              <a href="#">privacy policy</a>, <a href="#">terms of use</a> and{" "}
+              <a href="#">code of conduct</a>.
+            </p>
+            <div className="sign-in-misc__sperator">
+              <hr />
             </div>
-          </Col>
-        </div>
-      </Container>
-    </div>
+            <div className="sign-in-misc__register">
+              <p>
+                New to DEV Community? <Link to="/register">Create account</Link>
+                .
+              </p>
+            </div>
+          </div>
+        </Row>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,7 +1,7 @@
+@import "abstracts/variables";
 @import "node_modules/bootstrap/scss/bootstrap";
 
-@import "./base/reset";
-@import "./base/global";
-@import "./base/variables";
+@import "base/reset";
+@import "base/global";
 @import "./pages/";
 @import "./components/";
