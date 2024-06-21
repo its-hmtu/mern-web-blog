@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import connectDb from './config/db.js'
 import userRoutes from './routes/user.route.js'
 import postRoutes from './routes/post.route.js'
+import commentRoutes from './routes/comment.route.js'
 import { notFound, errorHandler } from './middlewares/error.js'
 
 dotenv.config()
@@ -13,6 +14,8 @@ connectDb()
 
 const app = express()
 const PORT = process.env.PORT || 5000
+const BASE_URL = '/api/v1'
+const __dirname = path.resolve()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
@@ -20,21 +23,25 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 
 app.use(cookieParser())
 
-app.use('/api/users', userRoutes)
-app.use('/api/posts', postRoutes)
+app.use(`${BASE_URL}/users`, userRoutes)
+app.use(`${BASE_URL}/posts`, postRoutes)
+app.use(`${BASE_URL}/comments`, commentRoutes)
 
-if (process.env.NODE_ENV === 'development') { // change to 'production' later
-  const __dirname = path.resolve()
-  app.use(express.static(path.join(__dirname, '/client/dist')))
+// if (process.env.NODE_ENV === 'development' || !__dirname) { // change to 'production' later
+//   app.use(express.static(path.join(__dirname, '/client/dist')))
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  })
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running...')
-  })
-}
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+//   })
+// } else {
+//   app.get('/', (req, res) => {
+//     res.send('API is running...')
+//   })
+// }
+
+app.get('/', (req, res) => {
+  res.send('API is running...')
+})
 
 app.use(notFound)
 app.use(errorHandler)

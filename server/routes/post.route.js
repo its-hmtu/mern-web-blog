@@ -11,10 +11,10 @@ import { protect } from '../middlewares/auth.js';
 const router = express.Router();
 
 router.get('/', getPosts)
-router.get('/:postId', getPost)
+// router.get('/', getPost)
 router.post('/create', protect, createPost)
-router.delete('/delete/:userId/:postId', protect, deletePost)
-router.put('/update/:userId/:postId', protect, updatePost)
+router.delete('/:postId', protect, deletePost)
+router.put('/update/:postId', protect, updatePost)
 // TODO: delete post && update post routes
 
 export default router;
