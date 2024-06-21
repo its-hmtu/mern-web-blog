@@ -1,72 +1,45 @@
-import React, { useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { LogoSvg } from 'svg/Logo';
+import React from 'react';
+import logo from 'images/logo.png'
+import google from 'images/gog.png'
+import email from 'images/email.png'
 
-const RegisterPage = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const ref = useRef()
-
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  }
-
-  useEffect(() => {
-    ref.current.focus()
-  }, [])
-
+function RegisterPage() {
   return (
-    <div className='sign-in-wrapper'>
-      <Container fluid className="sign-in-container">
-        <div className='logo-wrapper'>
-          <LogoSvg />
-        </div>
-        <div className="sign-in-container-inner">
-          <Col sm={12}>
-            <div className="sign-in-box">
-              <h1 className="text-start">Sign up</h1>
-              <p className="text-start">Come and join the Pixelgrade community! We’ve prepared some unique perks to help you get started and configure your website in style. <strong>Peek inside for free</strong> and find some great little treats for you.</p>
-              <Form>
-                <Form.Group>
-                  <Form.Label>First name</Form.Label>
-                  <Form.Control type="email" placeholder="Enter first name" ref={ref}/>
-                </Form.Group>
+    <div className="container">
+      <img className="logo" src={logo} alt="" />
+      <div className="title">Join the DEV Community</div>
+      <div className="container__pt">DEV Community is a community of 1,626,760 amazing developers</div>
 
-                <Form.Group>
-                  <Form.Label>Email address and password</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email address" ref={ref}/>
-                </Form.Group>
+      <div className="button">
+        <p><img src={google} alt="" /></p>
+        <p>Sign up with Google</p>
+        <p></p>
+      </div>
 
-                <Form.Group className='password-group'>
-                  {/* <Form.Label>Password</Form.Label> */}
-                  <InputGroup>
-                    <Form.Control type={showPassword ? 'text' : 'password'} placeholder="Enter password" />
-                    <Button variant="dark" onClick={handleShowPassword}>
-                      {showPassword ? 'Hide' : 'Show'}
-                    </Button>
-                  </InputGroup>
-                </Form.Group>
+      <div className="button">
+        <p><img src={email} alt="" /></p>
+        <p>Sign up with Email</p>
+        <p></p>
+      </div>
 
-                <Form.Group>
-                  <Form.Check type="checkbox" label="I agree to Pixelgrade's terms and conditions and privacy policy." />
-                </Form.Group>
+      <div className="container_footer">
+        <p>By signing up, you are agreeing to our</p>
+        <p className="text_blue">privacy policy, terms of use</p>
+      </div>
 
-                <Button className='sign-in-btn' variant="primary" type="submit" block>
-                  Set up my account →
-                </Button>
-              </Form>
+      <div className="container_footer">
+        <p>and</p>
+        <p className="text_blue">code of conduct.</p>
+      </div>
 
-              <Link to={'/signin'} className="back-to-sign-in text-start">
-                <Button variant="link" block>
-                  ← Sign in
-                </Button>
-              </Link>
-            </div>
-          </Col>
-        </div>
-      </Container>
+      <hr />
+
+      <div className="container_footer_end">
+        <p>Already have an account?</p>
+        <p className="Log_blue">Log in.</p>
+      </div>
     </div>
   );
-};
+}
 
 export default RegisterPage;
