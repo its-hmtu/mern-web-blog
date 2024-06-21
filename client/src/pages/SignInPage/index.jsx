@@ -90,7 +90,7 @@ const SignInPage = () => {
             </div>
             <div className="sign-in-misc__register">
               <p>
-                New to DEV Community? <Link to="/register">Create account</Link>
+                New to DEV Community? <Link to="/register" className="fw-semibold">Create account</Link>
                 .
               </p>
             </div>
