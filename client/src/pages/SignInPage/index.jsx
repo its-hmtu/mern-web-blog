@@ -54,7 +54,7 @@ const SignInPage = () => {
 
             <Form.Group className="checkbox-group d-flex justify-content-between">
               <Form.Check type="checkbox" label="Remember me" />
-              <a href="#" className="text-end">
+              <a href="#" className="text-end fw-semibold" >
                 Forgot password?
               </a>
             </Form.Group>
