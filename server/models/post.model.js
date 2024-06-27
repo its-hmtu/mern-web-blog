@@ -1,44 +1,67 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
+import User from "./user.model.js";
 
 const postSchema = new mongoose.Schema({
-  user: {
+  user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: [true, 'User id is required']
   },
   
   title: {
     type: String,
-    required: true,
+    required: [true, 'Post title is required'],
   },
 
   content: {
     type: String,
-    required: true,
+    required: [true, 'Post content is required']
   },
 
   images: [
     {
-      type: String,
-      default: ''
+      url: {
+        type: String,
+        default: ''
+      },
+      height: {
+        type: Number,
+        default: 0
+      },
+      width: {
+        type: Number,
+        default: 0
+      }
     }
   ],
 
   main_image: {
-    type: String,
-    default: ''
+    url: {
+      type: String,
+      default: ''
+    },
+    height: {
+      type: Number,
+      default: 0
+    },
+    width: {
+      type: Number,
+      default: 0
+    }
   },
 
-  reading_time: {
+  read_time: {
     type: Number,
-    required: true
+    default: 3,
   },
 
-  category: {
-    type: String,
-    default: 'uncategorized'
-  },
+  categories: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category'
+    }
+  ],
   
   comments_count: {
     type: Number,
@@ -57,23 +80,25 @@ const postSchema = new mongoose.Schema({
     }
   ],
 
-  publish_timestamp: {
+  publishedAt: {
     type: Date,
     default: Date.now
   },
 
   slug: {
     type: String,
-    required: true,
+    required: [true, 'Post slug is required'],
     unique: true,
   }
 }, {timestamps: true})
 
-postSchema.pre('validate', function(next) {
+postSchema.pre('validate', async function(next)  {
   if (this.title) {
     // get last 4 characters from _id.
-    const id = this._id.toString().substr(this._id.length - 4);
-    this.slug = slugify(this.title, {lower: true, strict: true}) + '-' + id;
+    // const id = this._id.toString().substr(this._id.length - 4);
+    const user_slug = await User.findById(this.user_id).select('slug');
+    this.title = this.title.trim().replace(/\s+/g, '-');
+    this.slug = slugify(user_slug + "/" + this.title, { lower: true, strict: true });
   }
 
   next()

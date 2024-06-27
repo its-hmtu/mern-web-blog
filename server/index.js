@@ -6,7 +6,9 @@ import connectDb from './config/db.js'
 import userRoutes from './routes/user.route.js'
 import postRoutes from './routes/post.route.js'
 import commentRoutes from './routes/comment.route.js'
+import authRoutes from './routes/auth.route.js'
 import { notFound, errorHandler } from './middlewares/error.js'
+import cors from 'cors'
 
 dotenv.config()
 
@@ -14,15 +16,16 @@ connectDb()
 
 const app = express()
 const PORT = process.env.PORT || 5000
-const BASE_URL = '/api/v1'
+const BASE_URL = '/v1'
 const __dirname = path.resolve()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
-// app.use(cors())
+app.use(cors())
 
 app.use(cookieParser())
 
+app.use(`${BASE_URL}/auth`, authRoutes)
 app.use(`${BASE_URL}/users`, userRoutes)
 app.use(`${BASE_URL}/posts`, postRoutes)
 app.use(`${BASE_URL}/comments`, commentRoutes)

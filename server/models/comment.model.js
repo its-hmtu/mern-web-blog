@@ -2,14 +2,20 @@ import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
   {
-    user: {
+    user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    post: {
+    post_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
     },
+
+    reply_to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+
     content: {
       type: String,
       required: true,
@@ -23,7 +29,11 @@ const commentSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
       },
-    ]
+    ],
+    replies_count: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
