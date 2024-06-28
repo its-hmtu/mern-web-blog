@@ -7,45 +7,75 @@ import {
 } from "../utils/genToken.js";
 import { sendConfirmationEmail } from "../utils/mailer.js";
 
-const resendConfirmationEmail = asyncHandler(async (req, res) => {
+export const resendConfirmationEmail = asyncHandler(async (req, res) => {
+  const { email } = req.body;
 
-})
+  if (!email) {
+    res.status(400);
+    throw new Error("Email is required");
+  } else {
+      const user = await User.findOne({ email });
+      if (!user) {
+        res.status(404);
+        throw new Error("User not found");
+      }
+      if (user.is_email_verified) {
+        res.status(400).json({
+          success: false,
+          message: "Email already verified",
+        });
+        return;
+      }
 
-const emailConfirmation = asyncHandler(async (req, res) => {
-  try {
-    const { token } = req.params;
+      try {
+        await sendConfirmationEmail({
+          userId: user._id,
+          fullName: user.full_name,
+          userEmail: user.email,
+          subject: "Verify your email address",
+          text: "Verify your email address",
+        });
 
-    const decoded = jwt.verify(token, process.env.EMAIL_SECRET);
+        res.status(200).json({
+          success: true,
+          message: "Email sent successfully",
+        });
+      } catch (e) {
+        res.status(500);
+        throw new Error(`Server error: ${e.message}`);
+      }
+    }
+});
 
-    // check if decoded token is expired
-    console.log(decoded);
-
-    const user = await User.findById(decoded.userId);
-
-    if (!user) {
-      res.status(404).send('User not found');
-      return;
+export const emailConfirmation = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.EMAIL_SECRET);
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        res.status(404).send("User not found");
+        return;
+      }
+      if (user.email === decoded.userEmail) {
+        user.is_email_verified = true;
+        await user.save();
+        res.redirect("http://127.0.0.1:5173/signin");
+      }
+    } catch (e) {
+      if (e.name === "TokenExpiredError") {
+        res.redirect("http://127.0.0.1:5173/register");
+      } else {
+        res.status(400);
+        throw new Error("Invalid token");
+      }
     }
 
-    // if user with user id include email in user model
-    // then set is_email_verified to true
-    if (user.email === decoded.userEmail) {
-      user.is_email_verified = true;
-      await user.save();
-      res.redirect("http://127.0.0.1:5173/signin");
-    }
-
-  } catch (e) {
-    if (e.name === "TokenExpiredError") {
-      res.redirect("http://127.0.0.1:5173/register");
-    } else {
-      res.status(400);
-      throw new Error("Invalid token");
-    }
   }
 });
 
-const register = asyncHandler(async (req, res) => {
+export const register = asyncHandler(async (req, res) => {
   const { full_name, user_name, email, password } = req.body;
 
   const isEmailUsed = await User.findOne({ email });
@@ -55,35 +85,43 @@ const register = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Email already in use");
   }
+
   if (isUserNameUsed) {
     res.status(400);
     throw new Error("Username already in use");
   }
-  const user = await User.create({
-    full_name,
-    user_name,
-    email,
-    password,
-  });
 
-  const accessToken = generateAccessToken(user._id);
-
-  res.status(201).json({
-    success: true,
-    message: "User registered successfully",
-    access_token: accessToken,
-  });
-
-  const mail = await sendConfirmationEmail({
-    userId: user._id,
-    fullName: user.full_name,
-    userEmail: user.email,
-    subject: "Welcome to our community",
-    text: "Welcome to our community",
-  });
+  try {
+    const user = await User.create({
+      full_name,
+      user_name,
+      email,
+      password,
+    });
+  
+    const accessToken = generateAccessToken(user._id);
+    generateRefreshToken(res, user._id);
+  
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      access_token: accessToken,
+    });
+  
+    await sendConfirmationEmail({
+      userId: user._id,
+      fullName: user.full_name,
+      userEmail: user.email,
+      subject: "Welcome to our community",
+      text: "Welcome to our community",
+    });
+  } catch (e) {
+    res.status(500);
+    throw new Error(`Server error: ${e.message}`);
+  }
 });
 
-const login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -97,32 +135,108 @@ const login = asyncHandler(async (req, res) => {
         subject: "Verify your email address",
         text: "Verify your email address",
       });
-      
+
       res.status(403).json({
         success: false,
-        message: "Email not verified, confirmation email sent."
-      })
+        message: "Email not verified.",
+      });
+
+      return;
     }
 
-    const accessToken = generateAccessToken(user._id);
-    generateRefreshToken(res, user._id);
-
-    res.status(200).json({
-      success: true,
-      message: "User logged in successfully",
-      access_token: accessToken,
-    });
+    try {
+      const accessToken = generateAccessToken(user._id);
+      generateRefreshToken(res, user._id);
+  
+      res.status(200).json({
+        success: true,
+        message: "User logged in successfully",
+        access_token: accessToken,
+      });
+    } catch (e) {
+      res.status(500);
+      throw new Error(`Server error: ${e.message}`);
+    }
   } else {
     res.status(401);
     throw new Error("Invalid email or password");
   }
 });
 
-const logout = asyncHandler(async (req, res) => {
-  res.cookie('refesh_token', "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
+export const logout = asyncHandler(async (req, res) => {
+  try {
+    res.cookie("refesh_token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    });
+    res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  } catch (e) {
+    res.status(500);
+    throw new Error(`Server error: ${e.message}`);
+  }
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  try {
+    await sendPasswordResetEmail({
+      userId: user._id,
+      fullName: user.full_name,
+      userEmail: user.email,
+      subject: "Reset your password",
+      text: "Reset your password",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
+    });
+  } catch (e) {
+    res.status(500);
+    throw new Error(`Server error: ${e.message}`);
+  }
 })
 
-export { register, login, logout, emailConfirmation };
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.FORGOT_PASSWORD_SECRET);
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        res.status(404).send("User not found");
+        return;
+      }
+      
+      user.password = newPassword;
+      await user.save();
+      
+      res.status(200).json({
+        success: true,
+        message: "Password reset successfully",
+      });
+
+    } catch (e) {
+      if (e.name === "TokenExpiredError") {
+        res.redirect("http://127.0.0.1:5173/register");
+      }
+      else {
+        res.status(400);
+        throw new Error("Invalid token");
+      }
+    }
+  }
+})

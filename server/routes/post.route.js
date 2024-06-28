@@ -6,15 +6,15 @@ import {
   deletePost,
   updatePost
 } from '../controllers/post.controller.js'
-import { protect } from '../middlewares/auth.js';
+import { userAuth } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
 router.get('/', getPosts)
 // router.get('/', getPost)
-router.post('/create', protect, createPost)
-router.delete('/:postId', protect, deletePost)
-router.put('/update/:postId', protect, updatePost)
+// router.post('/create', userAuth, createPost)
+// router.delete('/:postId', userAuth, deletePost)
+// router.put('/update/:postId', userAuth, updatePost)
 // TODO: delete post && update post routes
 
 export default router;

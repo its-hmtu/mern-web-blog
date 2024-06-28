@@ -1,14 +1,24 @@
 import express from "express";
 import {
+  getCurrentUser,
+  updateCurrentUser,
+  changePasswordCurrentUser,
   getUser,
-  updateUser,
 } from "../controllers/user.controller.js";
-import { protect } from "../middlewares/authMiddleware.js";
+import { userAuth, userAuthWithPassword } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// protect middleware will check for the token in the header, verify it, and attach the user object to the request object
-// only authenticated users can access the /profile route
-// router.get("/profile", protect, getCurrentUser);
+// get current user profile
+router.get("/profile", userAuth, getCurrentUser);
+
+// update current user profile
+router.put("/profile", userAuth, updateCurrentUser);
+
+// change password for current user
+router.put("/change-password", userAuthWithPassword, changePasswordCurrentUser)
+
+// get other user profile by slug
+router.get("/profile/:slug", getUser)
 
 export default router;
