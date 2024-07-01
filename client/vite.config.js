@@ -15,6 +15,8 @@ export default defineConfig({
       styles: "/src/assets/styles",
       images: "/src/assets/images",
       svg: "/src/assets/svg",
+      hooks: "/src/hooks",
+      api: "/src/api",
     },
   },
 })

@@ -1,30 +1,29 @@
-import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import React from "react";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import logo from "images/logo.png";
 
 const Header = () => {
   return (
-    <header className="custom-header">
-      <Navbar bg="dark" variant="dark" expand="lg">
-        <Container fluid>
-          <Navbar.Brand className='nav-logo' href="#">upstairs</Navbar.Brand>
-          {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
-          {/* <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link href="#people">People like you</Nav.Link>
-              <Nav.Link href="#craft">Craft your website</Nav.Link>
-              <Nav.Link href="#products">Inside our products</Nav.Link>
-              <Nav.Link href="#along">Along our way</Nav.Link>
-            </Nav>
-          </Navbar.Collapse> */}
-        </Container>
+    <header className="main-layout__header">
+      <Navbar>
+        <Navbar.Brand>
+          <Link to="/">
+            <img className="main-layout__header-logo" src={logo} alt="DEV" />
+          </Link>
+        </Navbar.Brand>
+        <Nav className="me-auto">{/* {Search bar} */}</Nav>
+
+        <Nav>
+          <Link to="/signin" className="me-2">
+            <Button variant="outline-primary" className="main-layout__header-btn sign-in">Sign in</Button>
+          </Link>
+
+          <Link to="/register" className="ms-2">
+            <Button variant="primary" className="main-layout__header-btn">Create account</Button>
+          </Link>
+        </Nav>
       </Navbar>
-      <Container className="text-center my-5">
-        <h1>Upstairs</h1>
-        <p>
-          A place of discovery, learning, and meaningful connections built around creating beautiful
-          and successful websites for positive impact. <a href="#story">Read the story of going upstairs.</a>
-        </p>
-      </Container>
     </header>
   );
 };

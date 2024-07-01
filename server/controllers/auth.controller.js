@@ -116,6 +116,12 @@ export const register = asyncHandler(async (req, res) => {
       text: "Welcome to our community",
     });
   } catch (e) {
+    if (e.name === "ValidationError") {
+      // Extract error messages
+      const messages = Object.values(e.errors).map((val) => val.message);
+      res.status(400);
+      throw new Error(messages);
+    }
     res.status(500);
     throw new Error(`Server error: ${e.message}`);
   }
@@ -154,8 +160,14 @@ export const login = asyncHandler(async (req, res) => {
         access_token: accessToken,
       });
     } catch (e) {
+      if (e.name === "ValidationError") {
+        // Extract error messages
+        const messages = Object.values(e.errors).map((val) => val.message);
+        res.status(400);
+        throw new Error(messages);
+      }
       res.status(500);
-      throw new Error(`Server error: ${e.message}`);
+      throw new Error('Server error');
     }
   } else {
     res.status(401);

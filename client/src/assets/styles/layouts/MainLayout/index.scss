@@ -1,0 +1,41 @@
+.main-layout {
+  &__container {
+
+  }
+
+  &__header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: $header-height;
+    box-shadow: $header-shadow;
+
+    .navbar {
+      width: $site-width;
+      margin: 0 auto;
+      padding: 0;
+      background-color: $white;
+    }
+
+    &-logo {
+      max-width: 200px;
+      width: 100%;
+      height: calc($header-height - 10px);
+    }
+    &-btn {
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &.sign-in {
+        border-color: transparent;
+        &:hover {
+          background-color: $blue-hover-light;
+          border-color: transparent;
+          color: $blue;
+        }
+      }
+    }
+  }
+}

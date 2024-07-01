@@ -11,6 +11,8 @@
       "layouts/*": ["./src/layouts/*"],
       "pages/*": ["./src/pages/*"],
       "svg/*": ["./src/assets/svg/*"],
+      "hooks/*": ["./src/hooks/*"],
+      "routes/*": ["./src/routes/*"],
     }
   },
   

@@ -32,7 +32,7 @@ export const sendConfirmationEmail = async (options) => {
         to: `${fullName} <${userEmail}>`,
         subject: subject,
         text: text,
-        html: `<b>Please follow this link to confirm your email: </b> <br /> <a target="_blank" href=${url} >${url}</a>`
+        html: `<b>Please follow this link to confirm your email: </b> <br /> <button><a target="_blank" href=${url} >${url}</a></button>`
       }
 
       transporter.sendMail(message, (err, info) => {
