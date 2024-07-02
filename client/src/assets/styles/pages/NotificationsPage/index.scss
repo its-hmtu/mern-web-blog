@@ -1,0 +1,66 @@
+.notifications-page {
+  &__container {
+    max-width: calc($site-width - 356px);
+    margin: 0 auto;
+    padding-top: calc($header-height + 16px);
+
+    .col-tag-sort {
+      ul {
+        li {
+          button {
+            width: 100%;
+            border-color: transparent;
+            color: $black-text;
+            text-align: start;
+
+            &:hover {
+              background-color: $blue-hover-light;
+              color: $blue;
+            }
+          }
+        }
+      }
+    }
+
+    .col-post {
+      .card {
+        border: none;
+        box-shadow: $card-shadow;
+        background-color: $white;
+        &-title {
+          width: 8rem;
+          height: 8rem;
+          margin: 0 auto;
+          justify-content: center;
+          img {
+            height: 100%;
+            width: 100%;
+            border-radius: 9999px;
+            border: 1px solid $black-text;
+          }
+        }
+
+        .card-body {
+          padding: 48px;
+          & > * + * {
+            margin-top: 16px;
+          }
+
+          .card-text {
+            a {
+              display: inline-block;
+              margin-right: 10px;
+            }
+            & > * + * {
+              margin-right: 10px;
+            }
+
+            & > span {
+              color: $black-text-desc;
+            }
+          }
+        }
+      }
+    }
+  }
+}

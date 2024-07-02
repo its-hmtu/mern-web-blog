@@ -1,9 +1,10 @@
 .main-layout {
   &__container {
-
+    padding-bottom: 50px;
   }
 
   &__header {
+    z-index: 9999;
     position: fixed;
     top: 0;
     left: 0;
@@ -42,7 +43,63 @@
       font-size: 24px;
     }
 
-    &-user-img{
+    &-user {
+      .dropdown {
+        button {
+          padding: 0;
+          border: none;
+          background-color: transparent;
+          &::after {
+            content: none;
+          }
+
+          &:active {
+            background-color: transparent;
+          }
+        }
+
+        &-menu {
+          max-width: 360px;
+          width: 250px;
+          box-shadow: 0 10px 15px -3px rgba($black, 0.1),
+            0 4px 6px -2px rgba($black, 0.05), 0 0 0 1px rgba($black, 0.1);
+          background-color: $white;
+          border: none;
+        }
+
+        &-item {
+          padding: 8px 16px;
+
+          &:hover {
+            background-color: $blue-hover-light;
+            border-radius: 8px;
+            text-decoration: underline;
+            color: $blue;
+
+            a {
+              color: $blue;
+            }
+          }
+
+          a {
+            text-decoration: none;
+            color: $black-text;
+            p {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-width: 100%;
+            }
+          }
+
+          .user-name {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    &-user-img {
       max-width: 32px;
       border-radius: 9999px;
     }

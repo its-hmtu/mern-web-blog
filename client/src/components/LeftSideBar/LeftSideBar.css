@@ -1,4 +1,4 @@
-.container-sidebar {
+/* .container-sidebar {
     display: none;
     max-width: 24rem;
   }
@@ -7,9 +7,9 @@
     font-size: 1.65rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start; */
     /* gap: 0.5rem; */
-  }
+  /* }
   
   .sidebar__list .list__item {
     padding: 0.5rem 1.1rem;
@@ -32,15 +32,15 @@
   .sidebar__list a {
     color: var(--color-black);
     display: flex;
-    align-items: center;
+    align-items: center; */
     /* width: 98%; */
-  }
+  /* } */
   
   /*============
   TAGS
   ============*/
   
-  .sidebar-tags-list {
+  /* .sidebar-tags-list {
     list-style: none;
     display: flex;
     flex-direction: column;
@@ -74,4 +74,4 @@
     .sidebar__list a {
       gap: 1rem;
     }
-  }
+  } */

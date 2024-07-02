@@ -1,0 +1,113 @@
+.blog-card {
+
+  & + & {
+    margin-top: 16px;
+  }
+  border: none;
+  box-shadow: $card-shadow;
+  background-color: $white;
+
+  &__img {
+    max-height: calc(90vh - $header-height);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    aspect-ratio: auto 650 / 273;
+  }
+
+  &__body {
+    padding: 20px;
+    a {
+      text-decoration: none;
+    }
+  }
+
+  &__user-img {
+    border-radius: 9999px;
+    border: 1px solid $gray-border;
+    max-width: 32px;
+    height: 32px;
+    padding: 0
+    // height: auto;
+  }
+
+  &__info {
+    width: fit-content;
+  }
+
+  &__user-name {
+    color: $black-text;
+    font-weight: 500;
+  }
+
+  &__date {
+    color: $black-text-desc;
+    font-size: 13px;
+  }
+
+  &__title {
+    padding-left: 46px;
+    font-size: 30px;
+
+    a {
+      color: $black-text;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+  }
+
+  &__text {
+    padding-left: 46px;
+    
+    &-tag {
+      padding: 4px 7px;
+      width: fit-content;
+      border: 1px solid transparent;
+      color: $black-text-desc;
+      font-size: 14px;
+
+      &:hover {
+        background-color: $gray-hover;
+        border-radius: 8px;
+        border-color: $gray-border; 
+      }
+    }
+  }
+
+  &__misc {
+    padding-left: 46px!important;
+    margin-top: 12px;
+    .col {
+      width: fit-content;
+      flex: unset;
+      padding: 0;
+
+      & > * + * {
+        margin-left: 8px;
+      }
+
+      button {
+        background-color: transparent;
+        color: $black-text;
+        border-color: transparent;
+
+        &:hover {
+          background-color: $gray-hover;
+        }
+      }
+
+      .btn-bookmark {
+        &:hover {
+          color: $blue;
+          background-color: $blue-hover-light;
+        }
+      }
+
+      .read-time {
+        font-size: 14px;
+      }
+    }
+  }
+}

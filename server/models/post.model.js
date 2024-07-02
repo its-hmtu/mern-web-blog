@@ -6,7 +6,19 @@ const postSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'User id is required']
+    required: [true, 'Post user is required']
+  },
+
+  author: {
+    full_name: {
+      type: String,
+      default: ''
+    },
+
+    bio: {
+      type: String,
+      default: ''
+    },
   },
   
   title: {

@@ -2,7 +2,7 @@
 RIGHT SIDEBAR
 ============*/
 
-.sidebar--right {
+/* .sidebar--right {
     display: none;
     flex-direction: column;
     width: 50%;
@@ -45,4 +45,4 @@ RIGHT SIDEBAR
     .sidebar--right {
       display: flex;
     }
-  }
+  } */

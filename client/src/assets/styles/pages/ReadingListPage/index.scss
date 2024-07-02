@@ -1,0 +1,60 @@
+.reading-list-page {
+  &__container {
+    max-width: $site-width;
+    margin: 0 auto;
+    padding-top: calc($header-height + 16px);
+
+    .col-tag-sort {
+      ul {
+        li {
+          button {
+            width: 100%;
+            border-color: transparent;
+            color: $black-text;
+            text-align: start;
+
+            &:hover {
+              background-color: $blue-hover-light;
+              color: $blue;
+            }
+          }
+        }
+      }
+    }
+
+    .col-post {
+      .card {
+        border: none;
+        box-shadow: $card-shadow;
+        background-color: $white;
+        .card-body {
+          padding: 16px 24px;
+          & > * + * {
+            margin-top: 16px;
+          }
+
+          img {
+            max-width: 32px;
+            width: 100%;
+            height: 32px;
+            border-radius: 9999px;
+          }
+
+          .card-text {
+            a {
+              display: inline-block;
+              margin-right: 10px;
+            }
+            & > * + * {
+              margin-right: 10px;
+            }
+
+            & > span {
+              color: $black-text-desc;
+            }
+          }
+        }
+      }
+    }
+  }
+}

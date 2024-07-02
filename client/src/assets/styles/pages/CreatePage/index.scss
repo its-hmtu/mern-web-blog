@@ -1,0 +1,105 @@
+.create-page {
+  &__container {
+    max-width: 1024px;
+    padding-top: 16px;
+    margin: 0 auto;
+
+    header {
+      button {
+        background-color: transparent;
+        border-color: transparent;
+        color: $black-text;
+
+        &:hover {
+          color: $blue;
+          background-color: $blue-hover-light;
+          border-color: transparent;
+        }
+
+        &:active {
+          color: $blue!important;
+          background-color: $blue-hover-light!important;
+          border-color: transparent!important;
+        
+        }
+      }
+    }
+
+    .nav-item {
+      & + .nav-item {
+        margin-left: 8px;
+      }
+
+      button {
+        border: none;
+        color: $black-text;
+
+        &:hover {
+          background-color: $blue-hover-light;
+          border-radius: 8px;
+          color: $blue;
+        }
+
+        &.active {
+          background-color: $white;
+          border-radius: 8px;
+          color: $blue;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .tab-content {
+      padding: 0;
+    }
+  }
+
+  &__editor-col {
+    background-color: $white;
+    padding: 32px 64px;
+    box-shadow: $card-shadow;
+    border-radius: 8px;
+
+    .quill {
+      & > * {
+        border: none;
+        padding-inline: 0;
+      }
+
+      .ql-container {
+        font-size: 16px;
+        .ql-editor {
+          &::before {
+            font-size: 1.125rem;
+          }
+        }
+      }
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__categories {
+    font-weight: 500;
+    margin-bottom: 16px;
+    padding-bottom: 16px !important;
+    border-bottom: 1px solid $gray-border;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__cover-image {
+    padding: 0 8px;
+    margin-bottom: 10px;
+  }
+}
