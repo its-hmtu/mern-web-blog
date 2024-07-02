@@ -12,30 +12,68 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays } from "@fortawesome/free-regular-svg-icons";
 
 const ProfilePage = () => {
+  const [user, setUser] = React.useState({
+    full_name: "Ben Halpern",
+    user_name: "@ben_halpern",
+    user_image: "https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png",
+    bio: 'Hi, I am Ben Halpern. I am a software developer and the co-founder of DEV. I love to write about programming and software development. I am also a big fan of memes.',
+    location: 'New York, USA',
+    joined: 'Jan 1, 2021'
+  });
+  const [blogs, setBlogs] = React.useState(
+    [
+      {
+        id: 1,
+        title: 'Meme Monday',
+        full_name: 'Ben Halpern',
+        user_image: 'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+        date: 'Jan 1 (7 hours ago)',
+        tags: ['#discuss', '#code'],
+        like: 10,
+        comment: 2,
+        read_time: 2,
+        image: 'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png'
+      },
+      {
+        id: 2,
+        title: 'Meme Monday',
+        full_name: 'Ben Halpern',
+        user_image: 'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+        date: 'Jan 1 (7 hours ago)',
+        tags: ['#discuss', '#code'],
+        like: 10,
+        comment: 2,
+        read_time: 3,
+        image: 'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png'
+      }
+    ]
+  )
   return (
     <Container fluid className="profile-page__container">
       <Row>
         <Col className="d-flex flex-column align-items-center">
           <Card className="profile-card w-100 d-flex flex-column align-items-center p-4 position-relative">
-            <img src={logo} alt="" className="profile-page__img" />
+            <img src={user.user_image} alt="" className="profile-page__img" />
             <Button variant="primary" className="mt-3 position-absolute">
               Edit Profile
             </Button>
             <Card.Body>
               <Card.Title className="mt-3 profile-card-title">
-                John Doe
+                {user.full_name}
               </Card.Title>
-              <Card.Text className="mt-3 profile-card-text">bio</Card.Text>
+              <Card.Text className="mt-3 profile-card-text">
+                {user.bio}
+              </Card.Text>
             </Card.Body>
             <Row className="info-misc">
               <Col>
                 <span className="mx-3">
                   <FontAwesomeIcon icon={faLocationDot} className="me-2"/>
-                  Location
+                  {user.location}
                   </span>
                 <span className="mx-3">
                   <FontAwesomeIcon icon={faCalendarDays} className="me-2" />
-                  Joined
+                  Joined {user.joined}
                 </span>
               </Col>
             </Row>
@@ -66,7 +104,11 @@ const ProfilePage = () => {
             </Card>
           </Col>
           <Col className="col-5 flex-grow-1">
-            <BlogCard />
+            {
+              blogs.map((blog, index) => (
+                <BlogCard key={index} data={blog} />
+              ))
+            }
           </Col>
         </div>
       </Row>

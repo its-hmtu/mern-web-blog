@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     profile_image_url: {
       type: String,
-      default: "",
+      default: ""
     },
     role: {
       type: String,

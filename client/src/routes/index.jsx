@@ -17,11 +17,13 @@ const RouteList = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/reading-list" element={<ReadingListPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/post/:slug" element={<h>Post</h>} />
       </Route>
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/email-confirmation" element={<CheckEmailPage />} />
       <Route path="/create-post" element={<CreatePage />} />
+      
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   )
