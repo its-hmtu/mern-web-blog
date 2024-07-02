@@ -10,12 +10,12 @@
     right: 0;
     height: $header-height;
     box-shadow: $header-shadow;
+    background-color: $white;
 
     .navbar {
       width: $site-width;
       margin: 0 auto;
       padding: 0;
-      background-color: $white;
     }
 
     &-logo {
@@ -36,6 +36,15 @@
           color: $blue;
         }
       }
+    }
+
+    &-noti {
+      font-size: 24px;
+    }
+
+    &-user-img{
+      max-width: 32px;
+      border-radius: 9999px;
     }
   }
 }
