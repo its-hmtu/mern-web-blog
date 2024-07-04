@@ -29,7 +29,6 @@ app.use(`${BASE_URL}/auth`, authRoutes)
 app.use(`${BASE_URL}/users`, userRoutes)
 app.use(`${BASE_URL}/posts`, postRoutes)
 app.use(`${BASE_URL}/comments`, commentRoutes)
-do()
 
 // if (process.env.NODE_ENV === 'development' || !__dirname) { // change to 'production' later
 //   app.use(express.static(path.join(__dirname, '/client/dist')))
