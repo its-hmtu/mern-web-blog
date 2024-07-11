@@ -1,14 +1,18 @@
 .profile-page {
-
   &__container {
     max-width: $site-width;
     margin: 0 auto;
     padding-top: calc($header-height + 16px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .card {
       background-color: $white;
       border: none;
       box-shadow: $card-shadow;
+      width: 100%;
+      max-width: 100%;
     }
 
     .row + .row {
@@ -16,16 +20,19 @@
     }
 
     .profile-card {
-      max-width: 992px;
+      max-width: 100%;
       margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
       & > button {
-        top: 0;
-        right: 0;
-        margin-right: 16px;
+        margin-top: 16px;
+        align-self: flex-end;
       }
 
-      &-text, &-title {
+      &-text,
+      &-title {
         text-align: center;
       }
 
@@ -40,17 +47,18 @@
       }
     }
   }
-  
+
   &__img {
-    max-width: 115px;
-    width: 100%;
+    width: 115px;
     height: 115px;
-    max-height: 115px;
-    border-radius: 9999px;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%;
     box-shadow: $card-shadow;
+    object-fit: cover;
   }
 
   &__content {
-    max-width: 992px;
+    max-width: 100%;
   }
 }
