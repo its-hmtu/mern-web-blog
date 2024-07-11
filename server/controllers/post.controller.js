@@ -1,179 +1,144 @@
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
+import {
+  NotFound,
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalServerError,
+} from "../errors/index.js"
+import fs from "fs";
 
-const getPosts = asyncHandler(async (req, res) => {
+import { authorize, uploadFile, deleteFile } from "../config/google_drive.js";
+
+function calculateReadTime(content) {
+  const text = content.replace(/(<([^>]+)>)/gi, "");
+  const wordsPerMinute = 200;
+  const wordCount = text.trim().split(/\s+/).length;
+
+  return Math.ceil(wordCount / wordsPerMinute);
+}
+
+const createPost = asyncHandler(async (req, res, next) => {
   try {
-    if (req.query && req.query.id) {
-      const { id } = req.query;
-      const post = await Post.findById(id);
+    const {title, content, category} = req.body;
+    const auth = await authorize();
+    const user = req.user;
 
-      if (!post) {
-        res.status(404);
-        throw new Error("Post not found");
-      } else {
-        res.status(200).json(post);
-      }
-    } else {
-      const startIndex = parseInt(req.query.startIndex) || 0;
-      const limit = parseInt(req.query.limit) || 3;
-      const sort_direction = req.query.order === "asc" ? 1 : -1;
-      const posts = await Post.find({
-        ...(req.query.userId && { userId: req.query.userId }),
-        ...(req.query.category && { category: req.query.category }),
-        ...(req.query.slug && { slug: req.query.slug }),
-        ...(req.query.postId && { _id: req.query.postId }),
-        ...(req.query.searchTerm && {
-          $or: [
-            { title: { $regex: req.query.searchTerm, $options: "i" } },
-            { content: { $regex: req.query.searchTerm, $options: "i" } },
-          ],
-        }),
-      })
-        .sort({
-          updateAt: sort_direction,
+    let mainImage = null;
+    if (req.files['main_image']) {
+      const mainImageFile = req.files['main_image'][0];
+      const response = await uploadFile(auth, mainImageFile.path);
+      mainImage = `https://drive.google.com/thumbnail?id=${response.data.id}`;
+      fs.unlinkSync(mainImageFile.path);
+    }
+
+    const contentImages = [];
+    if (req.files['content_images']) {
+      const contentImagesFiles = req.files['content_images'];
+      for (const file of contentImagesFiles) {
+        const response = await uploadFile(auth, file.path);
+        contentImages.push({
+          url: `https://drive.google.com/thumbnail?id=${response.data.id}`,
+          height: response.height,
+          width: response.width,
         })
-        .skip(startIndex)
-        .limit(limit);
-
-      const totalPosts = await Post.countDocuments();
-
-      const now = new Date();
-
-      const oneMonthAgo = new Date(
-        now.getFullYear(),
-        now.getMonth() - 1,
-        now.getDate()
-      );
-
-      const lastMonthPosts = await Post.countDocuments({
-        createdAt: { $gte: oneMonthAgo },
-      });
-
-      res.status(200).json({
-        posts,
-        totalPosts,
-        lastMonthPosts,
-      });
+        fs.unlinkSync(file.path);
+      }
+      console.log(contentImages)
     }
+
+    const user_id = user._id;
+
+    const author = user.full_name;
+
+    const read_time = calculateReadTime(content);
+
+    const post = await Post.create({
+      user_id,
+      author,
+      title,
+      content,
+      category,
+      main_image: mainImage,
+      images: contentImages,
+      read_time,
+    })
+
+    // update user posts count and add post to user posts list
+
+    user.posts_count += 1;
+    user.posts.push(post._id);
+    await user.save();
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Post created',
+      data: post,
+    })
   } catch (e) {
-    res.status(500);
-    throw new Error(`Server Error: ${e.message}`);
+    next(new InternalServerError(e.message))
   }
-});
+})
 
-const getPost = asyncHandler(async (req, res) => {
-  const postId = req.query.post;
-
+const deletePost = asyncHandler(async (req, res, next) => {
   try {
-    const post = await Post.findById(postId);
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post) {
+      next(new NotFound(`Post with id ${id} not found`))
+      return;
+    }
+
+    // find user and remove post from user posts list
+    const user = await User.findById(post.user_id);
+    if (!user) {
+      next(new NotFound(`User with id ${post.user_id} not found`))
+      return;
+    }
+
+    user.posts_count -= 1;
+    user.posts = user.posts.filter(p => p.toString() !== id);
+    await user.save();
+
+    // delete images from google drive
+    const auth = await authorize();
+    await deleteFile(auth, post.main_image.split("=")[1]);
+
+    for (const image of post.images) {
+      await deleteFile(auth, image.url.split("=")[1]);
+    }
+
+    await Post.deleteOne({ _id: id });
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Post deleted',
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+})
+
+const updatePost = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content, category } = req.body;
+    
+    const post = await Post.findById(id);
 
     if (!post) {
-      res.status(404);
-      throw new Error("Post not found");
-    } else {
-      res.status(200).json(post);
+      next(new NotFound(`Post with id ${id} not found`))
+      return;
     }
+
+    const auth = await authorize();
+
+
   } catch (e) {
-    res.status(500);
-    throw new Error(`Server Error: ${e.message}`);
+    next(new InternalServerError(e.message));
   }
-});
+})
 
-// @access Private
-const createPost = asyncHandler(async (req, res) => {
-  const { title, content } = req.body;
-
-  if (!title || !content) {
-    res.status(400);
-    throw new Error("Please fill all fields");
-  } else {
-    // const slug = title
-    //   .split(' ')
-    //   .join('-')
-    //   .toLowerCase()
-    //   .replace(/[^a-zA-Z0-9-]/g, '');
-
-    try {
-      const newPost = await Post.create({
-        ...req.body,
-        // slug,
-        userId: req.user._id,
-      });
-
-      res.status(201).json(newPost);
-    } catch (e) {
-      res.status(500);
-      throw new Error(`Server Error: ${e.message}`);
-    }
-  }
-});
-
-// @access Private
-const deletePost = asyncHandler(async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.params.userId;
-
-  if (req.user._id.toString() !== userId) {
-    let error_str =
-      process.env.NODE_ENV === "development"
-        ? `Not Authorized - ${typeof req.user._id} !== ${typeof userId}`
-        : "Not Authorized";
-
-    res.status(403);
-    throw new Error(error_str);
-  }
-
-  try {
-    const post = await Post.findByIdAndDelete(postId);
-    res.status(200).json({ message: "Post deleted" });
-
-    if (!post) {
-      res.status(404);
-      throw new Error("Post not found");
-    }
-  } catch (e) {
-    res.status(500);
-    throw new Error(`Server Error: ${e.message}`);
-  }
-});
-
-// @access Private
-const updatePost = asyncHandler(async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.params.userId;
-  const { title, content, category, image } = req.body;
-
-  if (req.user._id.toString() !== userId) {
-    res.status(403);
-    throw new Error(
-      `Not Authorized - ${typeof req.user._id} !== ${typeof req.params.userId}`
-    );
-  }
-
-  try {
-    const updatedPost = await Post.findByIdAndUpdate(
-      postId,
-      {
-        $set: {
-          title,
-          content,
-          category,
-          image,
-        },
-      },
-      { new: true }
-    );
-
-    res.status(200).json(updatedPost);
-
-    if (!updatedPost) {
-      res.status(404);
-      throw new Error("Post not found");
-    }
-  } catch (e) {
-    res.status(500);
-    throw new Error(`Server Error: ${e.message}`);
-  }
-});
-
-export { getPosts, getPost, createPost, deletePost, updatePost };
+export { createPost, deletePost, updatePost }

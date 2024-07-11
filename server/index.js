@@ -7,8 +7,10 @@ import userRoutes from './routes/user.route.js'
 import postRoutes from './routes/post.route.js'
 import commentRoutes from './routes/comment.route.js'
 import authRoutes from './routes/auth.route.js'
+import uploadRoutes from './routes/upload.route.js'
 import { notFound, errorHandler } from './middlewares/error.middleware.js'
 import cors from 'cors'
+
 
 dotenv.config()
 
@@ -29,18 +31,7 @@ app.use(`${BASE_URL}/auth`, authRoutes)
 app.use(`${BASE_URL}/users`, userRoutes)
 app.use(`${BASE_URL}/posts`, postRoutes)
 app.use(`${BASE_URL}/comments`, commentRoutes)
-
-// if (process.env.NODE_ENV === 'development' || !__dirname) { // change to 'production' later
-//   app.use(express.static(path.join(__dirname, '/client/dist')))
-
-//   app.get('*', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-//   })
-// } else {
-//   app.get('/', (req, res) => {
-//     res.send('API is running...')
-//   })
-// }
+app.use(`${BASE_URL}/upload`, uploadRoutes)
 
 app.get('/', (req, res) => {
   res.send('API is running...')
@@ -53,3 +44,15 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
+
+// if (process.env.NODE_ENV === 'development' || !__dirname) { // change to 'production' later
+//   app.use(express.static(path.join(__dirname, '/client/dist')))
+
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+//   })
+// } else {
+//   app.get('/', (req, res) => {
+//     res.send('API is running...')
+//   })
+// }

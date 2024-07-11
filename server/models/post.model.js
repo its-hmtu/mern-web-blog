@@ -10,15 +10,8 @@ const postSchema = new mongoose.Schema({
   },
 
   author: {
-    full_name: {
-      type: String,
-      default: ''
-    },
-
-    bio: {
-      type: String,
-      default: ''
-    },
+    type: String,
+    required: [true, 'Post author is required']
   },
   
   title: {
@@ -49,31 +42,19 @@ const postSchema = new mongoose.Schema({
   ],
 
   main_image: {
-    url: {
-      type: String,
-      default: ''
-    },
-    height: {
-      type: Number,
-      default: 0
-    },
-    width: {
-      type: Number,
-      default: 0
-    }
+    type: String,
+    default: ''
   },
 
   read_time: {
     type: Number,
-    default: 3,
+    default: 0,
   },
 
-  categories: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category'
-    }
-  ],
+  category: {
+    type: String,
+    default: 'General'
+  },
   
   comments_count: {
     type: Number,
@@ -99,18 +80,18 @@ const postSchema = new mongoose.Schema({
 
   slug: {
     type: String,
-    required: [true, 'Post slug is required'],
+    // required: [true, 'Post slug is required'],
     unique: true,
   }
 }, {timestamps: true})
 
-postSchema.pre('validate', async function(next)  {
+postSchema.pre('save', async function(next)  {
   if (this.title) {
     // get last 4 characters from _id.
     // const id = this._id.toString().substr(this._id.length - 4);
-    const user_slug = await User.findById(this.user_id).select('slug');
+    // const user_slug = await User.findById(this.user_id).select('slug');
     this.title = this.title.trim().replace(/\s+/g, '-');
-    this.slug = slugify(user_slug + "/" + this.title, { lower: true, strict: true });
+    this.slug = slugify( this.title, { lower: true, strict: true });
   }
 
   next()
