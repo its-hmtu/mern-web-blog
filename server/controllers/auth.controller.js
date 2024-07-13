@@ -106,13 +106,9 @@ export const register = asyncHandler(async (req, res, next) => {
       password,
     });
 
-    const accessToken = generateAccessToken(user._id);
-    generateRefreshToken(res, user._id);
-
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      access_token: accessToken,
     });
 
     await sendConfirmationEmail({
@@ -165,7 +161,6 @@ export const login = asyncHandler(async (req, res, next) => {
         message: "User logged in successfully",
         access_token: accessToken,
       });
-
     } else {
       next(new Unauthorized("Invalid email or password"));
       return;
@@ -203,11 +198,11 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     const { email } = req.body;
 
-  const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-  if (!user) {
-    next(new NotFound("User not found"));
-  }
+    if (!user) {
+      next(new NotFound("User not found"));
+    }
     await sendPasswordResetEmail({
       userId: user._id,
       fullName: user.full_name,

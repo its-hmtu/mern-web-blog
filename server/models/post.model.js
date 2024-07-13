@@ -82,7 +82,17 @@ const postSchema = new mongoose.Schema({
     type: String,
     // required: [true, 'Post slug is required'],
     unique: true,
-  }
+  },
+
+  is_removed_by_admin: {
+    type: Boolean,
+    default: false
+  },
+
+  is_comment_disabled: {
+    type: Boolean,
+    default: false
+  },
 }, {timestamps: true})
 
 postSchema.pre('save', async function(next)  {
@@ -90,7 +100,7 @@ postSchema.pre('save', async function(next)  {
     // get last 4 characters from _id.
     // const id = this._id.toString().substr(this._id.length - 4);
     // const user_slug = await User.findById(this.user_id).select('slug');
-    this.title = this.title.trim().replace(/\s+/g, '-');
+    // const title = this.title.trim().replace(/\s+/g, '-');
     this.slug = slugify( this.title, { lower: true, strict: true });
   }
 

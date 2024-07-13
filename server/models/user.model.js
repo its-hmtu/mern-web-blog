@@ -77,20 +77,22 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    liked_post: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
     reading_list: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
       },
     ],
-    access_token: {
-      type: String,
-      default: "",
-    },
     refresh_token: {
       type: String,
       default: "",
-    }
+    },
   },
   {
     timestamps: true,
@@ -105,6 +107,7 @@ userSchema.pre("save", async function (next) {
   const salt = await bcryptjs.genSalt(10);
   this.password = await bcryptjs.hash(this.password, salt);
   this.slug = slugify(this.user_name, { lower: true, strict: true});
+  this.delete_account_str = `delete/${this.user_name}`;
 });
 
 userSchema.methods.matchPassword = async function (plain) {

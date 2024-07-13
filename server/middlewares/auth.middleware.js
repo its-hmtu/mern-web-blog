@@ -76,8 +76,8 @@ export const userOrAdminAuth = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
       const user = await User.findById(decoded.userId);
 
-      const roles = ["user", "admin"];
-      if (user && roles.includes(user.role)) {
+      if (user && (user.role === "user" || user.role === "admin")) {
+        req.user = user;
         next();
       } else {
         next(new Forbidden("Not authorized as an admin"))

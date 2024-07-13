@@ -21,7 +21,7 @@ const generateRefreshToken = (res, userId) => {
     expiresIn: "7d",
   });
 
-  res.cookie('refesh_token', token, {
+  res.cookie('refresh_token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
     sameSite: "strict",

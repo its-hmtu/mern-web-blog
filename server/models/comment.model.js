@@ -28,6 +28,7 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    
     likes_count: {
       type: Number,
       default: 0,
@@ -42,6 +43,11 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

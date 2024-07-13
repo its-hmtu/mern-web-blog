@@ -3,6 +3,12 @@ import {
   createPost,
   deletePost,
   updatePost,
+  getPosts,
+  getSinglePost,
+  likePost,
+  addToReadingList,
+  getReadingList,
+  disableComment
 } from "../controllers/post.controller.js";
 import {
   userAuth,
@@ -37,8 +43,28 @@ router.post(
 );
 
 // route delete post should accept both user and admin roles to delete a post by id
-router.delete("/:id", userOrAdminAuth, deletePost);
+router.delete("/:id", userAuth, deletePost);
 
-router.put("/update/:id", userAuth, updatePost);
+router.put("/update/:id", userAuth, upload.fields([
+  {
+    name: "main_image",
+    maxCount: 1,
+  },
+  {
+    name: "content_images",
+    maxCount: 10,
+  },
+]), updatePost);
+
+router.get("/", getPosts);
+
+router.get("/:id", getSinglePost);
+
+// route like post should accept both user and admin roles to like a post by id
+router.put("/:id", userAuth, likePost);
+
+router.put("/reading-list/:id", userAuth, addToReadingList);
+
+router.get('/reading-list', userAuth, getReadingList);
 
 export default router;
