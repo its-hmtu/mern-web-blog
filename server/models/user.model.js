@@ -73,6 +73,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ],
+
     followers_count: {
       type: Number,
       default: 0,
@@ -89,10 +97,6 @@ const userSchema = new mongoose.Schema(
         ref: "Post",
       },
     ],
-    refresh_token: {
-      type: String,
-      default: "",
-    },
   },
   {
     timestamps: true,

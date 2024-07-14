@@ -1,5 +1,5 @@
 import express from "express";
-import { adminAuth } from "../middlewares/auth.middleware";
+import { adminAuth } from "../middlewares/auth.middleware.js";
 import { createCategory, deleteCategory, getCategories, updateCategory } from "../controllers/category.controller.js";
 
 const router = express.Router();

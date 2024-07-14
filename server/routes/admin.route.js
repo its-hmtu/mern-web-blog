@@ -13,3 +13,5 @@ import express from 'express'
 const router = express.Router()
 
 router.put('/make-admin', adminAuth, makeAdmin)
+
+export default router

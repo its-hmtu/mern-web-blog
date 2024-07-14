@@ -56,6 +56,9 @@ const createPost = asyncHandler(async (req, res, next) => {
 
     const read_time = calculateReadTime(content);
 
+    // get related posts id from any posts in the same category
+    const relatedPosts = await Post.find({ category: category }).limit(5);
+
     const post = await Post.create({
       user_id,
       author,
@@ -65,6 +68,7 @@ const createPost = asyncHandler(async (req, res, next) => {
       main_image: mainImage,
       images: contentImages,
       read_time,
+      related_posts: relatedPosts,
     });
 
     // update user posts count and add post to user posts list

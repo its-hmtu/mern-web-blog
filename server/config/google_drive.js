@@ -63,7 +63,7 @@ async function uploadFile(auth, filePath) {
 }
 
 // delete main_image and content_images from google drive when a post is deleted
-export const deleteFile = async (auth, fileId) => {
+const deleteFile = async (auth, fileId) => {
   const drive = google.drive({ version: 'v3', auth });
 
   await drive.files.delete({
@@ -74,4 +74,19 @@ export const deleteFile = async (auth, fileId) => {
   await listFiles();
 }
 
-export { authorize, uploadFile, upload }
+const clearFiles = async (auth) => {
+  const drive = google.drive({ version: 'v3', auth });
+
+  const files = await listFiles();
+
+  files.forEach(async (file) => {
+    await drive.files.delete({
+      fileId: file.id,
+    })
+  })
+
+  console.log('All files deleted')
+}
+
+
+export { authorize, uploadFile, upload, deleteFile, clearFiles }

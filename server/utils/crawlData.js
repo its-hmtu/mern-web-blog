@@ -1,6 +1,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 import connectDb from "../config/db.js";
 import dotenv from "dotenv";
 import sizeOf from "image-size";
@@ -114,32 +115,40 @@ async function main() {
   const articleLinks = await getArticleLinks(blogUrl);
   console.log(articleLinks);
 
-  const firstArticle = articleLinks[0];
-  const data = await crawlArticle(firstArticle);
-  console.log(data);
+  console.log(articleLinks.length);
 
-  // const filePath = path.join(__dirname, 'data.jsonl');
-  // for (const url of articleLinks) {
-  //   const data = await crawlArticle(url);
-  //   console.log(data);
+  const user = await User.findById("66938e879e2d267fa341de04");
+  const user_id = user._id;
+  const author = user.full_name;
 
-  //   const dataString = JSON.stringify(data) + ',\n'
-  //   fs.appendFileSync(filePath, dataString);
+  for (const article of articleLinks) {
+    const data = await crawlArticle(article);
 
-  //   // if (data && data.title && data.content) {
-  //   //   const newPost = new Post({
-  //   //     title: data.title,
-  //   //     content: data.content,
-  //   //   });
+    const post = new Post({
+      user_id,
+      author,
+      title: data.title,
+      content: data.content,
+      main_image: data.main_image,
+      read_time: data.read_time,
+      images: data.images,
+      
+    });
 
-  //   //   await newPost
-  //   //     .save()
-  //   //     .then(() => console.log(`Post saved successfully! URL: ${url}`))
-  //   //     .catch((error) => console.error("Error saving post:", error));
-  //   // } else {
-  //   //   console.error(`Error: No data to save for URL: ${url}`);
-  //   // }
-  // }
+    // if the post title is duplicate then don't save the post
+    const existingPost = await Post.findOne({ title: post.title });
+    if (existingPost) {
+      console.log("Post already exists, skipping...");
+      continue;
+    }
+
+    await post.save();
+
+    user.posts.push(post._id);
+    user.posts_count += 1;
+
+    await user.save();
+  }
 
   process.exit(0);
 }

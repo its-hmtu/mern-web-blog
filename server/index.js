@@ -9,6 +9,7 @@ import commentRoutes from './routes/comment.route.js'
 import authRoutes from './routes/auth.route.js'
 import uploadRoutes from './routes/upload.route.js'
 import categoryRoutes from './routes/category.route.js'
+import adminRoutes from './routes/admin.route.js'
 import { notFound, errorHandler } from './middlewares/error.middleware.js'
 import cors from 'cors'
 import { createServer } from 'http';
@@ -54,6 +55,7 @@ app.use(`${BASE_URL}/users`, userRoutes)
 app.use(`${BASE_URL}/posts`, postRoutes)
 app.use(`${BASE_URL}/comments`, commentRoutes)
 app.use(`${BASE_URL}/categories`, categoryRoutes)
+app.use(`${BASE_URL}/admin`, adminRoutes)
 app.use(`${BASE_URL}/upload`, uploadRoutes)
 
 app.get('/', (req, res) => {

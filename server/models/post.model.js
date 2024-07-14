@@ -73,6 +73,13 @@ const postSchema = new mongoose.Schema({
     }
   ],
 
+  related_posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post'
+    }
+  ],
+
   publishedAt: {
     type: Date,
     default: Date.now

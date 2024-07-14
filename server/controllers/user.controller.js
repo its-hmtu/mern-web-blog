@@ -11,6 +11,8 @@ import {
 import jwt from 'jsonwebtoken'
 import { generateAccessToken } from '../utils/genToken.js'
 import { sendEmailNotification } from '../utils/mailer.js'
+import { authorize, uploadFile } from '../config/google_drive.js'
+import fs from 'fs'
 
 // @access Private
 export const getUser = asyncHandler(async (req, res, next) => {
@@ -167,6 +169,90 @@ export const changePasswordCurrentUser = asyncHandler(async (req, res, next) => 
     next(new InternalServerError(`Server error ${e.message}`));
   }
 });
+
+export const changeAvatar = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+    const auth = await authorize();
+    const { remove } = req.query;
+
+    let avatar = null;
+    if (req.file) {
+      const file = req.file;
+      const response = await uploadFile(auth, file.path);
+      avatar = `https://drive.google.com/thumbnail?id=${response.data.id}`
+      fs.unlinkSync(file.path)
+    }
+
+    if (remove === 'true') {
+      avatar = null;
+    }
+
+    user.profile_image_url = avatar;
+    
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Avatar updated',
+      data: user,
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})
+
+export const followUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+    const userToFollow = await User.findById(id);
+    const { unfollow } = req.query;
+    
+    if (!userToFollow) {
+      return next(new NotFound('User not found'))
+    }
+
+    if (user.following.includes(id)) {
+      return next(new BadRequest('Already following user'))
+    }
+
+    if (unfollow === 'true') {
+      userToFollow.followers_count -= 1;
+      if (userToFollow.followers_count < 0) {
+        userToFollow.followers_count = 0;
+      }
+      await userToFollow.save();
+
+      user.following = user.following.filter(follow => follow.toString() !== id);
+
+      await user.save();
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'User unfollowed',
+        data: user,
+      })
+    }
+
+    userToFollow.followers_count += 1;
+
+    await userToFollow.save();
+
+    user.following.push(id);
+
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'User followed',
+      data: user,
+    })
+
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})
 
 export const refreshToken = asyncHandler(async (req, res, next) => {
   const refreshToken = req.cookies.refresh_token;
