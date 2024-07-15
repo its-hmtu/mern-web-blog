@@ -35,9 +35,4 @@ const RouteList = () => {
     </Routes>
   );
 };
-  );
-};
-
-export default RouteList;
-
 export default RouteList;
