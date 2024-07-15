@@ -1,53 +1,98 @@
-import React from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import logo from "images/logo.png";
-import BlogCard from "src/components/BlogCard";
+import React from 'react';
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import logo from 'images/logo.png';
+import BlogCard from 'src/components/BlogCard';
 import {
   faNewspaper,
   faComment,
   faTag,
   faLocationDot,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays } from "@fortawesome/free-regular-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
 
 const ProfilePage = () => {
   const [user, setUser] = React.useState({
-    full_name: "Ben Halpern",
-    user_name: "@ben_halpern",
-    user_image: "https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png",
+    full_name: 'Ben Halpern',
+    user_name: '@ben_halpern',
+    user_image:
+      'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
     bio: 'Hi, I am Ben Halpern. I am a software developer and the co-founder of DEV. I love to write about programming and software development. I am also a big fan of memes.',
     location: 'New York, USA',
-    joined: 'Jan 1, 2021'
+    joined: 'Jan 1, 2021',
   });
-  const [blogs, setBlogs] = React.useState(
-    [
-      {
-        id: 1,
-        title: 'Meme Monday',
-        full_name: 'Ben Halpern',
-        user_image: 'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-        date: 'Jan 1 (7 hours ago)',
-        tags: ['#discuss', '#code'],
-        like: 10,
-        comment: 2,
-        read_time: 2,
-        image: 'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png'
-      },
-      {
-        id: 2,
-        title: 'Meme Monday',
-        full_name: 'Ben Halpern',
-        user_image: 'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-        date: 'Jan 1 (7 hours ago)',
-        tags: ['#discuss', '#code'],
-        like: 10,
-        comment: 2,
-        read_time: 3,
-        image: 'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png'
-      }
-    ]
-  )
+  const [blogs, setBlogs] = React.useState([
+    {
+      id: 1,
+      title: 'Meme Monday',
+      full_name: 'Ben Halpern',
+      user_image:
+        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+      date: 'Jan 1 (7 hours ago)',
+      tags: ['#discuss', '#code'],
+      like: 10,
+      comment: 2,
+      read_time: 2,
+      image:
+        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
+    },
+    {
+      id: 2,
+      title: 'Meme Monday',
+      full_name: 'Ben Halpern',
+      user_image:
+        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+      date: 'Jan 1 (7 hours ago)',
+      tags: ['#discuss', '#code'],
+      like: 10,
+      comment: 2,
+      read_time: 3,
+      image:
+        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
+    },
+    {
+      id: 2,
+      title: 'Meme Monday',
+      full_name: 'Ben Halpern',
+      user_image:
+        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+      date: 'Jan 1 (7 hours ago)',
+      tags: ['#discuss', '#code'],
+      like: 10,
+      comment: 2,
+      read_time: 3,
+      image:
+        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
+    },
+    {
+      id: 2,
+      title: 'Meme Monday',
+      full_name: 'Ben Halpern',
+      user_image:
+        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+      date: 'Jan 1 (7 hours ago)',
+      tags: ['#discuss', '#code'],
+      like: 10,
+      comment: 2,
+      read_time: 3,
+      image:
+        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
+    },
+    {
+      id: 2,
+      title: 'Meme Monday',
+      full_name: 'Ben Halpern',
+      user_image:
+        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
+      date: 'Jan 1 (7 hours ago)',
+      tags: ['#discuss', '#code'],
+      like: 10,
+      comment: 2,
+      read_time: 3,
+      image:
+        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
+    },
+  ]);
   return (
     <Container fluid className="profile-page__container">
       <Row>
@@ -68,9 +113,9 @@ const ProfilePage = () => {
             <Row className="info-misc">
               <Col>
                 <span className="mx-3">
-                  <FontAwesomeIcon icon={faLocationDot} className="me-2"/>
+                  <FontAwesomeIcon icon={faLocationDot} className="me-2" />
                   {user.location}
-                  </span>
+                </span>
                 <span className="mx-3">
                   <FontAwesomeIcon icon={faCalendarDays} className="me-2" />
                   Joined {user.joined}
@@ -104,11 +149,9 @@ const ProfilePage = () => {
             </Card>
           </Col>
           <Col className="col-5 flex-grow-1">
-            {
-              blogs.map((blog, index) => (
-                <BlogCard key={index} data={blog} />
-              ))
-            }
+            {blogs.map((blog, index) => (
+              <BlogCard key={index} data={blog} />
+            ))}
           </Col>
         </div>
       </Row>

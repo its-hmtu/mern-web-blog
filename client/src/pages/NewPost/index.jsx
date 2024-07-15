@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import { appendData, renderRepeatedSkeletons } from '../../utils';
 
 const NewPost = () => {
   const auth = useContext(AuthContext);
   const history = useHistory();
   const { currentUser } = auth;
   const { isLoading, sendReq, error, clearError } = useHttpClient();
-  const { renderFormInputs, renderFormValues, isFormValid } = useForm(newPostForm);
+  const { renderFormInputs, renderFormValues, isFormValid } =
+    useForm(newPostForm);
   const formValues = renderFormValues();
   const formInputs = renderFormInputs();
 
@@ -25,24 +24,22 @@ const NewPost = () => {
         }
       );
       history.push('/');
-    } catch (err) {
-      // Handle error if needed
-    }
+    } catch (err) {}
   };
 
   return (
     <>
       <ErrorModal error={error} onClose={clearError} />
       {isLoading ? (
-        renderRepeatedSkeletons(<SkeletonElement type='text' />, 20)
+        renderRepeatedSkeletons(<SkeletonElement type="text" />, 20)
       ) : (
-        <div className='container-create-page'>
-          <form className='form form__create'>
+        <div className="container-create-page">
+          <form className="form form__create">
             <h2>Create a new post</h2>
             {formInputs}
             <button
               onClick={postSubmitHandle}
-              className='btn'
+              className="btn"
               disabled={!isFormValid()}
             >
               Submit <span>&rarr;</span>

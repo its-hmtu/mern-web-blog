@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SearchBar from '../../components/SearchBar/SearchBar';
+import SearchBar from '../SearchBar/SearchBar';
 import MainHeader from './MainHeader';
 import Nav from './Nav/Nav';
 
@@ -16,7 +16,7 @@ const MainNavigation = (props) => {
         <Nav onSearchIconClick={onSearchIconClick}>
           <SearchBar showSearchOnMobile={false} />
         </Nav>
-        <div className='search-mobile-container'>
+        <div className="search-mobile-container">
           <SearchBar showSearchOnMobile={showSearchOnMobile} />
         </div>
       </MainHeader>
