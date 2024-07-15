@@ -17,10 +17,9 @@
         }
 
         &:active {
-          color: $blue!important;
-          background-color: $blue-hover-light!important;
-          border-color: transparent!important;
-        
+          color: $blue !important;
+          background-color: $blue-hover-light !important;
+          border-color: transparent !important;
         }
       }
     }
@@ -68,6 +67,7 @@
 
       .ql-container {
         font-size: 16px;
+
         .ql-editor {
           &::before {
             font-size: 1.125rem;
