@@ -5,18 +5,54 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { useLoginUser } from "hooks/user";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [userInfo, setUserInfo] = React.useState({});
+  const { mutate, data, isLoading, error } = useLoginUser(
+    data => {
+      console.log(data);
+    }, 
+    error => {
+      errorRef.current = error;
+    }
+  )
   const ref = useRef();
+  const errorRef = useRef(null);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   useEffect(() => {
-    ref.current.focus();
+    if (ref.current) {
+      ref.current.focus();
+    }
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      // scroll to error but left a space on top
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [error]);
+
+  const handleUserInfoChange = (e) => {
+    const newInfo = { ...userInfo };
+    newInfo[e.target.id] = e.target.value;
+    setUserInfo(newInfo);
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    // console.log(userInfo);
+    // check if all fields are filled
+    if (Object.values(userInfo).some((val) => val === "")) {
+      return;
+    }
+    mutate(userInfo)
+  };
 
   return (
     <Container fluid className="sign-in-container">
@@ -37,15 +73,21 @@ const SignInPage = () => {
 
         <Row sm={12} className="sign-in-form__wrapper">
           <Form className="px-0">
+          {
+            error && (
+            <Row className="sign-in-form__error-wrapper">
+              <p ref={errorRef} className="sign-in-form__error  my-3 fw-semibold">{error.response.data.message}</p>
+            </Row>)
+          }
             <Form.Group>
               <Form.Label className="fw-semibold">Email</Form.Label>
-              <Form.Control type="email" ref={ref} />
+              <Form.Control type="email" id="email" ref={ref} onChange={handleUserInfoChange}/>
             </Form.Group>
 
             <Form.Group className="password-group">
               <Form.Label className="fw-semibold">Password</Form.Label>
               <InputGroup>
-                <Form.Control type={showPassword ? "text" : "password"} />
+                <Form.Control type={showPassword ? "text" : "password"} id="password" onChange={handleUserInfoChange}/>
                 <Button variant="primary" onClick={handleShowPassword} style={{minWidth: "50px"}}>{
                   showPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} /> 
                   }</Button>
@@ -64,6 +106,7 @@ const SignInPage = () => {
                 className="sign-in-btn"
                 variant="primary"
                 type="submit"
+                onClick={handleOnSubmit}
                 block
               >
                 Log in

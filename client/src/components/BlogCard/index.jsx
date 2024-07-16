@@ -1,34 +1,69 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import logo from "images/logo.png";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-icons";
+import { getUserQuery } from "hooks/user";
+import { useQuery } from "react-query";
 
 const BlogCard = ({ data }) => {
+  const timeRef = useRef(new Date(data.createdAt).toLocaleTimeString());
+  useEffect(() => {
+    const timeDiff = new Date().getTime() - new Date(data.createdAt).getTime();
+
+    if (timeDiff < 1000 * 60) {
+      timeRef.current = "Just now";
+     
+    } else if (timeDiff < 24000 * 60 * 60) { // less than 24 hours
+      timeRef.current = `${Math.floor(timeDiff / (1000 * 60))} minutes ago`;
+      
+    } else {
+      // format time to hh:mm
+      const date = new Date(data.createdAt).toLocaleDateString(
+        "en-GB",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }
+      );
+      timeRef.current = `${date}`;
+    }
+    return () => {
+      timeRef.current = null;
+    }
+  }, [data.createdAt]);
+
+  const { data: userData, isLoading } = useQuery(getUserQuery(data.user_id));
+  
   return (
     <Card className="blog-card">
-      <div
+      {data.main_image && <div
         className="blog-card__img"
         style={{ aspectRatio: "auto 1000 / 420" }}
       >
         <Card.Img
           className="blog-card__img"
           variant="top"
-          src={data.image}
-          // src={logo}
+          src={data.main_image}
+          // src={userData?.profile_image_url}
         />
-      </div>
+      </div>}
 
       <Card.Body className="blog-card__body">
         <Link to={"/"} className="">
           <Row className="gap-0 px-3 mb-3">
-            <img src={data.user_image} className="blog-card__user-img" />
+            <img src={userData?.profile_image_url} className="blog-card__user-img" />
 
             <div className="blog-card__info d-flex flex-column justify-content-center">
-              <p className="blog-card__user-name">{data.full_name}</p>
-              <p className="blog-card__date">Jan 1 (7 hours ago)</p>
+              <p className="blog-card__user-name">{data.author}</p>
+              <p className="blog-card__date">
+                {
+                  timeRef.current
+                }
+              </p>
             </div>
           </Row>
         </Link>
@@ -37,18 +72,18 @@ const BlogCard = ({ data }) => {
         </Card.Title>
         <Card.Text className="blog-card__text">
           <Row className="gap-0 px-2">
-            {data.tags.map((tag, index) => (
+            {/* {data.tags.map((tag, index) => (
               <Link key={index} className="blog-card__text-tag">
                 <span>{tag}</span>
               </Link>
-            ))}
+            ))} */}
           </Row>
         </Card.Text>
 
         <Row className="gap-0 px-3 mb-3 justify-content-between blog-card__misc">
           <Col>
-            <Button>👍 {data.like} like</Button>
-            <Button>💬 {data.comment} comment</Button>
+            <Button>👍 {data.likes_count} like</Button>
+            <Button>💬 {data.comments_count} comment</Button>
           </Col>
 
           <Col>

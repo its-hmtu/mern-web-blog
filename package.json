@@ -28,6 +28,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
+    "firebase": "^10.12.3",
     "googleapis": "^140.0.1",
     "image-size": "^1.1.1",
     "jsonwebtoken": "^9.0.2",

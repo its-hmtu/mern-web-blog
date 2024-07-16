@@ -25,9 +25,9 @@ const RouteList = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="terms-of-use" element={<TermsAndConditions />} />
-        <Route path="*" element={<NotFoundPage />} />{' '}
         {/* Add NotFoundPage for unmatched routes */}
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
       <Route path="signin" element={<SignInPage />} />
       <Route path="register" element={<RegisterPage />} />
       <Route path="email-confirmation" element={<CheckEmailPage />} />

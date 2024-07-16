@@ -1,176 +1,175 @@
-import React from 'react';
-import { Container, Row, Tabs } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import BlogCard from 'src/components/BlogCard';
+import React, { useEffect, useState } from "react";
+import { Container, Row, Tabs, Tab, Pagination, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import BlogCard from "components/BlogCard";
+import { getPostsQuery } from "hooks/post";
+import { useQuery, useQueryClient } from "react-query";
+import { getPaginationItems } from "utils/getPaginationItems";
 
 const BlogContent = () => {
-  const [blogs, setBlogs] = React.useState([
+  const queryClient = useQueryClient();
+  const [paramsPost, setParamsPost] = useState({
+    page: 1,
+    limit: 5,
+    order: "desc",
+  });
+  const [blogs, setBlogs] = useState([]);
+  const { data, isLoading } = useQuery(
+    getPostsQuery(paramsPost.page, paramsPost.limit, paramsPost.order),
     {
-      id: 1,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 2,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 2,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 3,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 4,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 5,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 6,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 2,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 2,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-    {
-      id: 2,
-      title: 'Meme Monday',
-      full_name: 'Ben Halpern',
-      user_image:
-        'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-      date: 'Jan 1 (7 hours ago)',
-      tags: ['#discuss', '#code'],
-      like: 10,
-      comment: 2,
-      read_time: 3,
-      slug: 'meme-monday',
-      image:
-        'https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F08vdwnxq29iztqhshcye.png',
-    },
-  ]);
+      keepPreviousData: true,
+    }
+  );
+
+  const handleSelect = (key) => {
+    // Assuming 'latest' tab should show posts in descending order
+    const newOrder = key === "latest" ? "desc" : "asc";
+    setParamsPost({ ...paramsPost, order: newOrder });
+  };
+
+  useEffect(() => {
+    console.log(data?.posts);
+
+    setBlogs(data?.posts);
+  }, []);
+
+  useEffect(() => {
+    console.log(blogs);
+  });
+
+  const totalPages = Math.ceil(data?.totalPosts / paramsPost.limit);
+  const paginationItems = getPaginationItems(paramsPost.page, totalPages);
 
   return (
-    <Container className="p-0">
+    <Container className="p-0 position-relative">
       <Tabs
-        defaultActiveKey="all"
+        defaultActiveKey="latest"
         id="blog-content__tabs"
         className="mb-3 blog-content__tabs"
+        onSelect={handleSelect}
       >
-        <Tabs.Item
-          eventKey="all"
-          title="Relevant"
-          className="blog-content__tab"
-        >
-          {blogs.map((blog) => (
+        <Tab eventKey="latest" title="Latest" className="blog-content__tab">
+          {data?.posts?.map((blog) => (
             <Link
-              to={'/post/:slug'.replace(':slug', blog.slug)}
+              to={"/post/:slug".replace(":slug", blog.slug)}
               key={blog.id}
               className="text-decoration-none"
             >
               <BlogCard data={blog} />
             </Link>
           ))}
-        </Tabs.Item>
-        <Tabs.Item
-          eventKey="latest"
-          title="Latest"
-          className="blog-content__tab"
-        />
-        <Tabs.Item eventKey="top" title="Top" className="blog-content__tab" />
+        </Tab>
+        <Tab eventKey="relevant" title="Relevant" className="blog-content__tab">
+          {data?.posts?.map((blog) => (
+            <Link
+              to={"/post/:slug".replace(":slug", blog.slug)}
+              key={blog.id}
+              className="text-decoration-none"
+            >
+              <BlogCard data={blog} />
+            </Link>
+          ))}
+        </Tab>
       </Tabs>
+      <Pagination
+        className="position-absolute"
+        style={{
+          right: 0,
+          top: 0,
+        }}
+      >
+        {paramsPost.page === 1 ? null : (
+          <Pagination.Prev
+            onClick={() => {
+              if (paramsPost.page > 1) {
+                setParamsPost({ ...paramsPost, page: paramsPost.page - 1 });
+              }
+            }}
+          />
+        )}
+        {paginationItems.map((item, index) =>
+          item === "..." ? (
+            <Pagination.Ellipsis key={index} />
+          ) : (
+            <Pagination.Item
+              key={index}
+              active={item === paramsPost.page}
+              onClick={() => setParamsPost({ ...paramsPost, page: item })}
+            >
+              {item}
+            </Pagination.Item>
+          )
+        )}
+        <Pagination.Next
+          onClick={() => {
+            if (paramsPost.page < totalPages) {
+              setParamsPost({ ...paramsPost, page: paramsPost.page + 1 });
+            }
+          }}
+        />
+        <Form.Select
+          className="ms-2"
+          value={paramsPost.page}
+          
+          onChange={(e) =>
+            setParamsPost({ ...paramsPost, page: parseInt(e.target.value) })
+          }
+          style={{ width: "auto", display: "inline-block" }}
+        >
+          {Array.from({ length: totalPages }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              Page {i + 1}
+            </option>
+          ))}
+        </Form.Select>
+      </Pagination>
+      <Pagination className="justify-content-center">
+        {paramsPost.page === 1 ? null : (
+          <Pagination.Prev
+            onClick={() => {
+              if (paramsPost.page > 1) {
+                setParamsPost({ ...paramsPost, page: paramsPost.page - 1 });
+              }
+            }}
+          />
+        )}
+        {paginationItems.map((item, index) =>
+          item === "..." ? (
+            <Pagination.Ellipsis key={index} />
+          ) : (
+            <Pagination.Item
+              key={index}
+              active={item === paramsPost.page}
+              onClick={() => setParamsPost({ ...paramsPost, page: item })}
+            >
+              {item}
+            </Pagination.Item>
+          )
+        )}
+        <Pagination.Next
+          onClick={() => {
+            if (paramsPost.page < totalPages) {
+              setParamsPost({ ...paramsPost, page: paramsPost.page + 1 });
+            }
+          }}
+        />
+
+        <Form.Select
+          className="ms-2"
+          value={paramsPost.page}
+          
+          onChange={(e) =>
+            setParamsPost({ ...paramsPost, page: parseInt(e.target.value) })
+          }
+          style={{ width: "auto", display: "inline-block" }}
+        >
+          {Array.from({ length: totalPages }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              Page {i + 1}
+            </option>
+          ))}
+        </Form.Select>
+      </Pagination>
     </Container>
   );
 };
