@@ -11,12 +11,13 @@ import {
 import jwt from 'jsonwebtoken'
 import { generateAccessToken } from '../utils/genToken.js'
 import { sendEmailNotification } from '../utils/mailer.js'
-import { authorize, uploadFile } from '../config/google_drive.js'
+// import { authorize, uploadFile } from '../config/google_drive.js'
+import { uploadFile } from '../config/firebase.js'
 import fs from 'fs'
 
 // @access Private
 export const getUser = asyncHandler(async (req, res, next) => {
-  const slug = req.params.id
+  const id = req.params.id
   const user = await User.findById(id).select('-password -__v -refresh_token -access_token')
 
   if (!user) {
@@ -173,14 +174,15 @@ export const changePasswordCurrentUser = asyncHandler(async (req, res, next) => 
 export const changeAvatar = asyncHandler(async (req, res, next) => {
   try {
     const user = req.user;
-    const auth = await authorize();
+    // const auth = await authorize();
     const { remove } = req.query;
 
     let avatar = null;
     if (req.file) {
       const file = req.file;
-      const response = await uploadFile(auth, file.path);
-      avatar = `https://drive.google.com/thumbnail?id=${response.data.id}`
+      const response = await uploadFile(file.path);
+      console.log(response)
+      avatar = response;
       fs.unlinkSync(file.path)
     }
 

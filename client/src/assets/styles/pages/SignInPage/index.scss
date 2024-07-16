@@ -1,30 +1,36 @@
 .sign-in-container {
   max-width: 100vw;
 
-  @include media-breakpoint-up(md) {
+  @media (min-width: 768px) {
+    // md breakpoint
     max-width: 65vw;
   }
 
-  @include media-breakpoint-up(lg) {
+  @media (min-width: 992px) {
+    // lg breakpoint
     max-width: 55vw;
   }
 
-  @include media-breakpoint-up(xl) {
+  @media (min-width: 1200px) {
+    // xl breakpoint
     max-width: 45vw;
   }
 
-  @include media-breakpoint-up(xxl) {
+  @media (min-width: 1400px) {
+    // xxl breakpoint
     max-width: 35vw;
   }
 
   &__inner {
-    & > * + * {
-      margin-top: 20px;
-    }
     padding: 24px;
 
-    @include media-breakpoint-up(lg) {
+    @media (min-width: 992px) {
+      // lg breakpoint
       padding: 48px;
+    }
+
+    & > * + * {
+      margin-top: 20px;
     }
   }
 
@@ -37,7 +43,6 @@
       .sign-in-btn,
       .sign-in-btn__google {
         padding: 12px 20px;
-        
       }
 
       .sign-in-btn {
@@ -59,7 +64,7 @@
       background-color: rgba(220, 38, 38, 0.1);
       border-radius: 4px;
       animation: shake 0.3s ease-in-out 0s 2 normal none running;
-      
+
       @keyframes shake {
         0% {
           transform: translateX(0);
@@ -83,8 +88,6 @@
       }
     }
 
-    
-
     .sign-in-misc {
       & > * + * {
         margin-top: 24px;
@@ -92,13 +95,15 @@
 
       &__terms {
         font-size: 14px;
-        padding: 0px;
+        padding: 0;
 
-        @include media-breakpoint-up(sm) {
+        @media (min-width: 576px) {
+          // sm breakpoint
           padding: 0 48px;
         }
 
-        @include media-breakpoint-up(lg) {
+        @media (min-width: 992px) {
+          // lg breakpoint
           padding: 0 56px;
         }
       }
@@ -106,7 +111,8 @@
       &__register {
         padding: 0 32px;
 
-        @include media-breakpoint-up(sm) {
+        @media (min-width: 576px) {
+          // sm breakpoint
           padding: 0 16px;
         }
       }

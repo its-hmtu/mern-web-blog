@@ -5,7 +5,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/genToken.js";
-import { sendConfirmationEmail } from "../utils/mailer.js";
+import { sendConfirmationEmail, sendPasswordResetEmail } from "../utils/mailer.js";
 import {
   NotFound,
   BadRequest,
@@ -196,34 +196,50 @@ export const logout = asyncHandler(async (req, res, next) => {
 
 export const forgotPassword = asyncHandler(async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const { email, newPassword } = req.body;
 
     const user = await User.findOne({ email });
 
     if (!user) {
       next(new NotFound("User not found"));
     }
-    await sendPasswordResetEmail({
-      userId: user._id,
-      fullName: user.full_name,
-      userEmail: user.email,
-      subject: "Reset your password",
-      text: "Reset your password",
-    });
+    // await sendPasswordResetEmail({
+    //   userId: user._id,
+    //   fullName: user.full_name,
+    //   userEmail: user.email,
+    //   subject: "Reset your password",
+    //   text: "Reset your password",
+    // });
+
+    if (user.is_email_verified === false) {
+      return next(new Forbidden("Email not verified"));
+    }
+
+    if (newPassword.length < 8) {
+      return next(new BadRequest("Password must be at least 8 characters"));
+    }
+
+    if (newPassword && (await user.matchPassword(newPassword))) {
+      return next(
+        new BadRequest("New password cannot be the same as current password")
+      );
+    }
+
+    user.password = newPassword;
+
+    await user.save();
 
     res.status(200).json({
       success: true,
-      message: "Email sent successfully",
+      message: "Password reset successfully",
     });
   } catch (e) {
-    next(new InternalServerError("Server error"));
+    next(new InternalServerError(e.message));
   }
 });
 
 export const resetPassword = asyncHandler(async (req, res, next) => {
   const { token } = req.params;
-  const { newPassword } = req.body;
-
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.FORGOT_PASSWORD_SECRET);

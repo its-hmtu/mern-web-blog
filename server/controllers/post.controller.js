@@ -231,9 +231,19 @@ const getPosts = asyncHandler(async (req, res, next) => {
 
     const postIdsArray = postIds ? postIds.split(",") : [];
 
-    const startIndex = parseInt(page) || 0;
-    const _limit = parseInt(limit) || 10;
+    // const startIndex = (parseInt(page) - 1) * parseInt(limit) || 0;
+    // const _limit = parseInt(limit) || 10;
+    
+    const _page = Math.max(1, parseInt(page)) || 1; // Ensure page is at least 1
+    const _limit = parseInt(limit) || 10; // Default limit to 10 if not specified or invalid
+
+    let startIndex = (_page - 1) * _limit;// This will now always be >= 0
+    // if (startIndex < 0) {
+    //   startIndex = 0;
+    // }
+    
     const sortDirection = order === "asc" ? 1 : -1;
+    
     const posts = await Post.find({
       ...(userId && { user_id: userId }),
       ...(category && { category: category }),
@@ -247,7 +257,7 @@ const getPosts = asyncHandler(async (req, res, next) => {
         ],
       }),
     })
-      .sort({ updatedAt: sortDirection })
+      .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(_limit);
 

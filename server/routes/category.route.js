@@ -11,3 +11,5 @@ router.post("/create", adminAuth, createCategory);
 router.route("/:id").delete(adminAuth, deleteCategory).put(adminAuth, updateCategory);
 
 export default router;
+
+// TODO: Add the category route to the server

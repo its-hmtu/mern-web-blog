@@ -1,8 +1,6 @@
 .blog-card {
-
-  & + & {
-    margin-top: 16px;
-  }
+  // 2 blog-card components should have a margin of 16px between them
+  margin-bottom: 16px;
   border: none;
   box-shadow: $card-shadow;
   background-color: $white;

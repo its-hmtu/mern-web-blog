@@ -3,6 +3,9 @@
     max-width: calc($site-width - 356px);
     margin: 0 auto;
     padding-top: calc($header-height + 16px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .col-tag-sort {
       ul {
@@ -27,21 +30,26 @@
         border: none;
         box-shadow: $card-shadow;
         background-color: $white;
+
         &-title {
           width: 8rem;
           height: 8rem;
           margin: 0 auto;
+          display: flex;
           justify-content: center;
+
           img {
             height: 100%;
             width: 100%;
-            border-radius: 9999px;
+            border-radius: 50%;
             border: 1px solid $black-text;
+            object-fit: cover;
           }
         }
 
         .card-body {
           padding: 48px;
+
           & > * + * {
             margin-top: 16px;
           }
@@ -51,6 +59,7 @@
               display: inline-block;
               margin-right: 10px;
             }
+
             & > * + * {
               margin-right: 10px;
             }

@@ -71,6 +71,10 @@ const RegisterPage = () => {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     // console.log(userInfo);
+    // check if all fields are filled
+    if (Object.values(userInfo).some((val) => val === "")) {
+      return;
+    }
     mutate(userInfo)
   };
 

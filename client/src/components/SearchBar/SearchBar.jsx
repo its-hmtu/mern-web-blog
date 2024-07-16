@@ -4,12 +4,12 @@ const SearchBar = (props) => {
   const { search } = useSearch();
   const [value, setValue] = useState('');
 
-  // Handle input change for search bar
+  //handle input change for search bar
   const onInputChange = (evt) => {
     setValue(evt.target.value);
   };
 
-  // Handle 'enter' press event
+  //handle 'enter' press event
   const onEnterKey = (evt) => {
     if (evt.keyCode === 13) {
       evt.preventDefault();
@@ -23,7 +23,7 @@ const SearchBar = (props) => {
       className={
         props.showSearchOnMobile ? 'search-bar--mobile ' : 'search-bar '
       }
-      key='random1'
+      key="random1"
       value={value}
       placeholder={'Search...'}
       onChange={onInputChange}
