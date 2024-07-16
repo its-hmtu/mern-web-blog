@@ -3,14 +3,13 @@ import { Container, Row, Tabs, Tab, Pagination, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import BlogCard from "components/BlogCard";
 import { getPostsQuery } from "hooks/post";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { getPaginationItems } from "utils/getPaginationItems";
 
 const BlogContent = () => {
-  const queryClient = useQueryClient();
   const [paramsPost, setParamsPost] = useState({
     page: 1,
-    limit: 5,
+    limit: 10,
     order: "desc",
   });
   const [blogs, setBlogs] = useState([]);
@@ -94,7 +93,10 @@ const BlogContent = () => {
             <Pagination.Item
               key={index}
               active={item === paramsPost.page}
-              onClick={() => setParamsPost({ ...paramsPost, page: item })}
+              onClick={() => {
+                setParamsPost({ ...paramsPost, page: item })
+                window.scrollTo(0, 0);
+              }}
             >
               {item}
             </Pagination.Item>
@@ -140,7 +142,10 @@ const BlogContent = () => {
             <Pagination.Item
               key={index}
               active={item === paramsPost.page}
-              onClick={() => setParamsPost({ ...paramsPost, page: item })}
+              onClick={() => {
+                setParamsPost({ ...paramsPost, page: item })
+                window.scrollTo(0, 0);
+              }}
             >
               {item}
             </Pagination.Item>

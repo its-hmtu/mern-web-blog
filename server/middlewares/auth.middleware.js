@@ -58,13 +58,13 @@ export const adminAuth = asyncHandler(async (req, res, next) => {
         req.user = user;
         next();
       } else {
-        next(new Forbidden("Not authorized as an admin"))
+        return next(new Forbidden("Not authorized as an admin"))
       }
     } catch (e) {
       next(new Unauthorized("Not authorized, token failed"))
     }
   } else {
-    next(new Unauthorized("Not authorized, no token"));
+    return next(new Unauthorized("Not authorized, no token"));
   }
 })
 

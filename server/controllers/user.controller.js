@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken'
 import { generateAccessToken } from '../utils/genToken.js'
 import { sendEmailNotification } from '../utils/mailer.js'
 // import { authorize, uploadFile } from '../config/google_drive.js'
-import { uploadFile } from '../config/firebase.js'
+import { deleteFileByUrl, uploadFile } from '../config/firebase.js'
 import fs from 'fs'
 
 // @access Private
@@ -180,6 +180,7 @@ export const changeAvatar = asyncHandler(async (req, res, next) => {
     let avatar = null;
     if (req.file) {
       const file = req.file;
+      await deleteFileByUrl(user.profile_image_url);
       const response = await uploadFile(file.path);
       console.log(response)
       avatar = response;

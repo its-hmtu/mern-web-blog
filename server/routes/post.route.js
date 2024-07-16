@@ -15,7 +15,7 @@ import {
   adminAuth,
   userOrAdminAuth,
 } from "../middlewares/auth.middleware.js";
-import { upload } from "../config/google_drive.js";
+import { upload } from "../config/firebase.js";
 
 const router = express.Router();
 

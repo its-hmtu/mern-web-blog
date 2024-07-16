@@ -13,6 +13,12 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Post author is required']
   },
+
+  profile_image_url: {
+    type: String,
+    default: '',
+    required: [true, 'Post author profile image is required']
+  },
   
   title: {
     type: String,
@@ -51,9 +57,15 @@ const postSchema = new mongoose.Schema({
     default: 0,
   },
 
-  category: {
+  category_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
+    required: [true, 'Post category id is required']
+  },
+
+  category_name: {
+    type: String,
+    required: [true, 'Post category name is required']
   },
   
   comments_count: {

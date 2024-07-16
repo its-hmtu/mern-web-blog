@@ -35,8 +35,6 @@ const BlogCard = ({ data }) => {
       timeRef.current = null;
     }
   }, [data.createdAt]);
-
-  const { data: userData, isLoading } = useQuery(getUserQuery(data.user_id));
   
   return (
     <Card className="blog-card">
@@ -55,7 +53,7 @@ const BlogCard = ({ data }) => {
       <Card.Body className="blog-card__body">
         <Link to={"/"} className="">
           <Row className="gap-0 px-3 mb-3">
-            <img src={userData?.profile_image_url} className="blog-card__user-img" />
+            <img src={data.profile_image_url} className="blog-card__user-img" />
 
             <div className="blog-card__info d-flex flex-column justify-content-center">
               <p className="blog-card__user-name">{data.author}</p>
@@ -72,11 +70,9 @@ const BlogCard = ({ data }) => {
         </Card.Title>
         <Card.Text className="blog-card__text">
           <Row className="gap-0 px-2">
-            {/* {data.tags.map((tag, index) => (
-              <Link key={index} className="blog-card__text-tag">
-                <span>{tag}</span>
-              </Link>
-            ))} */}
+            <Link className="blog-card__text-tag">
+              <span>#{data.category_name}</span>
+            </Link>
           </Row>
         </Card.Text>
 
