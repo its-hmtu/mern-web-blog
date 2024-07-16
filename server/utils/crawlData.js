@@ -125,11 +125,12 @@ async function main() {
 
   const category = await Category.findOne({ name: "General" });
 
-  const relatedPosts = await Post.find({ category_id: category._id }).limit(5);
-  console.log(relatedPosts);
+  
+  
   for (const article of articleLinks) {
     const data = await crawlArticle(article);
-
+    const relatedPosts = await Post.find({ category_id: category._id }).limit(5);
+    console.log(relatedPosts);
     const post = new Post({
       user_id,
       author,
