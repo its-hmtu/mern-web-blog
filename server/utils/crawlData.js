@@ -20,7 +20,6 @@ async function getArticleLinks(blogUrl) {
     const response = await axios.get(blogUrl);
     const $ = cheerio.load(response.data);
 
-    // find div with class name crayons-story__indention and get the href attribute of the a tag
     const articleLinks = [];
     $(".crayons-story__indention").each((index, element) => {
       const link = $(element).find("a").attr("href");
@@ -72,7 +71,6 @@ async function crawlArticle(url) {
 
     const images = [];
 
-    // find all image tag in content and get the src attribute, use image-size to get the dimensions
     article
       .find(".article-body-image-wrapper img")
       .each(async (index, element) => {
@@ -123,8 +121,58 @@ async function main() {
   const author = user.full_name;
   const profile_image_url = user.profile_image_url;
 
-  const category = await Category.findOne({ name: "General" });
-
+  const categories = [
+    {
+      name: "Technology",
+      description: "Technology news, reviews, and analysis.",
+    },
+    {
+      name: "Science",
+      description: "Science news, reviews, and analysis.",
+    },
+    {
+      name: "Health",
+      description: "Health news, reviews, and analysis.",
+    },
+    {
+      name: "Business",
+      description: "Business news, reviews, and analysis.",
+    },
+    {
+      name: "Entertainment",
+      description: "Entertainment news, reviews, and analysis.",
+    },
+    {
+      name: "Politics",
+      description: "Politics news, reviews, and analysis.",
+    },
+    {
+      name: "Sports",
+      description: "Sports news, reviews, and analysis.",
+    },
+    {
+      name: "Travel",
+      description: "Travel news, reviews, and analysis.",
+    },
+    {
+      name: "Lifestyle",
+      description: "Lifestyle news, reviews, and analysis.",
+    },
+  ];
+  
+  const createCategory = async () => {
+    try {
+      for (let i = 0; i < categories.length; i++) {
+        const category = new Category(categories[i]);
+        await category.save();
+      }
+      console.log("Categories created successfully");
+    } catch (error) {
+      console.error("Error creating categories: ", error);
+    }
+  };
+  
+  createCategory();
   
   
   for (const article of articleLinks) {
@@ -145,7 +193,6 @@ async function main() {
       related_posts: relatedPosts.map((post) => post._id),
     });
 
-    // if the post title is duplicate then don't save the post
     const existingPost = await Post.findOne({ title: post.title });
     if (existingPost) {
       console.log("Post already exists, skipping...");
