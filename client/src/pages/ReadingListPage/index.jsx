@@ -1,29 +1,62 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import logo from "images/logo.png"
+import logo from "images/logo.png";
 import PostCard from "./components/PostCard";
+import SideBarNavigate from "pages/HomePage/components/SideBarNavigate";
+import { AuthContext } from "contexts/AuthContext";
+import { useQuery } from "react-query";
+import { getPostsQuery } from "hooks/post";
+
+
 const ReadingListPage = () => {
-  const [posts, setPosts] = React.useState([{
-    user_image: "https://dev-to-uploads.s3.amazonaws.com/uploads/user/profile_image/31047/af153cd6-9994-4a68-83f4-8ddf3e13f0bf.jpg",
-    full_name: "Sloan",
-    title: "Meme monday",
-    date: "Jan 1 (7 hours ago)",
-    read_time: 2,
-    link: "/",
-    tag: ["#discussion", "#code"],
-  }])
+  // const [posts, setPosts] = React.useState([
+  //   {
+  //     user_image:
+  //       "https://dev-to-uploads.s3.amazonaws.com/uploads/user/profile_image/31047/af153cd6-9994-4a68-83f4-8ddf3e13f0bf.jpg",
+  //     full_name: "Sloan",
+  //     title: "Meme monday",
+  //     date: "Jan 1 (7 hours ago)",
+  //     read_time: 2,
+  //     link: "/",
+  //     tag: ["#discussion", "#code"],
+  //   },
+  // ]);
+  const {user} = useContext(AuthContext);
+
+  const [paramsPost, setParamsPost] = useState({
+    page: 1,
+    limit: 10,
+    order: "desc",
+    category: "",
+    postIds: "",
+  });
+
+  useEffect(() => {
+    if (user && user?.reading_list) {
+      setParamsPost((prevParams) => ({
+        ...prevParams,
+        postIds: user?.reading_list.join(","),
+      }));
+    }
+  }, [user]);
+
+  const { data, isLoading } = useQuery(
+    getPostsQuery(
+      paramsPost.page,
+      paramsPost.limit,
+      paramsPost.order,
+      paramsPost.category,
+      paramsPost.postIds
+    )
+  );
+
   return (
     <Container fluid className="reading-list-page__container">
       <Row>
-        <Row>
-          <h2 className="fw-bold">Reading list ({0})</h2>
-
-          {/* Search bar */}
-        </Row>
         <Row className="mt-3 gap-3">
           <Col className="col-2 col-tag-sort p-0">
-            <ul>
+            {/* <ul>
               <li>
                 <Button variant="outline-primary" className="">
                   All categories
@@ -41,16 +74,20 @@ const ReadingListPage = () => {
                   ))
                 ))
               }
-            </ul>
+            </ul> */}
+            <SideBarNavigate />
           </Col>
           <Col className="col-5 flex-grow-1 col-post">
-            <Card>
+            <Row>
+              <h2 className="fw-bold">Reading list ({data?.posts.length})</h2>
+
+              {/* Search bar */}
+            </Row>
+            <Card className="mt-4">
               <Card.Body>
-                {
-                  posts.map((post, index) => (
-                    <PostCard key={index} data={post} />
-                  ))
-                }
+                {data?.posts.map((post, index) => (
+                  <PostCard key={index} data={post} />
+                ))}
               </Card.Body>
             </Card>
           </Col>

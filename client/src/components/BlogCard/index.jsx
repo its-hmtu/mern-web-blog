@@ -3,7 +3,7 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import logo from "images/logo.png";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faEye } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-icons";
 import { getUserQuery } from "hooks/user";
 import { useQuery } from "react-query";
@@ -11,7 +11,7 @@ import { useAddReadingList } from "hooks/post";
 import { AuthContext } from "contexts/AuthContext";
 
 const BlogCard = ({ data, hide = false }) => {
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [timeAgo, setTimeAgo] = useState("");
   const [added, setAdded] = useState(false);
 
@@ -35,12 +35,11 @@ const BlogCard = ({ data, hide = false }) => {
     );
   }, [data.createdAt]);
 
-  const {mutate: addReadingList, isLoading: isAddingReadingList} = useAddReadingList(
-    () => {
+  const { mutate: addReadingList, isLoading: isAddingReadingList } =
+    useAddReadingList(() => {
       console.log("Added to reading list");
       setAdded(true);
-    }
-  );
+    });
 
   useEffect(() => {
     if (user?.reading_list.includes(data._id)) {
@@ -88,27 +87,40 @@ const BlogCard = ({ data, hide = false }) => {
           </Row>
         </Card.Text>
 
-        <Row className="gap-0 px-3 mb-3 justify-content-between blog-card__misc">
-          <Col>
-            {hide ? (<span>👍 {data.likes_count} like</span>) :
-             ( <Button>👍 {data.likes_count} like</Button>)
-            }
-            {
-              hide && data.comments_count === 0 ? (
-                <Button>💬 Add comment</Button>
-              ) : (
-                <Button>💬 {data.comments_count} comments</Button>
-              )
-            }
+        <Row className="gap-0 px-3 mb-3 justify-content-between align-items-center blog-card__misc">
+          <Col className="d-flex align-items-center">
+            {hide ? (
+              <span>👍 {data.likes_count} like</span>
+            ) : (
+              <Button>👍 {data.likes_count} like</Button>
+            )}
+            {hide && data.comments_count === 0 ? (
+              <Button>💬 Add comment</Button>
+            ) : (
+              <Button>💬 {data.comments_count} comments</Button>
+            )}
+
+            <div>
+              <FontAwesomeIcon icon={faEye} />
+              <span className="ms-2">{data.views_count} views</span>
+            </div>
           </Col>
 
           <Col>
             <span className="read-time">{data.read_time} min read</span>
-            {!hide && <Button className="btn-bookmark" onClick={
-              () => addReadingList({postId: data._id, add: !added})
-            }>
-              <FontAwesomeIcon icon={added ? faBookmark : faBookmarkOutline} />
-            </Button>}
+            {user?._id === data.user_id ||
+              (!hide && (
+                <Button
+                  className="btn-bookmark"
+                  onClick={() =>
+                    addReadingList({ postId: data._id, add: !added })
+                  }
+                >
+                  <FontAwesomeIcon
+                    icon={added ? faBookmark : faBookmarkOutline}
+                  />
+                </Button>
+              ))}
           </Col>
         </Row>
       </Card.Body>
