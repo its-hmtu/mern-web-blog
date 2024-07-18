@@ -20,7 +20,7 @@
     }
 
     .profile-card {
-      max-width: 100%;
+      max-width: 80vw;
       margin-top: 20px;
       display: flex;
       flex-direction: column;
@@ -44,6 +44,29 @@
     .summary-card {
       .card-body > * + * {
         margin-top: 10px;
+      }
+    }
+
+    .comments-card {
+      .comment {
+          &_content {
+            width: fit-content;
+            max-width: 200px;
+  
+            // text overflow
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            p {
+              display: inline;
+            }
+          }
+  
+          &_time {
+            width: 50%;
+            font-size: 0.8rem;
+            color: $black-text-desc;
+          }
       }
     }
   }

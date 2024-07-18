@@ -1,5 +1,5 @@
-import React from 'react';
-import { Nav } from 'react-bootstrap';
+import React, { useContext } from 'react';
+import { Badge, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -31,8 +31,11 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import Footer from './Footer';
 import 'styles/index.scss';
+import { AuthContext } from 'contexts/AuthContext';
 
 const SideBarNavigate = () => {
+  const {user} = useContext(AuthContext);
+
   return (
     <Nav className="side-bar-navigate flex-column">
       <ul className="list-unstyled">
@@ -42,58 +45,20 @@ const SideBarNavigate = () => {
             <span>Home</span>
           </Link>
         </li>
-        <li>
+        {user && <li>
           <Link to="/reading-list" className="d-flex align-items-center">
             <FontAwesomeIcon icon={faBook} className="me-2 icon-reading-list" />
-            <span>Reading List</span>
+            <span className='d-flex '>Reading List 
+              <Badge bg="primary" className="ms-2 d-flex justify-content-center align-items-center" style={{
+                maxHeight: '20px',
+              }}>{user?.reading_list.length}</Badge>
+            </span>
           </Link>
-        </li>
-        <li>
-          <Link to="/podcasts" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faPodcast} className="me-2 icon-podcast" />
-            <span>Podcasts</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/videos" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faVideo} className="me-2 icon-video" />
-            <span>Videos</span>
-          </Link>
-        </li>
+        </li>}
         <li>
           <Link to="/tags" className="d-flex align-items-center">
             <FontAwesomeIcon icon={faTags} className="me-2 icon-tags" />
-            <span>Tags</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/dev-help" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faLightbulb} className="me-2 icon-help" />
-            <span>DEV Help</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/shop" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faShoppingCart} className="me-2 icon-shop" />
-            <span>Forem Shop</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/advertise" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faHeart} className="me-2 icon-advertise" />
-            <span>Advertise on DEV</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/challenges" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faTrophy} className="me-2 icon-challenges" />
-            <span>DEV Challenges</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/showcase" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faStar} className="me-2 icon-showcase" />
-            <span>DEV Showcase</span>
+            <span>Categories</span>
           </Link>
         </li>
         <li>
@@ -109,26 +74,15 @@ const SideBarNavigate = () => {
           </Link>
         </li>
         <li>
-          <Link to="/guides" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faBookOpen} className="me-2 icon-guides" />
-            <span>Guides</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/software-comparisons"
-            className="d-flex align-items-center"
-          >
-            <FontAwesomeIcon
-              icon={faBalanceScale}
-              className="me-2 icon-comparisons"
-            />
-            <span>Software Comparisons</span>
+          <Link to="/posts" className="d-flex align-items-center">
+            <FontAwesomeIcon icon={faBookOpen} className="me-2 icon-posts" />
+            <span>Posts</span>
           </Link>
         </li>
       </ul>
 
-      <h6 className="px-3 mt-4">Other</h6>
+      <hr />
+      <h6 className="px-1 my-2">Other</h6>
       <ul className="list-unstyled">
         <li>
           <Link to="/code-of-conduct" className="d-flex align-items-center">

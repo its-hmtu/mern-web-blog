@@ -3,7 +3,9 @@ import {
   createComment,
   getPostComments,
   deleteComment,
-  updateComment
+  updateComment,
+  getUserComments,
+  getAllComments,
 } from "../controllers/comment.controller.js";
 import {
   userAuth,
@@ -19,5 +21,8 @@ router.post("/create", userAuth, createComment);
 
 router.route("/:id").delete(userAuth, deleteComment).put(userAuth, updateComment);
 
+router.get("/admin", adminAuth, getAllComments);
+
+router.get("/me", userOrAdminAuth, getUserComments);
 
 export default router;

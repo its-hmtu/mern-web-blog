@@ -13,6 +13,10 @@ import {
   Forbidden,
   InternalServerError,
 } from "../errors/index.js";
+import { OAuth2Client } from "google-auth-library";
+import crypto from 'crypto'
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const resendConfirmationEmail = asyncHandler(async (req, res, next) => {
   try {
@@ -134,6 +138,8 @@ export const login = asyncHandler(async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    // remove password from the response
+
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
@@ -154,12 +160,22 @@ export const login = asyncHandler(async (req, res, next) => {
         return;
       }
       const accessToken = generateAccessToken(user._id);
-      generateRefreshToken(res, user._id);
+      const refreshToken = generateRefreshToken(user._id);
+
+      res.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+        domain: process.env.NODE_ENV === "production" ? "devcomunity.com" : "localhost",
+        path: "/"
+      });
 
       res.status(200).json({
         success: true,
         message: "User logged in successfully",
         access_token: accessToken,
+        data: user,
       });
     } else {
       next(new Unauthorized("Invalid email or password"));
@@ -179,12 +195,90 @@ export const login = asyncHandler(async (req, res, next) => {
   }
 });
 
+export const registerWithGoogle = asyncHandler(async (req, res, next) => {
+  try {
+    const { token } = req.query;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    console.log(payload)
+
+    let user = await User.findOne({email: payload.email})
+
+    if (user) {
+      return next(new BadRequest("User already exists!"))
+    }
+
+    let randomPassword = crypto.randomBytes(16).toString("hex")
+
+    user = await User.create({
+      email: payload.email,
+      password: randomPassword,
+      is_email_verified: payload.email_verified,
+      profile_image_url: payload.picture,
+      user_name: payload.name,
+      full_name: `${payload.given_name} ${payload.family_name}`
+    })
+
+    res.status(200).json({
+      success: true,
+      message: "User registered successfully"
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})
+
+export const loginWithGoogle = asyncHandler(async (req, res, next) => {
+  try {
+    const { token } = req.query;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    console.log(payload)
+
+    const user = await User.findOne({email: payload.email})
+
+    if (!user) {
+      return next(new NotFound("User not found!"))
+    }
+
+    const accessToken = generateAccessToken(user._id)
+    generateRefreshToken(res, user._id);
+
+    res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      access_token: accessToken
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})
+
 export const logout = asyncHandler(async (req, res, next) => {
   try {
-    res.cookie("refesh_token", "", {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return next(new NotFound("User not found"));
+    }
+
+    res.cookie("refresh_token", "", {
       httpOnly: true,
+      secure: true,
+      sameSite: "None",
       expires: new Date(0),
+      domain: process.env.NODE_ENV === "production" ? "devcomunity.com" : "localhost",
+      path: "/"
     });
+    
     res.status(200).json({
       success: true,
       message: "User logged out successfully",

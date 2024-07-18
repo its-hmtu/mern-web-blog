@@ -3,7 +3,7 @@ const BASE = 'http://localhost:5000/v1'
 export const ENDPOINTS = {
   register: `${BASE}/auth/register`,
   login: `${BASE}/auth/login`,
-  logout: `${BASE}/auth/logout`,
+  logout: `/auth/logout`,
   forgotPassword: `${BASE}/auth/forgot-password`,
   resendConfirmationEmail: `${BASE}/auth/resend`,
   resetPassword: `${BASE}/auth/reset-password`,
@@ -16,6 +16,7 @@ export const ENDPOINTS = {
   followUser: `${BASE}/users/follow`,
   deleteUser: `${BASE}/users`,
   getUser: `${BASE}/users/profile`,
+  getCurrentUserComments: `${BASE}/comments/me`,
 
   getPosts: `${BASE}/posts`,
 }

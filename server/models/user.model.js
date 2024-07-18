@@ -97,6 +97,15 @@ const userSchema = new mongoose.Schema(
         ref: "Post",
       },
     ],
+    // user_preference: {
+
+    // }
+    blocked_users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,

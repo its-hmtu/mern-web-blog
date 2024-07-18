@@ -8,6 +8,7 @@ import {
   deleteUser,
   changeAvatar,
   followUser,
+  blockUser
 } from "../controllers/user.controller.js";
 import { userAuth, userAuthWithPassword } from "../middlewares/auth.middleware.js";
 import { upload } from "../config/firebase.js";
@@ -27,7 +28,7 @@ router.put("/change-password", userAuthWithPassword, changePasswordCurrentUser)
 router.get("/profile/:id", getUser)
 
 // refresh token
-router.post("/refresh-token", refreshToken)
+router.get("/refresh-token", refreshToken)
 
 // change current user avatar
 router.put("/me/change-avatar", userAuth, upload.single("avatar"),  changeAvatar)
@@ -37,5 +38,8 @@ router.put("/follow/:id", userAuth, followUser)
 
 // delete current user account
 router.delete("/:id", userAuth, deleteUser)
+
+// block a user 
+router.put("/block/:id", userAuth, blockUser)
 
 export default router;

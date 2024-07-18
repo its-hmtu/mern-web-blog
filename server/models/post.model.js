@@ -78,6 +78,11 @@ const postSchema = new mongoose.Schema({
     default: 0
   },
 
+  views_count: {
+    type: Number,
+    default: 0
+  },
+
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,

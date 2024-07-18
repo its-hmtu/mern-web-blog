@@ -6,31 +6,15 @@ import { getPostsQuery } from "hooks/post";
 import { useQuery } from "react-query";
 import { getPaginationItems } from "utils/getPaginationItems";
 
-const BlogContent = () => {
-  const [paramsPost, setParamsPost] = useState({
-    page: 1,
-    limit: 10,
-    order: "desc",
-  });
+const BlogContent = ({data, paramsPost, handleSelect, setParamsPost}) => {
+  
   const [blogs, setBlogs] = useState([]);
-  const { data, isLoading } = useQuery(
-    getPostsQuery(paramsPost.page, paramsPost.limit, paramsPost.order),
-    {
-      keepPreviousData: true,
-    }
-  );
-
-  const handleSelect = (key) => {
-    // Assuming 'latest' tab should show posts in descending order
-    const newOrder = key === "latest" ? "desc" : "asc";
-    setParamsPost({ ...paramsPost, order: newOrder });
-  };
 
   useEffect(() => {
-    console.log(data?.posts);
+    console.log(data);
 
-    setBlogs(data?.posts);
-  }, []);
+    setBlogs(data?.posts.filter((post) => post.category_name !== "Discussion"));
+  }, [data]);
 
   useEffect(() => {
     console.log(blogs);
@@ -48,7 +32,7 @@ const BlogContent = () => {
         onSelect={handleSelect}
       >
         <Tab eventKey="latest" title="Latest" className="blog-content__tab">
-          {data?.posts?.map((blog) => (
+          {blogs?.map((blog) => (
             <Link
               to={"/post/:slug".replace(":slug", blog.slug)}
               key={blog.id}
@@ -59,7 +43,7 @@ const BlogContent = () => {
           ))}
         </Tab>
         <Tab eventKey="relevant" title="Relevant" className="blog-content__tab">
-          {data?.posts?.map((blog) => (
+          {blogs?.map((blog) => (
             <Link
               to={"/post/:slug".replace(":slug", blog.slug)}
               key={blog.id}

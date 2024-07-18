@@ -281,3 +281,33 @@ export const refreshToken = asyncHandler(async (req, res, next) => {
     next(new Unauthorized('Invalid refresh token'))
   }
 });
+
+export const blockUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const { id } = req.params;
+
+    const userToBlock = await User.findById(id);
+
+    if (!userToBlock) {
+      return next(new NotFound('User not found'))
+    }
+
+    if (user.blocked_users.includes(id)) {
+      return next(new BadRequest('User already blocked'))
+    }
+
+    user.blocked_users.push(id);
+
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'User blocked',
+      data: user.blocked_users,
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})

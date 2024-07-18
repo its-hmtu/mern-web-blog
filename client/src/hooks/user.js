@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "react-query";
-import { registerUser, loginUser, getUser } from "api/user";
+import { registerUser, loginUser, getUser, getCurrentUser, logoutUser, getCurrentUserComments } from "api/user";
 
 export const userQueryKey = "user-info";
+// export const currentUserQueryKey = "me";
+export const userCommentsKey = "user-comments";
 
 export const useRegisterUser = (succes = () => {}, error = () => {}) => {
   const queryClient = useQueryClient();
@@ -24,8 +26,10 @@ export const useLoginUser = (succes = () => {}, error = () => {}) => {
   const queryClient = useQueryClient();
 
   return useMutation(loginUser, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(userQueryKey, data);
+    onSuccess: async (data) => {
+      localStorage.setItem('access_token', JSON.stringify(data.access_token))
+      // localStorage.setItem("user", JSON.stringify(data.data))
+      queryClient.setQueryData(userQueryKey, data.data);
       succes(data);
     },
     onSettled: () => {
@@ -37,7 +41,32 @@ export const useLoginUser = (succes = () => {}, error = () => {}) => {
   })
 }
 
+export const useLogoutUser = (succes = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(logoutUser, {
+    onSuccess: (data) => {
+      // localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
+      succes(data)
+    },
+    onError: (err) => {
+      error(err.response.data.message)
+    }
+  })
+}
+
 export const getUserQuery = (id) => ({
   queryKey: [userQueryKey, {id}],
   queryFn: getUser,
+})
+
+export const getCurrentUserQuery = () => ({
+  queryKey: [userQueryKey],
+  queryFn: getCurrentUser,
+})
+
+export const getCurrentUserCommentsQuery = (page = 1, limit = 5, order = 'desc') => ({
+  queryKey: [userCommentsKey, { page, limit, order }],
+  queryFn: getCurrentUserComments,
 })

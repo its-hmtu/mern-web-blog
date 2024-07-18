@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect,useState } from 'react';
 import {
   Navbar,
   Nav,
@@ -8,19 +8,30 @@ import {
   Col,
   Dropdown,
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from 'images/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { faBell as faBellSolid } from '@fortawesome/free-solid-svg-icons';
+import { useQuery, useQueryClient } from 'react-query';
+import { getCurrentUserQuery, useLogoutUser } from 'hooks/user';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Header = () => {
-  const [user, setUser] = React.useState({
-    full_name: 'Ben Halpern',
-    user_name: '@ben_halpern',
-    user_image:
-      'https://media.dev.to/cdn-cgi/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1%2Ff451a206-11c8-4e3d-8936-143d0a7e65bb.png',
-  });
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+  const { mutate, data, isLoading } = useLogoutUser(
+    () => {
+      queryClient.invalidateQueries('user-info');
+      setUser(null);
+      navigate('/', { replace: true });
+    }
+  );
+
+  const handleLogout = () => {
+    mutate()
+  }
 
   return (
     <header className="main-layout__header">
@@ -56,7 +67,7 @@ const Header = () => {
                   <Dropdown>
                     <Dropdown.Toggle>
                       <img
-                        src={user?.user_image}
+                        src={user?.profile_image_url}
                         alt="User"
                         className="main-layout__header-user-img"
                       />
@@ -66,7 +77,7 @@ const Header = () => {
                       <Dropdown.Item>
                         <Link to="/profile">
                           <p className="fw-semibold">{user?.full_name}</p>
-                          <p className="user-name">{user?.user_name}</p>
+                          <p className="user-name">@{user?.user_name}</p>
                         </Link>
                       </Dropdown.Item>
                       <hr />
@@ -88,8 +99,8 @@ const Header = () => {
 
                       <hr />
 
-                      <Dropdown.Item>
-                        <Link to="/signin">Sign out</Link>
+                      <Dropdown.Item onClick={handleLogout}>
+                        <Link to="/">Sign out</Link>
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>

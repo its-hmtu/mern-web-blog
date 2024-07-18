@@ -8,47 +8,44 @@ import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-i
 import { getUserQuery } from "hooks/user";
 import { useQuery } from "react-query";
 
-const BlogCard = ({ data }) => {
-  const timeRef = useRef(new Date(data.createdAt).toLocaleTimeString());
-  useEffect(() => {
-    const timeDiff = new Date().getTime() - new Date(data.createdAt).getTime();
+const BlogCard = ({ data, hide = false }) => {
+  const [timeAgo, setTimeAgo] = useState("");
 
-    if (timeDiff < 1000 * 60) {
-      timeRef.current = "Just now";
-     
-    } else if (timeDiff < 24000 * 60 * 60) { // less than 24 hours
-      timeRef.current = `${Math.floor(timeDiff / (1000 * 60))} minutes ago`;
-      
-    } else {
-      // format time to hh:mm
-      const date = new Date(data.createdAt).toLocaleDateString(
-        "en-GB",
-        {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }
-      );
-      timeRef.current = `${date}`;
-    }
-    return () => {
-      timeRef.current = null;
-    }
+  useEffect(() => {
+    const now = new Date();
+    const postDate = new Date(data.createdAt);
+    console.log(data.createdAt);
+    const diffInMs = now - postDate;
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+
+    if (diffInMinutes < 1) setTimeAgo("just now");
+    if (diffInMinutes < 60) setTimeAgo(`${diffInMinutes} minutes ago`);
+    if (diffInHours < 24) setTimeAgo(`${diffInHours} hours ago`);
+    setTimeAgo(
+      postDate.toLocaleDateString(undefined, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+    );
   }, [data.createdAt]);
-  
+
   return (
     <Card className="blog-card">
-      {data.main_image && <div
-        className="blog-card__img"
-        style={{ aspectRatio: "auto 1000 / 420" }}
-      >
-        <Card.Img
+      {data.main_image && !hide && (
+        <div
           className="blog-card__img"
-          variant="top"
-          src={data.main_image}
-          // src={userData?.profile_image_url}
-        />
-      </div>}
+          style={{ aspectRatio: "auto 1000 / 420" }}
+        >
+          <Card.Img
+            className="blog-card__img"
+            variant="top"
+            src={data.main_image}
+            // src={userData?.profile_image_url}
+          />
+        </div>
+      )}
 
       <Card.Body className="blog-card__body">
         <Link to={"/"} className="">
@@ -57,11 +54,7 @@ const BlogCard = ({ data }) => {
 
             <div className="blog-card__info d-flex flex-column justify-content-center">
               <p className="blog-card__user-name">{data.author}</p>
-              <p className="blog-card__date">
-                {
-                  timeRef.current
-                }
-              </p>
+              <p className="blog-card__date">{timeAgo}</p>
             </div>
           </Row>
         </Link>
@@ -78,15 +71,23 @@ const BlogCard = ({ data }) => {
 
         <Row className="gap-0 px-3 mb-3 justify-content-between blog-card__misc">
           <Col>
-            <Button>👍 {data.likes_count} like</Button>
-            <Button>💬 {data.comments_count} comment</Button>
+            {hide ? (<span>👍 {data.likes_count} like</span>) :
+             ( <Button>👍 {data.likes_count} like</Button>)
+            }
+            {
+              data.comments_count === 0 ? (
+                <Button>💬 Add comment</Button>
+              ) : (
+                <Button>💬 {data.comments_count} comments</Button>
+              )
+            }
           </Col>
 
           <Col>
             <span className="read-time">{data.read_time} min read</span>
-            <Button className="btn-bookmark">
+            {!hide && <Button className="btn-bookmark">
               <FontAwesomeIcon icon={faBookmarkOutline} />
-            </Button>
+            </Button>}
           </Col>
         </Row>
       </Card.Body>
