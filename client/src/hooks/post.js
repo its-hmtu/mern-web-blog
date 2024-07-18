@@ -1,9 +1,16 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPosts, getSinglePost } from "api/post";
+import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost } from "api/post";
 import { userQueryKey } from "./user";
 
 export const postQueryKey = "posts"
 export const categoryQueryKey = "categories"
+export const postCommentsQueryKey = "post-comments"
+
+// Post comments
+export const getPostCommentsQuery = (postId) => ({
+  queryKey: [postCommentsQueryKey, { postId }],
+  queryFn: getPostComments,
+})
 
 // Categories
 

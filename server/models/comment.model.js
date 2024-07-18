@@ -14,6 +14,11 @@ const commentSchema = new mongoose.Schema(
       required: true,
     },
 
+    profile_image_url: {
+      type: String,
+      required: true,
+    },
+
     post_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",

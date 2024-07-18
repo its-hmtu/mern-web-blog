@@ -31,6 +31,7 @@ const createComment = asyncHandler(async (req, res, next) => {
     const comment = await Comment.create({
       user_id: user._id,
       user_name: user.user_name,
+      profile_image_url: user.profile_image_url,
       post_id: post_id,
       post_title: post.title,
       content,
@@ -90,7 +91,7 @@ const createComment = asyncHandler(async (req, res, next) => {
 const getPostComments = asyncHandler(async (req, res) => {
   try {
     const { post } = req.query;
-    const comments = await Comment.find({ post }).populate("user", "username");
+    const comments = await Comment.find({ post_id: post });
 
     if (!comments) {
       res.status(404);

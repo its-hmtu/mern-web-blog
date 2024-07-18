@@ -2,6 +2,26 @@ import { ENDPOINTS } from "src/routes/api.path";
 import axios from "axios";
 import { axiosInstance } from "./user";
 
+// Comments
+export const getPostComments = async ({queryKey}) => {
+  try {
+    const [, { postId }] = queryKey;
+    const { data } = await axios.get(`${ENDPOINTS.getPostComments}?post=${postId}`);
+
+    // if (data.success !== true) {
+    //   console.log(data.message);
+    //   throw new Error(data.message);
+    // }
+
+    return data.comments
+    
+  } catch (e) {
+    const {message} = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+
 // Categories
 
 export const getCategories = async () => {

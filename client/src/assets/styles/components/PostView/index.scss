@@ -1,14 +1,46 @@
 .post-view {
+  &__card {
+    padding: 0!important;
+  }
   &__container {
-    max-width: 850px;
+    max-width: calc($site-width - 200px);
     padding-top: calc($header-height + 24px);
-    
+    .action-buttons {
+      left: 19%; // Adjust based on your layout
+      top: 35%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      
+      button {
+        padding: 8px;
+        width: 48px;
+        height: 48px;
+        border-radius: 9999px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: $primary
+        }
+      }
+    }
+
     .card {
       background-color: $white;
-      
+
       &-body {
         padding: 24px;
-      } 
+      }
+    }
+
+    .card-comment {
+      background-color: white;
+      border: 2px solid $gray-border;
+      border-radius: 12px;
     }
   }
 
@@ -25,7 +57,7 @@
     }
 
     .highlight__panel {
-      display: none
+      display: none;
     }
 
     // pre {
@@ -46,7 +78,9 @@
     // // Additional styling
     // display: block; // To make the code block-level (if not already)
     // white-space: pre-wrap; // To ensure proper whitespace handling
-    // word-break: break-all; 
+    // word-break: break-all;
     // }
   }
+
+
 }
