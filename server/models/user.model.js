@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     profile_image_url: {
       type: String,
-      default: ""
+      default: "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=826&t=st=1721292071~exp=1721292671~hmac=cd9459df860e32f4b8c9352a1500c0ee2b1dbb1c5673017a3a4a0dcf3d488e1a"
     },
     role: {
       type: String,

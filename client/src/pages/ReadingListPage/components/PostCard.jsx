@@ -6,23 +6,27 @@ import { Link } from "react-router-dom";
 const PostCard = ({ data }) => {
   return (
     <div className="d-flex gap-3">
-      <img src={data.user_image} alt="" />
+      <img src={data.profile_image_url} alt="" />
       <div>
         <Card.Title>{data.title}</Card.Title>
         <Card.Text>
           <Link to="/user" className="">
-            <span className="fw-semibold">{data.full_name}</span>
+            <span className="fw-semibold">{data.author}</span>
           </Link>
           <span>•</span>
-          <span className=" ">{data.date}</span>
+          <span className=" ">{
+            new Date(data.createdAt).toLocaleDateString(undefined, {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            }) 
+            }</span>
           <span>•</span>
           <span className="">{data.read_time} min read</span>
           <span>•</span>
-          {
-            data.tag.map((tag, index) => (
-              <span className="">{tag}</span>
-            ))
-          }
+          
+          <span className="">{data.category_name}</span>
+          
         </Card.Text>
       </div>
     </div>

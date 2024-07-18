@@ -21,7 +21,13 @@ connectDb()
 
 const app = express()
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  }
+});
 const PORT = process.env.PORT || 5000
 const BASE_URL = '/v1'
 const __dirname = path.resolve()
@@ -32,12 +38,10 @@ app.use((req, res, next) => {
 })
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  // When the client identifies itself, join a room with their user ID
-  socket.on('identify', (userId) => {
-    socket.join(userId);
-  });
+  // setInterval(() => {
+  //   socket.emit('hello', 'world');
+  //   console.log('emitted hello world');
+  // }, 1000);
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
