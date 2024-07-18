@@ -13,6 +13,7 @@ import Dashboard from '../pages/Dashboard';
 import SettingsPage from '../pages/SettingsPage';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import NotFoundPage from '../pages/NotFoundPage';
+import PostView from '../components/PostView';
 
 const RouteList = () => {
   return (
@@ -26,7 +27,7 @@ const RouteList = () => {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="terms-of-use" element={<TermsAndConditions />} />
         <Route path="*" element={<NotFoundPage />} />{' '}
-        {/* Add NotFoundPage for unmatched routes */}
+        <Route path="/post/:id" element={<PostView />} />
       </Route>
       <Route path="signin" element={<SignInPage />} />
       <Route path="register" element={<RegisterPage />} />
