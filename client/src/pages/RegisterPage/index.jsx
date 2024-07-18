@@ -1,7 +1,16 @@
 import React from "react";
 import logo from "images/logo.png";
 import { useRef, useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button, InputGroup, Modal, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  InputGroup,
+  Modal,
+  Spinner,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +18,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import ToolTip from "src/components/ToolTip";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useRegisterUser } from "hooks/user";
+import { GoogleLogin } from "@react-oauth/google";
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,14 +27,14 @@ const RegisterPage = () => {
   const [captValue, setCaptValue] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
-  const {mutate, data, isLoading, error} = useRegisterUser(
-    data => {
+  const { mutate, data, isLoading, error } = useRegisterUser(
+    (data) => {
       console.log(data);
     },
-    error => {
+    (error) => {
       errorRef.current = error;
     }
-  )
+  );
 
   const ref = useRef();
   const errorRef = useRef(null);
@@ -71,7 +81,11 @@ const RegisterPage = () => {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     // console.log(userInfo);
-    mutate(userInfo)
+    // check if all fields are filled
+    if (Object.values(userInfo).some((val) => val === "")) {
+      return;
+    }
+    mutate(userInfo);
   };
 
   return (
@@ -93,12 +107,16 @@ const RegisterPage = () => {
 
         <Row sm={12} className="sign-in-form__wrapper">
           <Form className="px-0">
-          {
-            error && (
-            <Row className="sign-in-form__error-wrapper">
-              <p ref={errorRef} className="sign-in-form__error  my-3 fw-semibold">{error.response.data.message}</p>
-            </Row>)
-          }
+            {error && (
+              <Row className="sign-in-form__error-wrapper">
+                <p
+                  ref={errorRef}
+                  className="sign-in-form__error  my-3 fw-semibold"
+                >
+                  {error.response.data.message}
+                </p>
+              </Row>
+            )}
             <Form.Group>
               <Form.Label className="fw-semibold">
                 Name
@@ -234,21 +252,35 @@ const RegisterPage = () => {
                 onClick={handleOnSubmit}
                 disabled={!isSubmit}
               >
-                { isLoading ? (
-                  <Spinner animation="border" variant="light" style={{maxHeight: "24px", height: "24px", width: "24px"}} />
-                ) : "Register"}
+                {isLoading ? (
+                  <Spinner
+                    animation="border"
+                    variant="light"
+                    style={{ maxHeight: "24px", height: "24px", width: "24px" }}
+                  />
+                ) : (
+                  "Register"
+                )}
               </Button>
-
               <span className="fw-semibold text-center">or</span>
-
-              <Button variant="outline-dark" className="sign-in-btn__google">
+              {/* {<Button variant="outline-dark" className="sign-in-btn__google">
                 <Col className="d-flex align-items-center ">
                   <FontAwesomeIcon icon={faGoogle} />
                   <span className="d-flex w-100 justify-content-center">
                     Continue with Google
-                  </span>
+                  </span> 
                 </Col>
-              </Button>
+              </Button>} */}
+              <div  className="d-flex w-100 justify-content-center">
+                <GoogleLogin 
+                  onSuccess={(credentialResponse) => {
+                    console.log(credentialResponse);
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
+              </div>
             </Row>
           </Form>
           <div className="sign-in-misc text-center my-4">

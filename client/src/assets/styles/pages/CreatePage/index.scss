@@ -59,6 +59,28 @@
     box-shadow: $card-shadow;
     border-radius: 8px;
 
+    form {
+      textarea {
+        // no scroll bar and height auto resize when word wrap
+        resize: none;
+        overflow: hidden;
+        height: auto;
+        width: 100%;
+        padding: 8px;
+        border: 1px solid $gray-border;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        white-space: pre-wrap;
+
+      }
+
+      label {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+    }
+
     .quill {
       & > * {
         border: none;

@@ -7,7 +7,7 @@ import RegisterPage from '../pages/RegisterPage';
 import CheckEmailPage from '../pages/CheckEmailPage';
 import ProfilePage from '../pages/ProfilePage';
 import ReadingListPage from '../pages/ReadingListPage';
-import CreatePage from '../pages/CreatePage';
+import CreatePage from 'pages/CreatePage';
 import NotificationsPage from '../pages/NotificationsPage';
 import Dashboard from '../pages/Dashboard';
 import SettingsPage from '../pages/SettingsPage';

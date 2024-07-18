@@ -11,12 +11,13 @@ import {
 import jwt from 'jsonwebtoken'
 import { generateAccessToken } from '../utils/genToken.js'
 import { sendEmailNotification } from '../utils/mailer.js'
-import { authorize, uploadFile } from '../config/google_drive.js'
+// import { authorize, uploadFile } from '../config/google_drive.js'
+import { deleteFileByUrl, uploadFile } from '../config/firebase.js'
 import fs from 'fs'
 
 // @access Private
 export const getUser = asyncHandler(async (req, res, next) => {
-  const slug = req.params.id
+  const id = req.params.id
   const user = await User.findById(id).select('-password -__v -refresh_token -access_token')
 
   if (!user) {
@@ -173,14 +174,16 @@ export const changePasswordCurrentUser = asyncHandler(async (req, res, next) => 
 export const changeAvatar = asyncHandler(async (req, res, next) => {
   try {
     const user = req.user;
-    const auth = await authorize();
+    // const auth = await authorize();
     const { remove } = req.query;
 
     let avatar = null;
     if (req.file) {
       const file = req.file;
-      const response = await uploadFile(auth, file.path);
-      avatar = `https://drive.google.com/thumbnail?id=${response.data.id}`
+      await deleteFileByUrl(user.profile_image_url);
+      const response = await uploadFile(file.path);
+      console.log(response)
+      avatar = response;
       fs.unlinkSync(file.path)
     }
 
@@ -256,7 +259,7 @@ export const followUser = asyncHandler(async (req, res, next) => {
 
 export const refreshToken = asyncHandler(async (req, res, next) => {
   const refreshToken = req.cookies.refresh_token;
-  console.log(refreshToken)
+  // console.log(refreshToken)
 
   if (!refreshToken) {
     return next(new Unauthorized('No refresh token provided'))
@@ -278,3 +281,33 @@ export const refreshToken = asyncHandler(async (req, res, next) => {
     next(new Unauthorized('Invalid refresh token'))
   }
 });
+
+export const blockUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const { id } = req.params;
+
+    const userToBlock = await User.findById(id);
+
+    if (!userToBlock) {
+      return next(new NotFound('User not found'))
+    }
+
+    if (user.blocked_users.includes(id)) {
+      return next(new BadRequest('User already blocked'))
+    }
+
+    user.blocked_users.push(id);
+
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'User blocked',
+      data: user.blocked_users,
+    })
+  } catch (e) {
+    next(new InternalServerError(e.message))
+  }
+})

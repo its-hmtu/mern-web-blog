@@ -11,7 +11,10 @@ import {
 } from "../errors/index.js";
 import fs from "fs";
 
-import { authorize, uploadFile, deleteFile } from "../config/google_drive.js";
+// import { authorize, uploadFile, deleteFile } from "../config/google_drive.js";
+
+import { deleteFileByUrl, uploadFile } from "../config/firebase.js";
+import Category from "../models/category.model.js";
 
 function calculateReadTime(content) {
   const text = content.replace(/(<([^>]+)>)/gi, "");
@@ -23,15 +26,18 @@ function calculateReadTime(content) {
 
 const createPost = asyncHandler(async (req, res, next) => {
   try {
-    const { title, content, category } = req.body;
-    const auth = await authorize();
+    const { title, content, category_name } = req.body;
+    // const auth = await authorize();
     const user = req.user;
+
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
 
     let mainImage = null;
     if (req.files["main_image"]) {
       const mainImageFile = req.files["main_image"][0];
-      const response = await uploadFile(auth, mainImageFile.path);
-      mainImage = `https://drive.google.com/thumbnail?id=${response.data.id}`;
+      const response = await uploadFile(mainImageFile.path);
+      mainImage = response
       fs.unlinkSync(mainImageFile.path);
     }
 
@@ -39,17 +45,14 @@ const createPost = asyncHandler(async (req, res, next) => {
     if (req.files["content_images"]) {
       const contentImagesFiles = req.files["content_images"];
       for (const file of contentImagesFiles) {
-        const response = await uploadFile(auth, file.path);
+        const response = await uploadFile(file.path);
         contentImages.push({
-          url: `https://drive.google.com/thumbnail?id=${response.data.id}`,
-          height: response.height,
-          width: response.width,
+          url: response,
         });
         fs.unlinkSync(file.path);
       }
-      console.log(contentImages);
     }
-
+    
     const user_id = user._id;
 
     const author = user.full_name;
@@ -57,18 +60,22 @@ const createPost = asyncHandler(async (req, res, next) => {
     const read_time = calculateReadTime(content);
 
     // get related posts id from any posts in the same category
-    const relatedPosts = await Post.find({ category: category }).limit(5);
+    const category = await Category.findOne({name: category_name});
+    const relatedPosts = await Post.find({ category_id: category._id }).limit(3);
+    console.log(relatedPosts);
 
     const post = await Post.create({
       user_id,
       author,
       title,
       content,
-      category,
+      category_id: category._id,
+      category_name: category_name,
       main_image: mainImage,
       images: contentImages,
       read_time,
-      related_posts: relatedPosts,
+      related_posts: relatedPosts.map((post) => post._id),
+      profile_image_url: user.profile_image_url,
     });
 
     // update user posts count and add post to user posts list
@@ -124,14 +131,10 @@ const deletePost = asyncHandler(async (req, res, next) => {
       // delete comments associated with post
       await Comment.deleteMany({ post_id: id });
 
-      // delete images from google drive
-      const auth = await authorize();
-      await deleteFile(auth, post.main_image.split("=")[1]);
-
+      await deleteFileByUrl(post.main_image);
       for (const image of post.images) {
-        await deleteFile(auth, image.url.split("=")[1]);
+        await deleteFileByUrl(image.url);
       }
-
       await Post.deleteOne({ _id: id });
 
       res.status(200).json({
@@ -155,22 +158,22 @@ const updatePost = asyncHandler(async (req, res, next) => {
     const user = req.user;
 
     if (user.posts.includes(id)) {
-      const { title, content, category } = req.body;
+      const { title, content, category_name } = req.body;
 
       const post = await Post.findById(id);
+      const category = await Category.findOne({name: category_name});
 
       if (!post) {
         next(new NotFound(`Post with id ${id} not found`));
         return;
       }
 
-      const auth = await authorize();
 
       if (req.files["main_image"]) {
         const mainImageFile = req.files["main_image"][0];
-        await deleteFile(auth, post.main_image.split("=")[1]);
-        const response = await uploadFile(auth, mainImageFile.path);
-        post.main_image = `https://drive.google.com/thumbnail?id=${response.data.id}`;
+        await deleteFileByUrl(post.main_image);
+        const response = await uploadFile(mainImageFile.path);
+        post.main_image = response;
         fs.unlinkSync(mainImageFile.path);
       } else {
         post.main_image = post.main_image;
@@ -178,12 +181,13 @@ const updatePost = asyncHandler(async (req, res, next) => {
 
       if (req.files["content_images"]) {
         const contentImagesFiles = req.files["content_images"];
+        for (const image of post.images) {
+          await deleteFileByUrl(image.url);
+        }
         for (const file of contentImagesFiles) {
-          const response = await uploadFile(auth, file.path);
+          const response = await uploadFile( file.path);
           post.images.push({
-            url: `https://drive.google.com/thumbnail?id=${response.data.id}`,
-            height: response.height,
-            width: response.width,
+            url: response
           });
           fs.unlinkSync(file.path);
         }
@@ -193,7 +197,8 @@ const updatePost = asyncHandler(async (req, res, next) => {
 
       post.title = title || post.title;
       post.content = content || post.content;
-      post.category = category || post.category;
+      post.category_id = category._id || post.category_id;
+      post.category_name = category_name || post.category_name;
 
       const read_time = calculateReadTime(post.content);
 
@@ -227,16 +232,17 @@ const getPosts = asyncHandler(async (req, res, next) => {
       postId,
       postIds,
       searchTerm,
+      currentUserId,
     } = req.query;
 
     const postIdsArray = postIds ? postIds.split(",") : [];
-
-    const startIndex = parseInt(page) || 0;
+    const _page = Math.max(1, parseInt(page)) || 1;
     const _limit = parseInt(limit) || 10;
-    const sortDirection = order === "asc" ? 1 : -1;
-    const posts = await Post.find({
+    let startIndex = (_page - 1) * _limit;
+    
+    let queryConditions = {
       ...(userId && { user_id: userId }),
-      ...(category && { category: category }),
+      ...(category && { category_name: category }),
       ...(slug && { slug: slug }),
       ...(postId && { _id: postId }),
       ...(postIdsArray.length > 0 && { _id: { $in: postIdsArray } }),
@@ -246,22 +252,28 @@ const getPosts = asyncHandler(async (req, res, next) => {
           { content: { $regex: searchTerm, $options: "i" } },
         ],
       }),
-    })
-      .sort({ updatedAt: sortDirection })
+    };
+
+    if (currentUserId && currentUserId.trim() !== "") {
+      const currentUser = await User.findById(currentUserId);
+      const currentUserBlockedList = currentUser ? currentUser.blocked_users : [];
+      queryConditions = { ...queryConditions, user_id: { $nin: currentUserBlockedList } };
+    }
+
+    const sortDirection = order === "asc" ? 1 : -1;
+    
+    const posts = await Post.find(queryConditions)
+      .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(_limit);
 
-    const totalPosts = await Post.countDocuments();
+    const totalPosts = await Post.countDocuments(queryConditions);
 
     const now = new Date();
-
-    const oneMonthAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - 1,
-      now.getDate()
-    );
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
 
     const lastMonthPosts = await Post.countDocuments({
+      ...queryConditions,
       createdAt: { $gte: oneMonthAgo },
     });
 
@@ -290,6 +302,8 @@ const getSinglePost = asyncHandler(async (req, res, next) => {
       next(new NotFound(`Post with id ${id} not found`));
       return;
     }
+
+    post.views_count += 1;
 
     res.status(200).json({
       status: "success",
@@ -348,6 +362,9 @@ const likePost = asyncHandler(async (req, res, next) => {
     }
     if (like === "false") {
       post.likes_count -= 1;
+      if (post.likes_count <= 0) {
+        post.likes_count = 0;
+      }
       await post.save();
 
       user.liked_post = user.liked_post.filter((p) => p.toString() !== id);

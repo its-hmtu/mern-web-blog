@@ -2,6 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
+import Category from "../models/category.model.js";
 import connectDb from "../config/db.js";
 import dotenv from "dotenv";
 import sizeOf from "image-size";
@@ -120,19 +121,28 @@ async function main() {
   const user = await User.findById("66938e879e2d267fa341de04");
   const user_id = user._id;
   const author = user.full_name;
+  const profile_image_url = user.profile_image_url;
 
+  const category = await Category.findOne({ name: "General" });
+
+  
+  
   for (const article of articleLinks) {
     const data = await crawlArticle(article);
-
+    const relatedPosts = await Post.find({ category_id: category._id }).limit(5);
+    console.log(relatedPosts);
     const post = new Post({
       user_id,
       author,
+      profile_image_url,
       title: data.title,
       content: data.content,
+      category_id: category._id,
+      category_name: category.name,
       main_image: data.main_image,
       read_time: data.read_time,
       images: data.images,
-      
+      related_posts: relatedPosts.map((post) => post._id),
     });
 
     // if the post title is duplicate then don't save the post

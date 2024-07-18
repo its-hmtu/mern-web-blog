@@ -15,13 +15,24 @@ import { sendEmailNotification } from "../utils/mailer.js";
 const createComment = asyncHandler(async (req, res, next) => {
   try {
     const { content } = req.body;
-    const user = req.user;
     const { post_id, reply_to } = req.query;
+    const user = req.user;
+    const post = await Post.findById(post_id);
+    const postOwner = await User.findById(post.user_id);
+
+    const postOwnerBlockedUser = postOwner.blocked_users.includes(user._id);
+
+    if (postOwnerBlockedUser) {
+      return next(
+        new Forbidden("You are blocked from commenting on this post")
+      );
+    }
 
     const comment = await Comment.create({
       user_id: user._id,
       user_name: user.user_name,
       post_id: post_id,
+      post_title: post.title,
       content,
       reply_to,
     });
@@ -45,7 +56,6 @@ const createComment = asyncHandler(async (req, res, next) => {
       await sendEmailNotification(options);
     }
 
-    const post = await Post.findById(post_id);
     post.comments_count += 1;
     post.comments.push(comment._id);
     await post.save();
@@ -56,7 +66,6 @@ const createComment = asyncHandler(async (req, res, next) => {
 
     // if other users are commenting on the post notify the post owner
     if (post.user_id.toString() !== user._id.toString()) {
-      const postOwner = await User.findById(post.user_id);
       const options = {
         userId: postOwner._id,
         fullName: postOwner.full_name,
@@ -201,10 +210,34 @@ const getAllComments = asyncHandler(async (req, res, next) => {
   }
 });
 
+const getUserComments = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { page, limit, order } = req.query;
+
+    const startIndex = (parseInt(page) - 1) * parseInt(limit);
+    const sortDirection = order === "asc" ? 1 : -1;
+    const comments = await Comment.find({ user_id: user._id })
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(parseInt(limit));
+
+
+    res.status(200).json({
+      status: "success",
+      message: "User comments retrieved",
+      comments: comments,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+});
+
 export {
   createComment,
   getPostComments,
   deleteComment,
   updateComment,
   getAllComments,
+  getUserComments,
 };

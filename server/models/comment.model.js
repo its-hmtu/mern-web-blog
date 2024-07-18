@@ -19,6 +19,11 @@ const commentSchema = new mongoose.Schema(
       ref: "Post",
     },
 
+    post_title: {
+      type: String,
+      required: true,
+    },
+
     reply_to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",

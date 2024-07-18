@@ -7,7 +7,7 @@ import {
   BadRequest,
   Unauthorized
 } from '../errors/index.js'
-import { authorize, clearFiles } from '../config/google_drive.js'
+// import { authorize, clearFiles } from '../config/google_drive.js'
 
 export const makeAdmin = asyncHandler(async (req, res, next) => {
   try {
@@ -60,9 +60,9 @@ export const clearGoogleDrive = asyncHandler(async (req, res, next) => {
   try {
     const admin = req.user;
 
-    const auth = await authorize();
+    // const auth = await authorize();
 
-    await clearFiles(auth);
+    // await clearFiles(auth);
 
     res.status(200).json({
       status: 'success',

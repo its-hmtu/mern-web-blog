@@ -19,7 +19,7 @@ export const userAuth = asyncHandler(async (req, res, next) => {
         "-password -__v -refresh_token -access_token"
       );
       req.user = user;
-      console.log(user);
+      // console.log(user);
       next();
     } catch (e) {
       next(new Unauthorized("Not authorized, token failed"))
@@ -58,13 +58,13 @@ export const adminAuth = asyncHandler(async (req, res, next) => {
         req.user = user;
         next();
       } else {
-        next(new Forbidden("Not authorized as an admin"))
+        return next(new Forbidden("Not authorized as an admin"))
       }
     } catch (e) {
       next(new Unauthorized("Not authorized, token failed"))
     }
   } else {
-    next(new Unauthorized("Not authorized, no token"));
+    return next(new Unauthorized("Not authorized, no token"));
   }
 })
 
