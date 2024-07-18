@@ -44,6 +44,23 @@ export const getPosts = async ({ queryKey }) => {
   }
 };
 
+export const getSinglePost = async ({queryKey}) => {
+  try {
+    const [, { slug }] = queryKey;
+    const { data } = await axios.get(`${ENDPOINTS.getSinglePost}/${slug}`);
+    if (data.status !== 'success') {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+
 export const createPost = async (formData) => {
   try {
     const { data } = await axiosInstance.post(ENDPOINTS.createPost, formData);

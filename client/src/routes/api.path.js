@@ -21,6 +21,7 @@ export const ENDPOINTS = {
   getCurrentUserComments: `${BASE}/comments/me`,
 
   getPosts: `${BASE}/posts`,
+  getSinglePost: `${BASE}/posts`,
   createPost: `${BASE}/posts/create`,
   addToReadingList: `${BASE}/posts/reading-list`,
 

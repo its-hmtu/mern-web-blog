@@ -26,7 +26,7 @@ import { getPaginationItems } from "utils/getPaginationItems";
 import { getCurrentUserCommentsQuery } from "hooks/user";
 
 const ProfilePage = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [paramsPost, setParamsPost] = useState({
     page: 1,
     limit: 5,
@@ -36,13 +36,13 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    if (user && user.posts) {
+    if (user && user?.posts) {
       setParamsPost((prevParams) => ({
         ...prevParams,
-        postIds: user.posts.join(","),
+        postIds: user?.posts.join(","),
       }));
     }
-  }, [user]);
+  }, []);
 
   const { data, isLoading } = useQuery(
     getPostsQuery(
@@ -153,95 +153,112 @@ const ProfilePage = () => {
               </Card.Body>
             </Card>
 
-            <Card className="comments-card mt-3">
-              <Card.Body className="p-4">
-                <Card.Title className="fw-semibold mb-4">
-                  Latest Comments
-                </Card.Title>
-                <Card.Text>
-                  {comments?.map((comment, index) => (
-                    <div key={index} className="comment border-bottom pb-3">
-                      <h6 className="mb-1">{comment?.post_title}</h6>
-                      <Row className="justify-content-start align-items-center">
-                        <span className="d-inline-block me-2 comment_content"
-                          dangerouslySetInnerHTML={{ __html: comment?.content }}
-                        ></span>
-                        <span className="fw-semibold comment_time" >
-                          {new Date(comment?.createdAt).toLocaleDateString(
-                            undefined,
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )}
-                        </span>
-                      </Row>
-                    </div>
-                  ))}
-                </Card.Text>
-              </Card.Body>
-            </Card>
+            {user?.comments && user?.comments.length > 0 && (
+              <Card className="comments-card mt-3">
+                <Card.Body className="p-4">
+                  <Card.Title className="fw-semibold mb-4">
+                    Latest Comments
+                  </Card.Title>
+                  <Card.Text>
+                    {comments?.map((comment, index) => (
+                      <div key={index} className="comment border-bottom pb-3">
+                        <h6 className="mb-1">{comment?.post_title}</h6>
+                        <Row className="justify-content-start align-items-center">
+                          <span
+                            className="d-inline-block me-2 comment_content"
+                            dangerouslySetInnerHTML={{
+                              __html: comment?.content,
+                            }}
+                          ></span>
+                          <span className="fw-semibold comment_time">
+                            {new Date(comment?.createdAt).toLocaleDateString(
+                              undefined,
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </span>
+                        </Row>
+                      </div>
+                    ))}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            )}
           </Col>
           <Col className="col-5 flex-grow-1">
-            {data?.posts.map((blog, index) => (
-              <BlogCard key={index} hide data={blog} />
-            ))}
-            <Pagination className="justify-content-center">
-              {paramsPost.page === 1 ? null : (
-                <Pagination.Prev
+            {user?.posts && user?.posts.length > 0 ? (
+              data?.posts.map((blog, index) => (
+                <BlogCard key={index} hide data={blog} />
+              ))
+            ) : (
+              <div className="text-center">
+                <p className="fw-semibold mb-3">You don't have any posts yet. Create now!</p>
+                <Button variant="primary" className="fw-semibold">Create Post</Button>
+              </div>
+            )}
+            {user?.posts && user?.posts.length > 0 && (
+              <Pagination className="justify-content-center">
+                {paramsPost.page === 1 ? null : (
+                  <Pagination.Prev
+                    onClick={() => {
+                      if (paramsPost.page > 1) {
+                        setParamsPost({
+                          ...paramsPost,
+                          page: paramsPost.page - 1,
+                        });
+                      }
+                    }}
+                  />
+                )}
+                {paginationItems.map((item, index) =>
+                  item === "..." ? (
+                    <Pagination.Ellipsis key={index} />
+                  ) : (
+                    <Pagination.Item
+                      key={index}
+                      active={item === paramsPost.page}
+                      onClick={() => {
+                        setParamsPost({ ...paramsPost, page: item });
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      {item}
+                    </Pagination.Item>
+                  )
+                )}
+                <Pagination.Next
                   onClick={() => {
-                    if (paramsPost.page > 1) {
+                    if (paramsPost.page < totalPages) {
                       setParamsPost({
                         ...paramsPost,
-                        page: paramsPost.page - 1,
+                        page: paramsPost.page + 1,
                       });
                     }
                   }}
                 />
-              )}
-              {paginationItems.map((item, index) =>
-                item === "..." ? (
-                  <Pagination.Ellipsis key={index} />
-                ) : (
-                  <Pagination.Item
-                    key={index}
-                    active={item === paramsPost.page}
-                    onClick={() => {
-                      setParamsPost({ ...paramsPost, page: item });
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    {item}
-                  </Pagination.Item>
-                )
-              )}
-              <Pagination.Next
-                onClick={() => {
-                  if (paramsPost.page < totalPages) {
-                    setParamsPost({ ...paramsPost, page: paramsPost.page + 1 });
-                  }
-                }}
-              />
 
-              <Form.Select
-                className="ms-2"
-                value={paramsPost.page}
-                onChange={(e) =>
-                  setParamsPost({
-                    ...paramsPost,
-                    page: parseInt(e.target.value),
-                  })
-                }
-                style={{ width: "auto", display: "inline-block" }}
-              >
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    Page {i + 1}
-                  </option>
-                ))}
-              </Form.Select>
-            </Pagination>
+                <Form.Select
+                  className="ms-2"
+                  value={paramsPost.page}
+                  onChange={(e) =>
+                    setParamsPost({
+                      ...paramsPost,
+                      page: parseInt(e.target.value),
+                    })
+                  }
+                  style={{ width: "auto", display: "inline-block" }}
+                >
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      Page {i + 1}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Pagination>
+            )}
           </Col>
         </div>
       </Row>

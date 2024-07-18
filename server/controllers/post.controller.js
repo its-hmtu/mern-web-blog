@@ -294,19 +294,18 @@ const getPosts = asyncHandler(async (req, res, next) => {
 
 const getSinglePost = asyncHandler(async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
 
-    const post = await Post.findById(id);
+    const post = await Post.findOne({slug});
 
     if (!post) {
-      next(new NotFound(`Post with id ${id} not found`));
+      next(new NotFound(`Post with id ${post._id} not found`));
       return;
     }
 
-    post.views_count += 1;
-
     res.status(200).json({
       status: "success",
+      message: "Post found",
       data: post,
     });
   } catch (e) {

@@ -29,7 +29,7 @@ const RouteList = () => {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="terms-of-use" element={<TermsAndConditions />} />
         <Route path="*" element={<NotFoundPage />} />
-        <Route path="post/:id" element={<PostView />} />
+        <Route path="post/:path" element={<PostView />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="about" element={<About />} />
       </Route>

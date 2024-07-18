@@ -77,7 +77,10 @@ const BlogCard = ({ data, hide = false }) => {
           </Row>
         </Link>
         <Card.Title className="blog-card__title">
-          <Link>{data.title}</Link>
+          <Link
+            to={`/post/:path`.replace(":path", data.slug)}
+            className="text-decoration-none blog-card__title"
+          >{data.title}</Link>
         </Card.Title>
         <Card.Text className="blog-card__text">
           <Row className="gap-0 px-2">

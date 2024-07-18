@@ -44,11 +44,12 @@
   }
 
   &__title {
-    padding-left: 46px;
+    padding-inline: 16px;
     font-size: 30px;
 
     a {
       color: $black-text;
+      padding: 0;
 
       &:hover {
         color: $blue;
@@ -57,7 +58,7 @@
   }
 
   &__text {
-    padding-left: 46px;
+    padding-left: 16px;
     
     &-tag {
       padding: 4px 7px;

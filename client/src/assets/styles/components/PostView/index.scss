@@ -1,23 +1,52 @@
-.container {
-  .card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-
-    .card-body {
-      h1 {
-        font-size: 2rem;
-        font-weight: bold;
-      }
-
-      p {
-        font-size: 1rem;
-        line-height: 1.5;
-      }
-
-      small {
-        font-size: 0.875rem;
-        color: #666;
-      }
+.post-view {
+  &__container {
+    max-width: 850px;
+    padding-top: calc($header-height + 24px);
+    
+    .card {
+      background-color: $white;
+      
+      &-body {
+        padding: 24px;
+      } 
     }
+  }
+
+  &__title {
+    font-size: 48px;
+    font-weight: 700;
+  }
+
+  &__content {
+    font-size: 18px;
+
+    & > * + * {
+      margin-top: 24px;
+    }
+
+    .highlight__panel {
+      display: none
+    }
+
+    // pre {
+    //   background-color: ;
+    //   padding: 16px;
+    //   border-radius: 8px;
+    //   overflow-x: auto;
+    // }
+
+    // code {
+    //   font-size: 16px; // Already defined in your SCSS
+    // color: $white; // Assuming $white is defined in your variables
+    // background-color: black; // You might want to reuse the pre background-color
+    // padding: 8px; // Adjust padding as needed
+    // border-radius: 4px; // Optional: if you want rounded corners
+    // overflow-x: auto; // For horizontal scrolling if the code is too long
+
+    // // Additional styling
+    // display: block; // To make the code block-level (if not already)
+    // white-space: pre-wrap; // To ensure proper whitespace handling
+    // word-break: break-all; 
+    // }
   }
 }

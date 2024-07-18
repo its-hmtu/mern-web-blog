@@ -58,7 +58,7 @@ router.put("/update/:id", userAuth, upload.fields([
 
 router.get("/", getPosts);
 
-router.get("/:id", getSinglePost);
+router.get("/:slug", getSinglePost);
 
 // route like post should accept both user and admin roles to like a post by id
 router.put("/:id", userAuth, likePost);
