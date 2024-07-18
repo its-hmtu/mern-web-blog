@@ -13,7 +13,7 @@ const handleDecode = () => {
   return {decoded, storage};
 };
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: ENDPOINTS.baseUrl,
 });
 
@@ -54,7 +54,7 @@ export const refreshToken = async () => {
     console.log("Fail");
   }
   localStorage.setItem("access_token", JSON.stringify(data?.access_token));
-  console.log(data);
+  // console.log(data);
   return data;
 };
 

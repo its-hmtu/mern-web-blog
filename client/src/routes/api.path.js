@@ -1,3 +1,5 @@
+import { getCategories } from "api/post"
+
 const BASE = 'http://localhost:5000/v1'
 
 export const ENDPOINTS = {
@@ -19,4 +21,8 @@ export const ENDPOINTS = {
   getCurrentUserComments: `${BASE}/comments/me`,
 
   getPosts: `${BASE}/posts`,
+  createPost: `${BASE}/posts/create`,
+  addToReadingList: `${BASE}/posts/reading-list`,
+
+  getCategories: `${BASE}/categories`,
 }

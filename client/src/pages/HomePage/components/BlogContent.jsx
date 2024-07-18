@@ -33,24 +33,24 @@ const BlogContent = ({data, paramsPost, handleSelect, setParamsPost}) => {
       >
         <Tab eventKey="latest" title="Latest" className="blog-content__tab">
           {blogs?.map((blog) => (
-            <Link
-              to={"/post/:slug".replace(":slug", blog.slug)}
-              key={blog.id}
-              className="text-decoration-none"
-            >
-              <BlogCard data={blog} />
-            </Link>
+            // <Link
+            //   to={"/post/:slug".replace(":slug", blog.slug)}
+            //   key={blog.id}
+            //   className="text-decoration-none"
+            // >
+              <BlogCard data={blog} key={blog.id} />
+            // </Link>
           ))}
         </Tab>
         <Tab eventKey="relevant" title="Relevant" className="blog-content__tab">
           {blogs?.map((blog) => (
-            <Link
-              to={"/post/:slug".replace(":slug", blog.slug)}
-              key={blog.id}
-              className="text-decoration-none"
-            >
-              <BlogCard data={blog} />
-            </Link>
+            // <Link
+            //   to={"/post/:slug".replace(":slug", blog.slug)}
+            //   key={blog.id}
+            //   className="text-decoration-none"
+            // >
+              <BlogCard data={blog} key={blog.id}/>
+            // </Link>
           ))}
         </Tab>
       </Tabs>

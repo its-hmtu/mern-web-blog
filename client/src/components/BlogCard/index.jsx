@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import logo from "images/logo.png";
 import { Link } from "react-router-dom";
@@ -7,9 +7,13 @@ import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-icons";
 import { getUserQuery } from "hooks/user";
 import { useQuery } from "react-query";
+import { useAddReadingList } from "hooks/post";
+import { AuthContext } from "contexts/AuthContext";
 
 const BlogCard = ({ data, hide = false }) => {
+  const {user} = useContext(AuthContext);
   const [timeAgo, setTimeAgo] = useState("");
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -30,6 +34,21 @@ const BlogCard = ({ data, hide = false }) => {
       })
     );
   }, [data.createdAt]);
+
+  const {mutate: addReadingList, isLoading: isAddingReadingList} = useAddReadingList(
+    () => {
+      console.log("Added to reading list");
+      setAdded(true);
+    }
+  );
+
+  useEffect(() => {
+    if (user?.reading_list.includes(data._id)) {
+      setAdded(true);
+    } else {
+      setAdded(false);
+    }
+  }, [user, data._id]);
 
   return (
     <Card className="blog-card">
@@ -75,7 +94,7 @@ const BlogCard = ({ data, hide = false }) => {
              ( <Button>👍 {data.likes_count} like</Button>)
             }
             {
-              data.comments_count === 0 ? (
+              hide && data.comments_count === 0 ? (
                 <Button>💬 Add comment</Button>
               ) : (
                 <Button>💬 {data.comments_count} comments</Button>
@@ -85,8 +104,10 @@ const BlogCard = ({ data, hide = false }) => {
 
           <Col>
             <span className="read-time">{data.read_time} min read</span>
-            {!hide && <Button className="btn-bookmark">
-              <FontAwesomeIcon icon={faBookmarkOutline} />
+            {!hide && <Button className="btn-bookmark" onClick={
+              () => addReadingList({postId: data._id, add: !added})
+            }>
+              <FontAwesomeIcon icon={added ? faBookmark : faBookmarkOutline} />
             </Button>}
           </Col>
         </Row>

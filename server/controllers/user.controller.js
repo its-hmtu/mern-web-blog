@@ -259,7 +259,7 @@ export const followUser = asyncHandler(async (req, res, next) => {
 
 export const refreshToken = asyncHandler(async (req, res, next) => {
   const refreshToken = req.cookies.refresh_token;
-  console.log(refreshToken)
+  // console.log(refreshToken)
 
   if (!refreshToken) {
     return next(new Unauthorized('No refresh token provided'))

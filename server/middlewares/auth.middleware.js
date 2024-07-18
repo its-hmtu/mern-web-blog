@@ -19,7 +19,7 @@ export const userAuth = asyncHandler(async (req, res, next) => {
         "-password -__v -refresh_token -access_token"
       );
       req.user = user;
-      console.log(user);
+      // console.log(user);
       next();
     } catch (e) {
       next(new Unauthorized("Not authorized, token failed"))

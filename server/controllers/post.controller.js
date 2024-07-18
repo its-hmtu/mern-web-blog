@@ -30,6 +30,9 @@ const createPost = asyncHandler(async (req, res, next) => {
     // const auth = await authorize();
     const user = req.user;
 
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+
     let mainImage = null;
     if (req.files["main_image"]) {
       const mainImageFile = req.files["main_image"][0];
