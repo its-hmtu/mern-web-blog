@@ -243,31 +243,31 @@ const PostView = () => {
             </Row>
 
             {
-              comments?.map((comment, index) => (
-                <Row key={index} className="mt-5 px-4 align-items-center flex-nowrap w-100">
-                  <img
-                    src={comment?.profile_image_url}
-                    alt=""
-                    className="blog-card__user-img me-4 mt-2"
-                    style={{
-                      maxWidth: "48px",
-                      height: "48px",
-                    }}
-                  />
+              // comments?.map((comment, index) => (
+              //   <Row key={index} className="mt-5 px-4 align-items-center flex-nowrap w-100">
+              //     <img
+              //       src={comment?.profile_image_url}
+              //       alt=""
+              //       className="blog-card__user-img me-4 mt-2"
+              //       style={{
+              //         maxWidth: "48px",
+              //         height: "48px",
+              //       }}
+              //     />
 
-                  <Card.Text className="flex-grow-1 card-comment w-75 py-3 mt-2">
-                    <Row className="flex-nowrap align-items-center w-100">
-                      <Link className="fw-semibold text-decoration-none" style={{
-                        width: "fit-content",
-                      }}>
-                        {comment?.author}
-                        </Link>
-                      <small className="pm-0 p-0 fw-semibold">{new Date(comment?.createdAt).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })}</small>
-                    </Row>
-                    <span className="ms-2" dangerouslySetInnerHTML={{__html: comment?.content}}></span>
-                  </Card.Text>
-                </Row>
-              ))
+              //     <Card.Text className="flex-grow-1 card-comment w-75 py-3 mt-2">
+              //       <Row className="flex-nowrap align-items-center w-100">
+              //         <Link className="fw-semibold text-decoration-none" style={{
+              //           width: "fit-content",
+              //         }}>
+              //           {comment?.author}
+              //           </Link>
+              //         <small className="pm-0 p-0 fw-semibold">{new Date(comment?.createdAt).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })}</small>
+              //       </Row>
+              //       <span className="ms-2" dangerouslySetInnerHTML={{__html: comment?.content}}></span>
+              //     </Card.Text>
+              //   </Row>
+              // ))
             }
           </Card>
         </Col>
