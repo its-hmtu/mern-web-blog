@@ -123,40 +123,32 @@ async function main() {
 
   const categories = [
     {
-      name: "Technology",
-      description: "Technology news, reviews, and analysis.",
+      name: "Health & Beauty",
+      description: "Nutrition, Fitness, Skincare, Beauty Tips.",
     },
     {
-      name: "Science",
-      description: "Science news, reviews, and analysis.",
+      name: "Lifestyle & Family",
+      description: "Parenting, Home Life, Life Hacks, Marriage & Relationships.",
     },
     {
-      name: "Health",
-      description: "Health news, reviews, and analysis.",
+      name: "Food",
+      description: "Recipes, Dining Out, Restaurant Reviews, Food & Drinks.",
     },
     {
-      name: "Business",
-      description: "Business news, reviews, and analysis.",
+      name: "Business & Entrepreneurship",
+      description: "Online Business, Management & Leadership, Startups, Personal Finance.",
+    },
+    {
+      name: "Education",
+      description: "Scholarships & Studying Abroad, Soft Skills, Study Materials, Educational Technology",
     },
     {
       name: "Entertainment",
-      description: "Entertainment news, reviews, and analysis.",
-    },
-    {
-      name: "Politics",
-      description: "Politics news, reviews, and analysis.",
-    },
-    {
-      name: "Sports",
-      description: "Sports news, reviews, and analysis.",
-    },
-    {
-      name: "Travel",
-      description: "Travel news, reviews, and analysis.",
+      description: "Movies, Music, Books and Literature, Events and Festivals.",
     },
     {
       name: "Lifestyle",
-      description: "Lifestyle news, reviews, and analysis.",
+      description: "Fashion, Interior Design, Hobbies & Interests, Vehicles.",
     },
   ];
   
@@ -173,7 +165,7 @@ async function main() {
   };
   
   createCategory();
-  
+
   
   for (const article of articleLinks) {
     const data = await crawlArticle(article);
