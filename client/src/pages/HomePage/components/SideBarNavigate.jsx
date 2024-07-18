@@ -61,9 +61,9 @@ const SideBarNavigate = () => {
           </Link>
         </li>
         <li>
-          <Link to="/tags" className="d-flex align-items-center">
+          <Link to="/categories" className="d-flex align-items-center">
             <FontAwesomeIcon icon={faTags} className="me-2 icon-tags" />
-            <span>Tags</span>
+            <span>Categories</span>
           </Link>
         </li>
         <li>
