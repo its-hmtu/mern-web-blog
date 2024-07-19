@@ -42,6 +42,30 @@ const categories = [
     name: "Lifestyle",
     description: "Lifestyle news, reviews, and analysis.",
   },
+  {
+    name: "Health & Beauty",
+    description: "Nutrition, Fitness, Skincare, Beauty Tips.",
+  },
+  {
+    name: "Lifestyle & Family",
+    description: "Parenting, Home Life, Life Hacks, Marriage & Relationships.",
+  },
+  {
+    name: "Food",
+    description: "Recipes, Dining Out, Restaurant Reviews, Food & Drinks.",
+  },
+  {
+    name: "Business & Entrepreneurship",
+    description: "Online Business, Management & Leadership, Startups, Personal Finance.",
+  },
+  {
+    name: "Education",
+    description: "Scholarships & Studying Abroad, Soft Skills, Study Materials, Educational Technology",
+  },
+  {
+    name: "Entertainment",
+    description: "Movies, Music, Books and Literature, Events and Festivals.",
+  },
 ];
 
 const createCategory = async () => {
