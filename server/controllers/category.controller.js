@@ -7,6 +7,7 @@ import {
   Forbidden,
   InternalServerError,
 } from '../errors/index.js';
+import Post from '../models/post.model.js';
 
 const createCategory = asyncHandler(async(req, res, next) => {
   try {
@@ -15,6 +16,7 @@ const createCategory = asyncHandler(async(req, res, next) => {
       name,
       description,
     });
+
     res.status(201).json({
       success: true,
       message: 'Category created successfully',
@@ -51,6 +53,17 @@ const deleteCategory = asyncHandler(async(req, res, next) => {
     if (!category) {
       return next(new NotFound(`Category with id ${req.params.id} not found`));
     }
+
+    // Find all posts with the category and change the category to 'uncategorized'
+    const posts = await Post.find({ category: req.params.id });
+    const uncategorized = await Category.findOne({ name: 'Uncategorized' });
+    for (let post of posts) {
+      post.category_name = uncategorized.name;
+      post.category_id = uncategorized._id;
+
+      await post.save();
+    }
+
     await Category.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,

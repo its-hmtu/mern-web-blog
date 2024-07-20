@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import 'styles/index.scss';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -24,7 +23,7 @@ const CategoriesPage = () => {
   if (error) return <p>Error loading categories: {error.message}</p>;
 
   return (
-    <div className="container my-5">
+    <div className="category-container my-5">
       <h1 className="mb-4">Categories</h1>
       <div className="row">
         {categories.map((category, index) => (

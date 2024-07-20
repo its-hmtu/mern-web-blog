@@ -9,7 +9,7 @@ import {
   InternalServerError
 } from "../errors/index.js";
 
-export const userAuth = asyncHandler(async (req, res, next) => {
+export const verifyToken = asyncHandler(async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   
   if (token) {
@@ -29,64 +29,12 @@ export const userAuth = asyncHandler(async (req, res, next) => {
   }
 });
 
-export const userAuthWithPassword = asyncHandler(async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-      const user = await User.findById(decoded.userId);
-      req.user = user;
+export const verifyRole = (role) => {
+  return (req, res, next) => {
+    if (req.user && role.includes(req.user.role)) {
       next();
-    } catch (e) {
-      next(new Unauthorized("Not authorized, token failed"))
+    } else {
+      return next(new Forbidden("Not authorized, role not allowed"));
     }
   }
-  else {
-    next(new Unauthorized("Not authorized, no token"))
-  }
-});
-
-export const adminAuth = asyncHandler(async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-      const user = await User.findById(decoded.userId);
-      if (user && user.role === "admin") {
-        req.user = user;
-        next();
-      } else {
-        return next(new Forbidden("Not authorized as an admin"))
-      }
-    } catch (e) {
-      next(new Unauthorized("Not authorized, token failed"))
-    }
-  } else {
-    return next(new Unauthorized("Not authorized, no token"));
-  }
-})
-
-export const userOrAdminAuth = asyncHandler(async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-      const user = await User.findById(decoded.userId);
-
-      if (user && (user.role === "user" || user.role === "admin")) {
-        req.user = user;
-        next();
-      } else {
-        next(new Forbidden("Not authorized as an admin"))
-      }
-    } catch (e) {
-      next(new Unauthorized("Not authorized, token failed"))
-    }
-  }
-  else {
-    next(new Unauthorized("Not authorized, no token"))
-  }
-})
+}

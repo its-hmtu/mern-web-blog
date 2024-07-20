@@ -28,7 +28,7 @@ const BlogContent = ({data, paramsPost, handleSelect, setParamsPost}) => {
       <Tabs
         defaultActiveKey="latest"
         id="blog-content__tabs"
-        className="mb-3 blog-content__tabs"
+        className="mb-3 blog-content__tabs border-0"
         onSelect={handleSelect}
       >
         <Tab eventKey="latest" title="Latest" className="blog-content__tab">

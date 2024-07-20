@@ -10,7 +10,7 @@ import {
   forgotPassword,
   resetPassword,
 } from "../controllers/auth.controller.js";
-import { userAuth } from "../middlewares/auth.middleware.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.post("/login-google", loginWithGoogle);
 
 router.post("/register-google", registerWithGoogle);
 
-router.get("/logout",  userAuth, logout);
+router.post("/logout", logout);
 
 router.get("/confirmation/:token", emailConfirmation);
 

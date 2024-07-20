@@ -14,7 +14,7 @@
       "hooks/*": ["./src/hooks/*"],
       "routes/*": ["./src/routes/*"],
       "api/*": ["./src/api/*"],
-      "context/*": ["./src/context/*"],
+      "contexts/*": ["./src/contexts/*"],
     }
   },
   

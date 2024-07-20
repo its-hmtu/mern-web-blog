@@ -94,7 +94,7 @@ export const loginUser = async (user) => {
 
 export const logoutUser = async () => {
   try {
-    const { data } = await axiosInstance.get(ENDPOINTS.logout, {
+    const { data } = await axiosInstance.post(ENDPOINTS.logout, {
       withCredentials: true,
     });
     if (data.success === "false") {
@@ -157,6 +157,26 @@ export const getCurrentUser = async () => {
     return message;
   }
 };
+
+export const getAllUsers = async ({ queryKey }) => {
+  try {
+    const [, { page, limit, order }] = queryKey;
+    const { data } = await axios.get(
+      `${ENDPOINTS.getAllUsers}?page=${page}&limit=${limit}&order=${order}`
+    );
+
+    if (data.success === "false") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
 
 export const getCurrentUserComments = async ({queryKey}) => {
   try {

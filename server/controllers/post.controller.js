@@ -1,6 +1,6 @@
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
-import Comment from "../models/comment.model.js"
+import Comment from "../models/comment.model.js";
 import asyncHandler from "express-async-handler";
 import {
   NotFound,
@@ -26,33 +26,34 @@ function calculateReadTime(content) {
 
 const createPost = asyncHandler(async (req, res, next) => {
   try {
-    const { title, content, category_name } = req.body;
+    const { title, content, category_name, main_image, content_images } =
+      req.body;
     // const auth = await authorize();
     const user = req.user;
 
-    console.log('Request body:', req.body);
-    console.log('Request files:', req.files);
+    console.log("Request body:", req.body);
+    console.log("Request files:", req.files);
 
-    let mainImage = null;
-    if (req.files["main_image"]) {
-      const mainImageFile = req.files["main_image"][0];
-      const response = await uploadFile(mainImageFile.path);
-      mainImage = response
-      fs.unlinkSync(mainImageFile.path);
-    }
+    // let mainImage = null;
+    // if (req.files["main_image"]) {
+    //   const mainImageFile = req.files["main_image"][0];
+    //   const response = await uploadFile(mainImageFile.path);
+    //   mainImage = response
+    //   fs.unlinkSync(mainImageFile.path);
+    // }
 
-    const contentImages = [];
-    if (req.files["content_images"]) {
-      const contentImagesFiles = req.files["content_images"];
-      for (const file of contentImagesFiles) {
-        const response = await uploadFile(file.path);
-        contentImages.push({
-          url: response,
-        });
-        fs.unlinkSync(file.path);
-      }
-    }
-    
+    // const contentImages = [];
+    // if (req.files["content_images"]) {
+    //   const contentImagesFiles = req.files["content_images"];
+    //   for (const file of contentImagesFiles) {
+    //     const response = await uploadFile(file.path);
+    //     contentImages.push({
+    //       url: response,
+    //     });
+    //     fs.unlinkSync(file.path);
+    //   }
+    // }
+
     const user_id = user._id;
 
     const author = user.full_name;
@@ -60,8 +61,10 @@ const createPost = asyncHandler(async (req, res, next) => {
     const read_time = calculateReadTime(content);
 
     // get related posts id from any posts in the same category
-    const category = await Category.findOne({name: category_name});
-    const relatedPosts = await Post.find({ category_id: category._id }).limit(3);
+    const category = await Category.findOne({ name: category_name });
+    const relatedPosts = await Post.find({ category_id: category._id }).limit(
+      10
+    );
     console.log(relatedPosts);
 
     const post = await Post.create({
@@ -71,8 +74,8 @@ const createPost = asyncHandler(async (req, res, next) => {
       content,
       category_id: category._id,
       category_name: category_name,
-      main_image: mainImage,
-      images: contentImages,
+      main_image,
+      images: content_images,
       read_time,
       related_posts: relatedPosts.map((post) => post._id),
       profile_image_url: user.profile_image_url,
@@ -110,24 +113,32 @@ const deletePost = asyncHandler(async (req, res, next) => {
         next(new NotFound(`User with id ${post.user_id} not found`));
         return;
       }
-      
+
       user.posts_count -= 1;
+      if (user.posts_count <= 0) {
+        user.posts_count = 0;
+      }
       user.posts = user.posts.filter((p) => p.toString() !== id);
       await user.save();
 
       // count comments that user has made on post and remove comments from user comments list
 
       for (const id of post.comments) {
-        const comment = await Comment.findById(id)
+        const comment = await Comment.findById(id);
         const user_id = comment.user_id;
-        const user = await User.findById(user_id)
+        const user = await User.findById(user_id);
 
         user.comments_count -= 1;
-        user.comments = user.comments.filter((c) => c.toString() !== id.toString())
+        if (user.comments_count <= 0) {
+          user.comments_count = 0;
+        }
+        user.comments = user.comments.filter(
+          (c) => c.toString() !== id.toString()
+        );
 
         await user.save();
       }
-      
+
       // delete comments associated with post
       await Comment.deleteMany({ post_id: id });
 
@@ -161,13 +172,12 @@ const updatePost = asyncHandler(async (req, res, next) => {
       const { title, content, category_name } = req.body;
 
       const post = await Post.findById(id);
-      const category = await Category.findOne({name: category_name});
+      const category = await Category.findOne({ name: category_name });
 
       if (!post) {
         next(new NotFound(`Post with id ${id} not found`));
         return;
       }
-
 
       if (req.files["main_image"]) {
         const mainImageFile = req.files["main_image"][0];
@@ -185,9 +195,9 @@ const updatePost = asyncHandler(async (req, res, next) => {
           await deleteFileByUrl(image.url);
         }
         for (const file of contentImagesFiles) {
-          const response = await uploadFile( file.path);
+          const response = await uploadFile(file.path);
           post.images.push({
-            url: response
+            url: response,
           });
           fs.unlinkSync(file.path);
         }
@@ -239,7 +249,7 @@ const getPosts = asyncHandler(async (req, res, next) => {
     const _page = Math.max(1, parseInt(page)) || 1;
     const _limit = parseInt(limit) || 10;
     let startIndex = (_page - 1) * _limit;
-    
+
     let queryConditions = {
       ...(userId && { user_id: userId }),
       ...(category && { category_name: category }),
@@ -256,21 +266,30 @@ const getPosts = asyncHandler(async (req, res, next) => {
 
     if (currentUserId && currentUserId.trim() !== "") {
       const currentUser = await User.findById(currentUserId);
-      const currentUserBlockedList = currentUser ? currentUser.blocked_users : [];
-      queryConditions = { ...queryConditions, user_id: { $nin: currentUserBlockedList } };
+      const currentUserBlockedList = currentUser
+        ? currentUser.blocked_users
+        : [];
+      queryConditions = {
+        ...queryConditions,
+        user_id: { $nin: currentUserBlockedList },
+      };
     }
 
     const sortDirection = order === "asc" ? 1 : -1;
-    
+
     const posts = await Post.find(queryConditions)
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(_limit);
 
-    const totalPosts = await Post.countDocuments(queryConditions);
-
+    const totalFilteredPosts = await Post.countDocuments(queryConditions);
+    const totalPosts = await Post.countDocuments();
     const now = new Date();
-    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
 
     const lastMonthPosts = await Post.countDocuments({
       ...queryConditions,
@@ -285,6 +304,7 @@ const getPosts = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       posts,
       totalPosts,
+      totalFilteredPosts,
       lastMonthPosts,
     });
   } catch (e) {
@@ -296,7 +316,7 @@ const getSinglePost = asyncHandler(async (req, res, next) => {
   try {
     const { slug } = req.params;
 
-    const post = await Post.findOne({slug});
+    const post = await Post.findOne({ slug });
 
     if (!post) {
       next(new NotFound(`Post with id ${post._id} not found`));
@@ -446,7 +466,7 @@ const getReadingList = asyncHandler(async (req, res, next) => {
   } catch (e) {
     next(new InternalServerError(e.message));
   }
-})
+});
 
 const disableComment = asyncHandler(async (req, res, next) => {
   try {
@@ -460,26 +480,29 @@ const disableComment = asyncHandler(async (req, res, next) => {
       return;
     }
 
-    if (user._id.toString() === post.user_id.toString() || user.role === "admin") {
+    if (
+      user._id.toString() === post.user_id.toString() ||
+      user.role === "admin"
+    ) {
       if (disable === "") {
         next(new BadRequest("Please provide disable query"));
         return;
       }
-  
+
       if (disable === "true") {
         post.is_comment_disabled = true;
         await post.save();
-  
+
         res.status(200).json({
           status: "success",
           message: "Comment disabled",
         });
       }
-  
+
       if (disable === "false") {
         post.is_comment_disabled = false;
         await post.save();
-  
+
         res.status(200).json({
           status: "success",
           message: "Comment enabled",
@@ -492,7 +515,34 @@ const disableComment = asyncHandler(async (req, res, next) => {
   } catch (e) {
     next(new InternalServerError(e.message));
   }
-})
+});
+
+const getUserPosts = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { page, limit, order } = req.query;
+    const user = await User.findById(id);
+
+    if (!user) {
+      next(new NotFound(`User with id ${id} not found`));
+      return;
+    }
+
+    const startIndex = (parseInt(page) - 1) * parseInt(limit);
+    const sortDirection = order === "asc" ? 1 : -1;
+    const posts = await Post.find({ user_id: id })
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(parseInt(limit));
+
+    res.status(200).json({
+      status: "success",
+      data: posts,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+});
 
 export {
   createPost,
@@ -504,4 +554,5 @@ export {
   addToReadingList,
   getReadingList,
   disableComment,
+  getUserPosts,
 };

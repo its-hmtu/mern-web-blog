@@ -1,8 +1,8 @@
 @import "abstracts/variables";
 @import "node_modules/bootstrap/scss/bootstrap";
 
-@import "base/reset";
 @import "base/global";
+@import "base/reset";
 @import "./layouts/";
 @import "./pages/";
 @import "./components/";

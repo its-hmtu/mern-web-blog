@@ -17,6 +17,10 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    posts_count: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

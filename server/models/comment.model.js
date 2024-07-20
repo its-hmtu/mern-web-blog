@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { NotFound, InternalServerError } from "../errors/index.js"; 
-import User from './user.model.js'
+import { NotFound, InternalServerError } from "../errors/index.js";
+import User from "./user.model.js";
 
 const commentSchema = new mongoose.Schema(
   {
@@ -10,7 +10,7 @@ const commentSchema = new mongoose.Schema(
     },
 
     user_name: {
-      type: String, 
+      type: String,
       required: true,
     },
 
@@ -38,7 +38,7 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    
+
     likes_count: {
       type: Number,
       default: 0,
@@ -53,30 +53,39 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
+
     is_deleted: {
       type: Boolean,
       default: false,
-    }
+    },
+
+    deleted_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    deleted_at: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
   }
-)
+);
 
 const Comment = mongoose.model("Comment", commentSchema);
 
-commentSchema.pre('save', async function(next) {
+commentSchema.pre("save", async function (next) {
   try {
     const user = await User.findById(this.user_id);
     if (!user) {
-      next(new NotFound("User not found"))
+      next(new NotFound("User not found"));
     }
 
     if (this.reply_to) {
       const comment = await Comment.findById(this.reply_to);
       if (!comment) {
-        next(new NotFound("Comment not found"))
+        next(new NotFound("Comment not found"));
       }
       comment.replies.push(this._id);
       comment.replies_count = comment.replies.length;
@@ -87,8 +96,8 @@ commentSchema.pre('save', async function(next) {
       next();
     }
   } catch (error) {
-    next(new InternalServerError(error.message))
+    next(new InternalServerError(error.message));
   }
-})
+});
 
 export default Comment;

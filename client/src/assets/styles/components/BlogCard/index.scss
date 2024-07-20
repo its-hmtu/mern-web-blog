@@ -4,6 +4,10 @@
   border: none;
   box-shadow: $card-shadow;
   background-color: $white;
+  transition: none!important;
+  &:hover {
+    transform: none!important;
+  }
 
   &__img {
     max-height: calc(90vh - $header-height);
@@ -24,6 +28,7 @@
     border-radius: 9999px;
     border: 1px solid $gray-border;
     max-width: 32px;
+    width: 32px;
     height: 32px;
     padding: 0
     // height: auto;

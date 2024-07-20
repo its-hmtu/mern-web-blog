@@ -264,11 +264,11 @@ export const loginWithGoogle = asyncHandler(async (req, res, next) => {
 
 export const logout = asyncHandler(async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id);
+    // const user = await User.findById(req.user._id);
 
-    if (!user) {
-      return next(new NotFound("User not found"));
-    }
+    // if (!user) {
+    //   return next(new NotFound("User not found"));
+    // }
 
     res.cookie("refresh_token", "", {
       httpOnly: true,

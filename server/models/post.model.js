@@ -99,7 +99,7 @@ const postSchema = new mongoose.Schema({
 
   publishedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   },
 
   slug: {
@@ -108,7 +108,7 @@ const postSchema = new mongoose.Schema({
     unique: true,
   },
 
-  is_removed_by_admin: {
+  is_deleted: {
     type: Boolean,
     default: false
   },

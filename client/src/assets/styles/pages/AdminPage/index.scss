@@ -1,0 +1,33 @@
+.admin-layout__container {
+  padding-top: calc($header-height + 20px);
+  height: 100dvh;
+
+  .active {
+    background-color: rgb(13, 110, 253)!important;
+    color: #fff!important;
+    border-radius: 12px;
+  }
+
+  .dashboard-container {
+    max-width: calc($site-width + 50px);
+    margin: 0 200px 0 auto;
+    padding-inline: 40px;
+
+    .row {
+      max-height: 100dvh;
+
+      .col {
+        overflow: auto;
+        overflow-x: hidden;
+      }
+    }
+  }
+}
+
+.offcanvas-backdrop {
+  display: none;
+}
+
+.show-container {
+
+}

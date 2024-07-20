@@ -18,17 +18,15 @@ const createComment = asyncHandler(async (req, res, next) => {
     const { post_id, reply_to } = req.query;
     const user = req.user;
     const post = await Post.findById(post_id);
-    const postOwner = await User.findById(post.user_id);
+    const postAuthor = await User.findById(post.user_id);
 
-    const postOwnerBlockedUser = postOwner.blocked_users.includes(user._id);
+    const postAuthorBlockedUser = postAuthor.blocked_users.includes(user._id);
 
-    if (postOwnerBlockedUser) {
-      return next(
-        new Forbidden("You are blocked from commenting on this post")
-      );
+    if (user.role === "user" && postAuthorBlockedUser) {
+      return next(new Forbidden("You are blocked from commenting on this post"));
     }
 
-    const comment = await Comment.create({
+    const comment = new Comment({
       user_id: user._id,
       user_name: user.user_name,
       profile_image_url: user.profile_image_url,
@@ -44,17 +42,22 @@ const createComment = asyncHandler(async (req, res, next) => {
       parentComment.replies_count += 1;
       await parentComment.save();
 
-      const parentCommentUser = await User.findById(parentComment.user_id);
-      const options = {
-        userId: parentCommentUser._id,
-        fullName: parentCommentUser.full_name,
-        userEmail: parentCommentUser.email,
-        subject: "New Reply on Your Comment",
-        text: `${user.user_name} replied to your comment: ${parentComment.content}`,
-        url: ``,
-      };
+      // const parentCommentUser = await User.findById(parentComment.user_id);
 
-      await sendEmailNotification(options);
+      req.io.emit('newReply', {
+        reply: comment,
+        comment: parentComment,
+      })
+      // const options = {
+      //   userId: parentCommentUser._id,
+      //   fullName: parentCommentUser.full_name,
+      //   userEmail: parentCommentUser.email,
+      //   subject: "New Reply on Your Comment",
+      //   text: `${user.user_name} replied to your comment: ${parentComment.content}`,
+      //   url: ``,
+      // };
+
+      // await sendEmailNotification(options);
     }
 
     post.comments_count += 1;
@@ -66,21 +69,29 @@ const createComment = asyncHandler(async (req, res, next) => {
     await user.save();
 
     // if other users are commenting on the post notify the post owner
-    if (post.user_id.toString() !== user._id.toString()) {
-      const options = {
-        userId: postOwner._id,
-        fullName: postOwner.full_name,
-        userEmail: postOwner.email,
-        subject: "New Comment on Your Post",
-        text: `${user.user_name} commented on your post: ${post.title}`,
-        url: ``,
-      };
+    if (postAuthor._id.toString() !== user._id.toString()) {
+      // const options = {
+      //   userId: postOwner._id,
+      //   fullName: postOwner.full_name,
+      //   userEmail: postOwner.email,
+      //   subject: "New Comment on Your Post",
+      //   text: `${user.user_name} commented on your post: ${post.title}`,
+      //   url: ``,
+      // };
 
-      await sendEmailNotification(options);
+      // await sendEmailNotification(options);
+
+      req.io.emit('newComment', {
+        comment: comment,
+        post: post,
+      });
     }
+
+    await comment.save();
 
     res.status(201).json({
       status: "success",
+      message: "Comment created",
       comment: comment,
     });
   } catch (e) {
@@ -120,37 +131,58 @@ const deleteComment = asyncHandler(async (req, res, next) => {
       return next(new NotFound("Comment not found"));
     }
 
-    const isPostAuthor = post.user_id.toString() === user._id.toString();
+    const isAdmin = user.role === "admin";
+    const isModerator = user.role === "moderator";
     const isCommentAuthor = comment.user_id.toString() === user._id.toString();
-    const isCommentByAdmin =
-      (await User.findById(comment.user_id)).role === "admin";
+    const isPostAuthor = post.user_id.toString() === user._id.toString();
 
     if (
+      isAdmin ||
+      isModerator ||
       isCommentAuthor ||
-      (isPostAuthor && !isCommentByAdmin) ||
-      user.role === "admin"
+      isPostAuthor
     ) {
-      comment.is_deleted = true;
-      comment.content = "This comment has been deleted by the user";
-      comment.likes_count = null;
+      if (comment.reply_to) {
+        const parentComment = await Comment.findById(comment.reply_to);
+        parentComment.replies = parentComment.replies.filter((reply) => {
+          return reply.toString() !== comment._id.toString();
+        });
+        parentComment.replies_count -= 1;
+        if (parentComment.replies_count <= 0) {
+          parentComment.replies_count = 0;
+        }
+        await parentComment.save();
 
-      // remove comment from post comments
-      // post.comments = post.comments.filter((comment) => {
-      //   return comment.toString() !== id;
-      // });
+        comment.reply_to = null;
+      }
 
       post.comments_count -= 1;
-
+      if (post.comments_count <= 0) {
+        post.comments_count = 0;
+      }
       // remove comment from user comments
       user.comments = user.comments.filter((comment) => {
         return comment.toString() !== id;
       });
 
-      user.comments_count -= 1;
+      user.comments_count -= 1; 
+      if (user.comments_count <= 0) {
+        user.comments_count = 0;
+      }
 
       await post.save();
       await user.save();
-      await comment.save();
+      await Comment.deleteOne({ _id: id });
+
+      // if it is an admin or moderator deleting the comment, notify the user
+      if (isAdmin || isModerator) {
+        req.io.emit('commentDeleted', {
+          comment: comment,
+          post: post,
+          message: `Your comment on ${post.title} has been deleted by ${isAdmin ? 'an admin' : 'a moderator'}`,
+        });
+      }
+
 
       res.status(200).json({
         status: "success",
@@ -170,23 +202,37 @@ const updateComment = asyncHandler(async (req, res, next) => {
     const { content } = req.body;
     const user = req.user;
 
+    const isAdmin = user.role === "admin";
+    const isModerator = user.role === "moderator";
+    const isCommentAuthor = comment.user_id.toString() === user._id.toString();
+
     const comment = await Comment.findById(id);
 
     if (!comment) {
       return next(new NotFound("Comment not found"));
     }
 
-    if (comment.user_id.toString() !== user._id.toString()) {
+    // only the comment author, admin or moderator can update the comment
+    if (!isAdmin && !isModerator && !isCommentAuthor) {
       return next(new Unauthorized("Not authorized to update this comment"));
     }
 
-    comment.content = content;
+    comment.content = content || comment.content;
 
     await comment.save();
+
+    if (isAdmin || isModerator) {
+      const post = await Post.findById(comment.post_id);
+      req.io.emit('commentUpdated', {
+        comment: comment,
+        message: `Your comment on ${post.title} has been updated by ${isAdmin ? 'an admin' : 'a moderator'}`,
+      });
+    }
 
     res.status(200).json({
       status: "success",
       message: "Comment updated",
+      data: comment,
     });
   } catch (e) {
     next(new InternalServerError(e.message));
@@ -211,7 +257,7 @@ const getAllComments = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getUserComments = asyncHandler(async (req, res, next) => {
+const getCurrentUserComments = asyncHandler(async (req, res, next) => {
   try {
     const user = req.user;
     const { page, limit, order } = req.query;
@@ -234,11 +280,35 @@ const getUserComments = asyncHandler(async (req, res, next) => {
   }
 });
 
+const getUserComments = asyncHandler(async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const { page, limit, order } = req.query;
+
+    const startIndex = (parseInt(page) - 1) * parseInt(limit);
+    const sortDirection = order === "asc" ? 1 : -1;
+    const comments = await Comment.find({ user_id: id })
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(parseInt(limit));
+
+
+    res.status(200).json({
+      status: "success",
+      message: "User comments retrieved",
+      data: comments,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+});
+
 export {
   createComment,
   getPostComments,
   deleteComment,
   updateComment,
   getAllComments,
+  getCurrentUserComments,
   getUserComments,
 };

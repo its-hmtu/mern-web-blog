@@ -1,14 +1,22 @@
 import express from "express";
-import { adminAuth } from "../middlewares/auth.middleware.js";
-import { createCategory, deleteCategory, getCategories, updateCategory } from "../controllers/category.controller.js";
+import { verifyRole, verifyToken } from "../middlewares/auth.middleware.js";
+import {
+  createCategory,
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "../controllers/category.controller.js";
 
 const router = express.Router();
 
 router.get("/", getCategories);
 
-router.post("/create", adminAuth, createCategory);
+router.post("/create", verifyToken, verifyRole(["admin"]), createCategory);
 
-router.route("/:id").delete(adminAuth, deleteCategory).put(adminAuth, updateCategory);
+router
+  .route("/:id")
+  .delete(verifyToken, verifyRole(["admin"]), deleteCategory)
+  .put(verifyToken, verifyRole(["admin", "editor"]), updateCategory);
 
 export default router;
 

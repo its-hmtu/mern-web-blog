@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost } from "api/post";
+import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost, getUserPosts } from "api/post";
 import { userQueryKey } from "./user";
 
 export const postQueryKey = "posts"
 export const categoryQueryKey = "categories"
 export const postCommentsQueryKey = "post-comments"
+export const userCommentsQueryKey = "user-comments"
+export const userPostsQueryKey = "user-posts"
 
 // Post comments
 export const getPostCommentsQuery = (postId) => ({
@@ -59,3 +61,13 @@ export const useAddReadingList = (success = () => {}, error = () => {}) => {
     }
   })
 }
+
+export const getUserPostsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
+  queryKey: [userPostsQueryKey, { id, page, limit, order }],
+  queryFn: getUserPosts,
+})
+
+export const getUserCommentsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
+  queryKey: [userCommentsQueryKey, { id, page, limit, order }],
+  queryFn: getUserPosts,
+})

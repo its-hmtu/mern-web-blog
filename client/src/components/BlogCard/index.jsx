@@ -67,14 +67,14 @@ const BlogCard = ({ data, hide = false }) => {
 
       <Card.Body className="blog-card__body">
         <Link to={"/"} className="">
-          <Row className="gap-0 px-3 mb-3">
+          <div className="gap-0 px-3 mb-2 d-flex gap-2">
             <img src={data.profile_image_url} className="blog-card__user-img" />
 
             <div className="blog-card__info d-flex flex-column justify-content-center">
-              <p className="blog-card__user-name">{data.author}</p>
+              <p className="blog-card__user-name m-0">{data.author}</p>
               <p className="blog-card__date">{timeAgo}</p>
             </div>
-          </Row>
+          </div>
         </Link>
         <Card.Title className="blog-card__title">
           <Link
@@ -83,7 +83,9 @@ const BlogCard = ({ data, hide = false }) => {
           >{data.title}</Link>
         </Card.Title>
         <Card.Text className="blog-card__text">
-          <Row className="gap-0 px-2">
+          <Row className="gap-0 px-2" style={{
+            maxWidth: "fit-content"
+          }}>
             <Link className="blog-card__text-tag">
               <span>#{data.category_name}</span>
             </Link>

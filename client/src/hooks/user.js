@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "react-query";
-import { registerUser, loginUser, getUser, getCurrentUser, logoutUser, getCurrentUserComments } from "api/user";
+import { registerUser, loginUser, getUser, getCurrentUser, logoutUser, getCurrentUserComments, getAllUsers } from "api/user";
 
 export const userQueryKey = "user-info";
 // export const currentUserQueryKey = "me";
 export const userCommentsKey = "user-comments";
+export const allUsersKey = "all-users";
 
 export const useRegisterUser = (succes = () => {}, error = () => {}) => {
   const queryClient = useQueryClient();
@@ -48,6 +49,7 @@ export const useLogoutUser = (succes = () => {}, error = () => {}) => {
     onSuccess: (data) => {
       // localStorage.removeItem("user");
       localStorage.removeItem("access_token");
+      queryClient.removeQueries(userQueryKey);
       succes(data)
     },
     onError: (err) => {
@@ -69,4 +71,9 @@ export const getCurrentUserQuery = () => ({
 export const getCurrentUserCommentsQuery = (page = 1, limit = 5, order = 'desc') => ({
   queryKey: [userCommentsKey, { page, limit, order }],
   queryFn: getCurrentUserComments,
+})
+
+export const getAllUsersQuery = (page = 1, limit = 5, order = 'desc') => ({
+  queryKey: ["all-users", { page, limit, order }],
+  queryFn: getAllUsers,
 })

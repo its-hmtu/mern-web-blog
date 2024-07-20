@@ -8,21 +8,22 @@ import {
   deleteUser,
   changeAvatar,
   followUser,
-  blockUser
+  blockUser,
+  getAllUsers,
 } from "../controllers/user.controller.js";
-import { userAuth, userAuthWithPassword } from "../middlewares/auth.middleware.js";
+import { verifyToken, verifyRole } from "../middlewares/auth.middleware.js";
 import { upload } from "../config/firebase.js";
 
 const router = express.Router();
 
 // get current user profile
-router.get("/me", userAuth, getCurrentUser);
+router.get("/me", verifyToken, getCurrentUser);
 
 // update current user profile
-router.put("/me/update", userAuth, updateCurrentUser);
+router.put("/me/update", verifyToken, updateCurrentUser);
 
 // change password for current user
-router.put("/change-password", userAuthWithPassword, changePasswordCurrentUser)
+router.put("/change-password", verifyToken, changePasswordCurrentUser)
 
 // get a single user profile by id
 router.get("/profile/:id", getUser)
@@ -31,15 +32,17 @@ router.get("/profile/:id", getUser)
 router.get("/refresh-token", refreshToken)
 
 // change current user avatar
-router.put("/me/change-avatar", userAuth, upload.single("avatar"),  changeAvatar)
+router.put("/me/change-avatar", verifyToken, upload.single("avatar"),  changeAvatar)
 
 // follow a user
-router.put("/follow/:id", userAuth, followUser)
+router.put("/follow/:id", verifyToken, followUser)
 
 // delete current user account
-router.delete("/:id", userAuth, deleteUser)
+router.delete("/:id", verifyToken, deleteUser)
 
 // block a user 
-router.put("/block/:id", userAuth, blockUser)
+router.put("/block/:id", verifyToken, blockUser)
+
+router.get("/all", getAllUsers);
 
 export default router;

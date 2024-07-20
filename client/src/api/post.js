@@ -3,43 +3,44 @@ import axios from "axios";
 import { axiosInstance } from "./user";
 
 // Comments
-export const getPostComments = async ({queryKey}) => {
+export const getPostComments = async ({ queryKey }) => {
   try {
     const [, { postId }] = queryKey;
-    const { data } = await axios.get(`${ENDPOINTS.getPostComments}?post=${postId}`);
+    const { data } = await axios.get(
+      `${ENDPOINTS.getPostComments}?post=${postId}`
+    );
 
     // if (data.success !== true) {
     //   console.log(data.message);
     //   throw new Error(data.message);
     // }
 
-    return data.comments
-    
+    return data.comments;
   } catch (e) {
-    const {message} = e.response.data;
+    const { message } = e.response.data;
     console.log(message);
     return message;
   }
-}
+};
 
 // Categories
 
 export const getCategories = async () => {
   try {
-    const {data} = await axios.get(ENDPOINTS.getCategories);
+    const { data } = await axios.get(ENDPOINTS.getCategories);
     if (data.success !== true) {
       console.log(data.message);
       throw new Error(data.message);
     }
 
-    console.log(data.data)
+    console.log(data.data);
     return data.data;
   } catch (e) {
     const { message } = e.response.data;
     console.log(message);
     return message;
   }
-}
+};
 
 // Posts
 
@@ -64,11 +65,11 @@ export const getPosts = async ({ queryKey }) => {
   }
 };
 
-export const getSinglePost = async ({queryKey}) => {
+export const getSinglePost = async ({ queryKey }) => {
   try {
     const [, { slug }] = queryKey;
     const { data } = await axios.get(`${ENDPOINTS.getSinglePost}/${slug}`);
-    if (data.status !== 'success') {
+    if (data.status !== "success") {
       console.log(data.message);
       return data.message;
     }
@@ -79,7 +80,7 @@ export const getSinglePost = async ({queryKey}) => {
     console.log(message);
     return message;
   }
-}
+};
 
 export const createPost = async (formData) => {
   try {
@@ -95,11 +96,13 @@ export const createPost = async (formData) => {
     console.log(message);
     return message;
   }
-}
+};
 
 export const addToReadingList = async ({ postId, add }) => {
   try {
-    const { data } = await axiosInstance.put(`${ENDPOINTS.addToReadingList}/${postId}?add=${add}`);
+    const { data } = await axiosInstance.put(
+      `${ENDPOINTS.addToReadingList}/${postId}?add=${add}`
+    );
 
     if (data.status !== "success") {
       console.log(data.message);
@@ -112,4 +115,43 @@ export const addToReadingList = async ({ postId, add }) => {
     console.log(message);
     return message;
   }
+};
+
+export const getUserPosts = async ({ queryKey }) => {
+  try {
+    const [, { id, page, limit, order }] = queryKey;
+    const { data } = await axiosInstance.get(
+      `${ENDPOINTS.getUserPosts}/${id}?page=${page}&limit=${limit}&order=${order}`
+    );
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+};
+
+export const getUserComments = async ({ queryKey }) => {
+  try {
+    const [, { id, page, limit, order }] = queryKey;
+    const { data } = await axiosInstance.get(
+      `${ENDPOINTS.getUserComments}/${id}?page=${page}&limit=${limit}&order=${order}`
+    );
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
 }
+

@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import bcryptjs from "bcryptjs";
 import slugify from "slugify";
-import e from "express";
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,7 +32,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "editor", "moderator", "admin"],
       default: "user",
     },
     is_email_verified: {
@@ -73,14 +72,18 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+    following_categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     following: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       }
     ],
-
     followers_count: {
       type: Number,
       default: 0,
@@ -97,15 +100,24 @@ const userSchema = new mongoose.Schema(
         ref: "Post",
       },
     ],
-    // user_preference: {
-
-    // }
     blocked_users: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
+    is_comment_blocked: {
+      type: Boolean,
+      default: false,
+    },
+    is_banned: {
+      type: Boolean,
+      default: false,
+    },
+    is_create_post_blocked: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,
@@ -120,7 +132,6 @@ userSchema.pre("save", async function (next) {
   const salt = await bcryptjs.genSalt(10);
   this.password = await bcryptjs.hash(this.password, salt);
   this.slug = slugify(this.user_name, { lower: true, strict: true});
-  this.delete_account_str = `delete/${this.user_name}`;
 });
 
 userSchema.methods.matchPassword = async function (plain) {
