@@ -97,8 +97,8 @@ const Header = ({ admin = false }) => {
                         <>
                           <Dropdown.Item>
                             <Link to="/profile">
-                              <p className="fw-semibold">{user?.full_name}</p>
-                              <p className="user-name">@{user?.user_name}</p>
+                              <p className="fw-semibold m-0">{user?.full_name}</p>
+                              <p className="user-name m-0">@{user?.user_name}</p>
                             </Link>
                           </Dropdown.Item>
                           <hr />
@@ -118,6 +118,9 @@ const Header = ({ admin = false }) => {
                         </>
                       )}
 
+                      {admin && <Dropdown.Item onClick={handleLogout}>
+                        <Link to={"/"}>Go to blog page</Link>
+                      </Dropdown.Item>}
                       <Dropdown.Item onClick={handleLogout}>
                         <Link to={!admin ? "/" : "/admin/login"}>Sign out</Link>
                       </Dropdown.Item>
