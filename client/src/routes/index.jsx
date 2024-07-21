@@ -14,7 +14,7 @@ import SettingsPage from '../pages/SettingsPage';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import NotFoundPage from '../pages/NotFoundPage';
 import PostView from '../components/PostView';
-import CategoriesPage from '../components/CategoriesPage';
+import Categories from '../pages/Categories/Categories';
 import About from '../components/About';
 import AdminPage from 'pages/AdminPage';
 import AdminLogin from 'pages/AdminPage/pages/AdminLogin';
@@ -28,6 +28,9 @@ import EmailVerified from 'pages/EmailVerified';
 import Contact from 'pages/Contact';
 import PrivacyPolicy from 'pages/PrivacyPolicy';
 import CodeOfConduct from 'pages/CodeOfConduct';
+
+// import Footer from '/components/Footer';
+
 // import RightSideBar from '../components/RightSideBar';
 
 const RouteList = () => {
@@ -42,11 +45,12 @@ const RouteList = () => {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="terms-of-use" element={<TermsAndConditions />} />
         <Route path="post/:path" element={<PostView />} />
-        <Route path="categories" element={<CategoriesPage />} />
+        <Route path="categories" element={<Categories />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="code-of-conduct" element={<CodeOfConduct />} />
+        <Route path="categories" element={<Categories />} />
       </Route>
       <Route path="signin" element={<SignInPage />} />
       <Route path="register" element={<RegisterPage />} />
@@ -66,6 +70,7 @@ const RouteList = () => {
           <Route path="admin-users/:id/edit" element={<UserEdit />} />
         </Route>
       </Route>
+
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

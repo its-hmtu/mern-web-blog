@@ -1,7 +1,7 @@
-import { getCategories } from "api/post"
-import { getAllUsers } from "api/user"
+import { getCategories } from 'api/post';
+import { getAllUsers } from 'api/user';
 
-const BASE = 'http://localhost:5000/v1'
+const BASE = 'http://localhost:5000/v1';
 
 export const ENDPOINTS = {
   register: `${BASE}/auth/register`,
@@ -30,9 +30,8 @@ export const ENDPOINTS = {
   addToReadingList: `${BASE}/posts/reading-list`,
   getPostComments: `${BASE}/comments`,
 
-
   getCategories: `${BASE}/categories`,
 
   deleteUserAdmin: `${BASE}/admin/delete-user`,
   deletePostAdmin: `${BASE}/admin/delete-post`,
-}
+};
