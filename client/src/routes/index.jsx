@@ -28,6 +28,8 @@ import EmailVerified from 'pages/EmailVerified';
 import Contact from 'pages/Contact';
 import PrivacyPolicy from 'pages/PrivacyPolicy';
 import CodeOfConduct from 'pages/CodeOfConduct';
+import PostItem from 'components/PostItem';
+import PostsPage from 'pages/PostsPage';
 
 // import Footer from '/components/Footer';
 
@@ -51,6 +53,7 @@ const RouteList = () => {
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="code-of-conduct" element={<CodeOfConduct />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="posts" element={<PostsPage />} />
       </Route>
       <Route path="signin" element={<SignInPage />} />
       <Route path="register" element={<RegisterPage />} />

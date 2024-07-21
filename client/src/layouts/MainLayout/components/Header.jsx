@@ -32,6 +32,13 @@ const Header = ({ admin = false }) => {
     mutate();
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <header className="main-layout__header">
       <Navbar>
@@ -51,7 +58,12 @@ const Header = ({ admin = false }) => {
               to="/"
               className="d-flex text-decoration-none align-items-center gap-3"
             >
-              <img className="main-layout__header-logo" src={logo} alt="DEV" />
+              <img
+                className="main-layout__header-logo"
+                src={logo}
+                alt="DEV"
+                onClick={scrollToTop}
+              />
             </Link>
           )}
         </Navbar.Brand>

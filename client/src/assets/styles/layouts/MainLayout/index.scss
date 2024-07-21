@@ -1,3 +1,15 @@
+/* src/layouts/MainLayout/index.scss */
+
+/* Thay đổi màu sắc và kích thước trong SCSS */
+$header-height: 60px;
+$header-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$white: #ffffff;
+$black: #000000;
+$black-text: #333333;
+$blue: #007bff;
+$blue-hover-light: #0056b3;
+$site-width: 1200px;
+
 .main-layout {
   &__container {
     padding-bottom: 50px;
