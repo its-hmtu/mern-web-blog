@@ -76,6 +76,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    total_views:{
+      type: Number,
+      default: 0,
+    },
     following_categories: [
       {
         type: mongoose.Schema.Types.ObjectId,

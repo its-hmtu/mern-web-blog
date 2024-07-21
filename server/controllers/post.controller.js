@@ -79,8 +79,10 @@ const deletePost = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = req.user;
+
     if (user.posts.includes(id) || user.role !== "user") {
       const post = await Post.findById(id);
+      const author = await User.findById(post.user_id);
       if (!post) {
         next(new NotFound(`Post with id ${id} not found`));
         return;
@@ -97,6 +99,9 @@ const deletePost = asyncHandler(async (req, res, next) => {
         user.posts_count = 0;
       }
       user.posts = user.posts.filter((p) => p.toString() !== id);
+
+      user.total_views -= post.views_count;
+      user.total_likes -= post.likes_count;
       await user.save();
 
       // count comments that user has made on post and remove comments from user comments list
@@ -161,42 +166,34 @@ const updatePost = asyncHandler(async (req, res, next) => {
   // only author can update post
   try {
     const { id } = req.params;
-
+    const { title, content, category_name, main_image } = req.body;
     const user = req.user;
+    const post = await Post.findById(id);
+    const category = await Category.findOne({ name: category_name });
+    console.log(req.body);
 
-    if (user.posts.includes(id)) {
-      const { title, content, category_name, main_image } = req.body;
-
-      const post = await Post.findById(id);
-      const category = await Category.findOne({ name: category_name });
-
-      if (!post) {
-        next(new NotFound(`Post with id ${id} not found`));
-        return;
-      }
-
-
-      post.title = title || post.title;
-      post.content = content || post.content;
-      post.category_id = category._id || post.category_id;
-      post.category_name = category_name || post.category_name;
-      post.main_image = main_image || post.main_image;
-
-      const read_time = calculateReadTime(post.content);
-
-      post.read_time = read_time;
-
-      await post.save();
-
-      res.status(200).json({
-        status: "success",
-        message: "Post updated",
-        data: post,
-      });
-    } else {
-      next(new Forbidden("Not authorized to update post"));
+    if (!post) {
+      next(new NotFound(`Post with id ${id} not found`));
       return;
     }
+
+    post.title = title;
+    post.content = content;
+    post.category_id = category._id;
+    post.category_name = category_name;
+
+    await deleteFileByUrl(post.main_image);
+    post.main_image = main_image;
+
+    post.read_time = calculateReadTime(content);
+
+    await post.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Post updated",
+      data: post,
+    });
   } catch (e) {
     next(new InternalServerError(e.message));
   }
@@ -349,7 +346,7 @@ const likePost = asyncHandler(async (req, res, next) => {
       user.liked_post.push(post._id);
       await user.save();
 
-      await sendNotification( author._id, `${user.full_name} liked your post`);
+      await sendNotification(author._id, `${user.full_name} liked your post`);
 
       author.total_likes += 1;
       await author.save();
@@ -459,7 +456,7 @@ const getReadingList = asyncHandler(async (req, res, next) => {
       res.status(200).json({
         status: "success",
         data: posts,
-      })
+      });
     }
   } catch (e) {
     next(new InternalServerError(e.message));
@@ -549,9 +546,10 @@ const getUserPosts = asyncHandler(async (req, res, next) => {
 
 const updateViewsCount = asyncHandler(async (req, res, next) => {
   try {
-    const {id} = req.body;
+    const { id } = req.body;
 
     const post = await Post.findById(id);
+    const author = await User.findById(post.user_id);
 
     if (!post) {
       next(new NotFound(`Post with id ${id} not found`));
@@ -561,6 +559,9 @@ const updateViewsCount = asyncHandler(async (req, res, next) => {
     post.views_count += 1;
     await post.save();
 
+    author.total_views += 1;
+    await author.save();
+
     res.status(200).json({
       status: "success",
       message: "Views count updated",
@@ -569,7 +570,7 @@ const updateViewsCount = asyncHandler(async (req, res, next) => {
   } catch (e) {
     next(new InternalServerError(e.message));
   }
-})
+});
 
 export {
   createPost,
@@ -582,5 +583,5 @@ export {
   getReadingList,
   disableComment,
   getUserPosts,
-  updateViewsCount
+  updateViewsCount,
 };

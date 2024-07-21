@@ -27,6 +27,7 @@ import UserEdit from "pages/AdminPage/pages/components/UserEdit";
 import UserCreate from "pages/AdminPage/pages/components/UserCreate";
 import EmailVerified from "pages/EmailVerified";
 import SearchResults from "pages/SearchResults";
+import EditPostPage from "pages/EditPostPage";
 
 const RouteList = () => {
   return (
@@ -49,6 +50,7 @@ const RouteList = () => {
       <Route path="email-confirmation" element={<CheckEmailPage />} />
       <Route path="email-verified" element={<EmailVerified />}/>
       <Route path="create-post" element={<CreatePage />} />
+      <Route path="edit-post/:path" element={<EditPostPage />} />
       <Route path="admin">
         <Route index element={<AdminPage></AdminPage>} />
         <Route path="login" element={<AdminLogin></AdminLogin>} />

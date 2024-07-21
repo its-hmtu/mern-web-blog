@@ -15,8 +15,8 @@ import { sendNotification } from "./notification.controller.js";
 
 const createComment = asyncHandler(async (req, res, next) => {
   try {
-    const { content } = req.body;
-    const { post_id, reply_to } = req.query;
+    const { content, post_id } = req.body;
+    const { reply_to } = req.query;
     const user = req.user;
     const post = await Post.findById(post_id);
     const postAuthor = await User.findById(post.user_id);

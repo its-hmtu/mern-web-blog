@@ -29,7 +29,7 @@ router.post(
 // route delete post should accept both user and admin roles to delete a post by id
 router.delete("/:id", verifyToken, verifyRole(["user", "admin", "editor", "moderator"]), deletePost);
 
-router.put("/update/:id", verifyToken, verifyRole(["user", "admin", "editor", "moderator"]), updatePost);
+router.post("/update/:id", verifyToken, updatePost);
 
 router.get("/", getPosts);
 

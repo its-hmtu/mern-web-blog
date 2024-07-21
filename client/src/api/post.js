@@ -188,3 +188,70 @@ export const updateViewsCount = async (id) => {
     return message;
   }
 }
+
+export const deletePost = async (id) => {
+  try {
+    const { data } = await axiosInstance.delete(`${ENDPOINTS.deletePost}/${id}`);
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+
+export const updatePost = async ({id, postData}) => {
+  try {
+    const { data } = await axiosInstance.post(
+      `${ENDPOINTS.updatePost}/${id}`,
+      postData
+    );
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+
+export const likePost = async ({id, like}) => {
+  try {
+    const { data } = await axiosInstance.put(`${ENDPOINTS.likePost}/${id}?like=${like}`);
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+
+export const createComment = async (formData) => {
+  try {
+    const { data } = await axiosInstance.post(`${ENDPOINTS.createComment}`, formData);
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.comment;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}

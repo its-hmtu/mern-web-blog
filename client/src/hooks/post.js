@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getReadingList, getSinglePost, getUserComments, getUserPosts, updateViewsCount } from "api/post";
+import { addToReadingList, createComment, createPost, deletePost, getCategories, getPostComments, getPosts, getReadingList, getSinglePost, getUserComments, getUserPosts, likePost, updatePost, updateViewsCount } from "api/post";
 import { userQueryKey } from "./user";
 
 export const postsQueryKey = "posts"
@@ -60,6 +60,7 @@ export const useAddReadingList = (success = () => {}, error = () => {}) => {
     onSuccess: (data) => {
       queryClient.invalidateQueries(postsQueryKey);
       queryClient.invalidateQueries(userQueryKey);
+      queryClient.invalidateQueries(postQueryKey);
       success(data);
     },
     onError: (error) => {
@@ -97,6 +98,70 @@ export const useUpdateViewsCount = (success = () => {}, error = () => {}) => {
     },
     onError: (error) => {
       console.log(error.response.data.message);
+    }
+  })
+}
+
+export const useDeletePost = (success = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(deletePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(postsQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
+      success();
+    },
+    onError: (error) => {
+      error(error.response.data.message);
+    }
+  })
+}
+
+export const useUpdatePost = (success = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(updatePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(postsQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
+      success();
+    },
+    onError: (error) => {
+      error(error.response.data.message);
+    }
+  })
+}
+
+export const useLikePost = (success = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(likePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(postsQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
+      queryClient.invalidateQueries(postQueryKey);
+      success();
+    },
+    onError: (error) => {
+      error(error.response.data.message);
+    }
+  })
+}
+
+export const useCreateComment = (success = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(createComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(postCommentsQueryKey);
+      queryClient.invalidateQueries(userCommentsQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
+      queryClient.invalidateQueries(postsQueryKey);
+      queryClient.invalidateQueries(postQueryKey);
+      success();
+    },
+    onError: (error) => {
+      error(error.response.data.message);
     }
   })
 }

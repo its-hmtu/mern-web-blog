@@ -3,7 +3,7 @@
     padding: 0!important;
   }
   &__container {
-    max-width: calc($site-width - 200px);
+    max-width: calc($site-width - 100px);
     padding-top: calc($header-height + 24px);
     .action-buttons {
       left: 19%; // Adjust based on your layout
@@ -13,18 +13,22 @@
       flex-direction: column;
       gap: 10px;
       
-      button {
-        padding: 8px;
-        width: 48px;
-        height: 48px;
-        border-radius: 9999px;
-        font-size: 14px;
+      div {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 16px;
         font-weight: 700;
         cursor: pointer;
         transition: background-color 0.3s;
 
         &:hover {
-          background-color: $primary
+          background-color: $blue-hover-light
+        }
+
+        svg {
+          &:hover {
+            color: $blue-hover;
+          }
         }
       }
     }
@@ -82,4 +86,25 @@
   }
 
 
+}
+
+.related-post__card {
+  
+  padding: 12px;
+  
+  li {
+    display: flex;
+    gap: 16px;
+    img {
+      object-fit: cover;
+      border-radius: 9999px;
+    }
+
+    
+
+    div {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 }

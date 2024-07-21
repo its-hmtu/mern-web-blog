@@ -10,40 +10,41 @@ import {
   Form,
   Spinner,
   Card,
+  Modal,
 } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "react-query";
-import { getCategoriesQuery, useCreatePost } from "hooks/post";
+import { getCategoriesQuery, getSinglePostQuery, useCreatePost, useUpdatePost } from "hooks/post";
 import { uploadFile } from "api/upload";
 import { AuthContext } from "contexts/AuthContext";
 
-const CreatePage = () => {
+const EditPostPage = () => {
   const navigate = useNavigate();
+  const { path } = useParams();
   const { user } = useContext(AuthContext);
   const [title, setTitle] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [content, setContent] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef(null);
   const formData = new FormData();
+  const {data, isLoading: isPostLoading} = useQuery(getSinglePostQuery(path))
   const { data: categories, isLoading: isCategoriesLoading } = useQuery(
     getCategoriesQuery()
   );
-  const {
-    mutate,
-    data: postData,
-    isLoading: isCreatingPost,
-  } = useCreatePost((data) => {
-    console.log(data);
-    navigate("/dashboard", { replace: true });
-  });
-
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [mainImage, setMainImage] = useState(null);
-  const [postInfo, setPostInfo] = useState(null);
+  const {mutate: updatePost, isLoading: isUpdating} = useUpdatePost(
+    (data) => {
+      console.log(data);
+      // navigate("/dashboard", { replace: true });
+    } 
+  )
+  
   const handleImageChange = async (e) => {
     console.log(e.target.files);
     if (e.target.files.length) {
@@ -55,8 +56,11 @@ const CreatePage = () => {
   };
 
   useEffect(() => {
-    console.log(selectedImage);
-  })
+    setTitle(data?.title);
+    setCategoryName(data?.category_name);
+    setContent(data?.content);
+    setMainImage(data?.main_image);
+  }, [data]);
 
   const removeSelectedImage = () => {
     setSelectedImage(null);
@@ -101,7 +105,7 @@ const CreatePage = () => {
   };
 
   const handleCloseEditor = () => {
-    navigate("/", { replace: true });
+    navigate("/dashboard", { replace: true });
   };
 
   // calculate the height of the title textarea
@@ -111,19 +115,24 @@ const CreatePage = () => {
     titleTextArea.style.height = titleTextArea.scrollHeight + "px";
   }, [title]);
 
-  const handleSubmit = async () => {    
-    mutate({
+  const handleSubmit = async () => { 
+    const post =  {
       title,
       category_name: categoryName,
       content,
       main_image: mainImage,
-    });
+    }   
+    updatePost({id: data?._id, postData: post});
+
+    if (!isUpdating) {
+      setShowModal(true);
+    }
   };
 
   return (
     <Container fluid className="create-page__container pb-3">
       <header className="d-flex justify-content-between">
-        <h4>Create post</h4>
+        <h4>Edit post</h4>
         <Button className="" onClick={handleCloseEditor}>
           <FontAwesomeIcon icon={faXmark} />
         </Button>
@@ -148,7 +157,7 @@ const CreatePage = () => {
                     <div>
                       <div className="d-flex align-items-center gap-2 mt-2">
                         <img
-                          src={URL.createObjectURL(selectedImage)}
+                          src={URL.createObjectURL(selectedImage) || mainImage}
                           alt=""
                           className="create-page__main-image"
                           style={{
@@ -218,10 +227,10 @@ const CreatePage = () => {
               className="create-page__publish-btn fw-semibold mt-3"
               onClick={handleSubmit}
             >
-              {isCreatingPost ? (
+              {isUpdating ? (
                 <Spinner animation="border" role="status" />
               ) : (
-                "Publish"
+                "Update"
               )}
             </Button>
           </Tab>
@@ -295,8 +304,34 @@ const CreatePage = () => {
           </Tab>
         </Tabs>
       </Row>
+      <Modal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+        }}
+        className="mt-5"
+        centered
+      >
+        <Modal.Header>
+          <Modal.Title>Post Updated</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Your post has been successfully updated.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowModal(false);
+              navigate("/dashboard", { replace: true });
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
 
-export default CreatePage;
+export default EditPostPage;

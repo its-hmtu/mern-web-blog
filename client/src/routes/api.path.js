@@ -26,6 +26,11 @@ export const ENDPOINTS = {
   addToReadingList: `${BASE}/posts/reading-list`,
   getPostComments: `${BASE}/comments`,
   updateViewsCount: `${BASE}/posts/views-count`,
+  deletePost: `${BASE}/posts`,
+  updatePost: `${BASE}/posts/update`,
+  likePost: `${BASE}/posts`,
+
+  createComment: `${BASE}/comments/create`,
   
   getCategories: `${BASE}/categories`,
   getAllUsers: `${BASE}/admin/all`,
