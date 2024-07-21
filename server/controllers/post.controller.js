@@ -535,9 +535,14 @@ const getUserPosts = asyncHandler(async (req, res, next) => {
       .skip(startIndex)
       .limit(parseInt(limit));
 
+    const totalPosts = await Post.countDocuments({ user_id: id });
+
     res.status(200).json({
       status: "success",
-      data: posts,
+      data: {
+        posts,
+        totalPosts,
+      },
     });
   } catch (e) {
     next(new InternalServerError(e.message));

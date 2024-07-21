@@ -70,9 +70,9 @@ export const emailConfirmation = asyncHandler(async (req, res, next) => {
         user.is_email_verified = true;
         await user.save();
 
-        res.redirect("http://127.0.0.1:5173/signin");
+        res.redirect("http://localhost:5173/email-verified");
       } else {
-        res.redirect("http://127.0.0.1:5173/register");
+        res.redirect("http://localhost:5173/register");
       }
     } else {
       next(new BadRequest("Invalid token"));
@@ -351,7 +351,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
       });
     } catch (e) {
       if (e.name === "TokenExpiredError") {
-        res.redirect("http://127.0.0.1:5173/register");
+        res.redirect("http://localhost:5173/register");
       } else {
         next(new InternalServerError("Server error"));
       }

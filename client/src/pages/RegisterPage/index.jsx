@@ -11,7 +11,7 @@ import {
   Modal,
   Spinner,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
@@ -21,6 +21,7 @@ import { useRegisterUser } from "hooks/user";
 import { GoogleLogin } from "@react-oauth/google";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userInfo, setUserInfo] = useState({});
@@ -30,6 +31,7 @@ const RegisterPage = () => {
   const { mutate, data, isLoading, error } = useRegisterUser(
     (data) => {
       console.log(data);
+      navigate("/email-confirmation")
     },
     (error) => {
       errorRef.current = error;

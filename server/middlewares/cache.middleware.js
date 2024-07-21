@@ -4,7 +4,7 @@ const cache = new NodeCache()
 
 export const cacheMiddleware = (req, res, next) => {
   const key = req.originalUrl || req.url;
-  if (req.method !== 'GET' || key.startsWith('/auth')) {
+  if (req.method !== 'GET' || key.startsWith('/auth') || key === "/v1/users/refresh-token" || key.startsWith('/admin') || key === "/v1/users/me") {
     return next();
   }
   const cacheResponse = cache.get(key);

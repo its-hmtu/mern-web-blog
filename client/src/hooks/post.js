@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost, getUserPosts } from "api/post";
+import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost, getUserComments, getUserPosts } from "api/post";
 import { userQueryKey } from "./user";
 
 export const postQueryKey = "posts"
@@ -69,5 +69,5 @@ export const getUserPostsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
 
 export const getUserCommentsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
   queryKey: [userCommentsQueryKey, { id, page, limit, order }],
-  queryFn: getUserPosts,
+  queryFn: getUserComments,
 })

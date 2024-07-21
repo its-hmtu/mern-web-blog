@@ -225,7 +225,7 @@ app.use(`${BASE_URL}/users`, userRoutes);
 app.use(`${BASE_URL}/posts`, postRoutes);
 app.use(`${BASE_URL}/comments`, commentRoutes);
 app.use(`${BASE_URL}/categories`, categoryRoutes);
-// app.use(`${BASE_URL}/admin`, adminRoutes)
+app.use(`${BASE_URL}/admin`, adminRoutes)
 app.use(`${BASE_URL}/upload`, uploadRoutes);
 
 if (process.env.NODE_ENV === "development" || !__dirname) {

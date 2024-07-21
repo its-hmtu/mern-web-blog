@@ -21,7 +21,10 @@ import AdminLogin from "pages/AdminPage/pages/AdminLogin";
 import AdminDashBoard from "pages/AdminPage/pages/AdminDashboard";
 import AdminLayout from "layouts/AdminLayout";
 import AdminUsers from "pages/AdminPage/pages/AdminUsers";
+import AdminUsersTeam from "pages/AdminPage/pages/AdminUsersTeam";
 import UserShow from "pages/AdminPage/pages/components/UserShow";
+import UserEdit from "pages/AdminPage/pages/components/UserEdit";
+import EmailVerified from "pages/EmailVerified";
 
 const RouteList = () => {
   return (
@@ -41,6 +44,7 @@ const RouteList = () => {
       <Route path="signin" element={<SignInPage />} />
       <Route path="register" element={<RegisterPage />} />
       <Route path="email-confirmation" element={<CheckEmailPage />} />
+      <Route path="email-verified" element={<EmailVerified />}/>
       <Route path="create-post" element={<CreatePage />} />
       <Route path="admin">
         <Route index element={<AdminPage></AdminPage>} />
@@ -49,6 +53,10 @@ const RouteList = () => {
           <Route index element={<AdminDashBoard />} />
           <Route path="users" element={<AdminUsers />}/>
           <Route path="users/:id" element={<UserShow />} />
+          <Route path="users/:id/edit" element={<UserEdit />} />
+          <Route path="admin-users" element={<AdminUsersTeam />} />
+          <Route path="admin-users/:id" element={<UserShow />} />
+          <Route path="admin-users/:id/edit" element={<UserEdit />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

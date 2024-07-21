@@ -15,7 +15,7 @@ import { useQuery } from "react-query";
 import { getAllUsersQuery } from "hooks/user";
 import { useDeleteUserAdmin } from "hooks/admin";
 
-const AdminUsers = () => {
+const AdminUsersTeam = () => {
   const navigate = useNavigate();
   const [paramsUsers, setParamsUsers] = useState({
     page: 1,
@@ -58,7 +58,7 @@ const AdminUsers = () => {
           <Link to="/admin/dashboard">Dashboard</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link to="/admin/dashboard/users">Users</Link>
+          <Link to="/admin/dashboard/admin-users">Admins</Link>
         </Breadcrumb.Item>
       </Breadcrumb>
       <h1>List ({users?.totalUsers})</h1>
@@ -166,7 +166,7 @@ const AdminUsers = () => {
             </tr>
           ) : (
             usersData
-              ?.filter((user) => user.role === "user")
+              ?.filter((user) => user.role !== "user")
               .map((user) => (
                 <tr key={user._id}
                   style={{
@@ -195,7 +195,7 @@ const AdminUsers = () => {
                   </td>
                   <td>
                     <Link
-                      to={`/admin/dashboard/users/:id`.replace(":id", user._id)}
+                      to={`/admin/dashboard/admin-users/:id`.replace(":id", user._id)}
                     >
                       View
                     </Link>
@@ -232,4 +232,4 @@ const AdminUsers = () => {
   );
 };
 
-export default AdminUsers;
+export default AdminUsersTeam;

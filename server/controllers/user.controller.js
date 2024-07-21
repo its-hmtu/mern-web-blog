@@ -15,6 +15,8 @@ import { sendEmailNotification } from "../utils/mailer.js";
 // import { authorize, uploadFile } from '../config/google_drive.js'
 import { deleteFileByUrl, uploadFile } from "../config/firebase.js";
 import fs from "fs";
+import Post from "../models/post.model.js";
+import Category from "../models/category.model.js";
 
 // @access Private
 export const getUser = asyncHandler(async (req, res, next) => {
@@ -29,6 +31,21 @@ export const getUser = asyncHandler(async (req, res, next) => {
   
   user.following_categories = following_categories;
 
+  const posts = await Post.find({ user_id: user._id });
+  const comments = await Comment.find({ user_id: user._id });
+  const categories = [];
+  for (let id of user.following_categories) {
+    const item = await Category.find({ _id: id });
+    
+    categories.push(item);
+  }
+
+  const likedPosts = [];
+  for (let id of user.liked_post) {
+    const item = await Post.find({ _id: id });
+    likedPosts.push(item);
+  }
+
   if (!user) {
     return next(new NotFound("User not found"));
   }
@@ -37,7 +54,13 @@ export const getUser = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "User found",
-      data: user,
+      data: {
+        user,
+        posts,
+        comments,
+        categories,
+        liked_posts: likedPosts
+      },
     });
   } catch (e) {
     next(new InternalServerError(e.message));

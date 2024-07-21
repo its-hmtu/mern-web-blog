@@ -32,4 +32,7 @@ export const ENDPOINTS = {
 
 
   getCategories: `${BASE}/categories`,
+
+  deleteUserAdmin: `${BASE}/admin/delete-user`,
+  deletePostAdmin: `${BASE}/admin/delete-post`,
 }
