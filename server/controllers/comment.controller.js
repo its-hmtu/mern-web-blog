@@ -105,6 +105,8 @@ const getPostComments = asyncHandler(async (req, res) => {
     const { post } = req.query;
     const comments = await Comment.find({ post_id: post });
 
+    const replies = await Comment.find({ post_id: post, reply_to: { $ne: null } });
+
     if (!comments) {
       res.status(404);
       throw new Error("No comments found");
@@ -112,6 +114,7 @@ const getPostComments = asyncHandler(async (req, res) => {
       res.status(200).json({
         status: "success",
         comments: comments,
+        replies: replies,
       });
     }
   } catch (e) {

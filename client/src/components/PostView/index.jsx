@@ -28,6 +28,14 @@ const PostView = () => {
   const { data: comments, isLoading: commentsLoading } = useQuery(
     getPostCommentsQuery(data?._id)
   );
+  const [isCommentEdit, setIsCommentEdit] = useState(false);
+  const [isReplyEdit, setIsReplyEdit] = useState(false);
+  const [activeReply, setActiveReply] = useState(null);
+
+  const handleReplyClick = (commentId) => {
+    // Toggle the reply box for the clicked comment
+    setActiveReply(prev => prev === commentId ? null : commentId);
+  };
   const [paramsPost, setParamsPost] = useState({
     page: 1,
     limit: 10,
@@ -57,27 +65,22 @@ const PostView = () => {
     // console.log(path);
     // console.log(posts);
     // console.log(comments);
-
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
   }, []);
 
-  const modules = {
-    toolbar: [
-      "bold",
-      "italic",
-      "underline",
-      "strike",
-      "link",
-    ],
+  const handleCommetEdit = () => {
+    setIsCommentEdit(!isCommentEdit);
   };
 
-  const formats = [
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "link",
-  ];
+  const handleReplyEdit = () => {
+    setIsReplyEdit(!isReplyEdit);
+  }
+
+  const modules = {
+    toolbar: ["bold", "italic", "underline", "strike", "link"],
+  };
+
+  const formats = ["bold", "italic", "underline", "strike", "link"];
 
   return (
     <Container className="post-view__container position-relative" fluid>
@@ -129,7 +132,7 @@ const PostView = () => {
                         width: "fit-content",
                       }}
                     >
-                      <Link className="fw-semibold">{data?.author}</Link>
+                      <h3 className="fw-semibold">{data?.author}</h3>
                       <span className="post-view__date">
                         {new Date(data?.createdAt).toLocaleDateString(
                           undefined,
@@ -153,22 +156,28 @@ const PostView = () => {
             </Card.Body>
           </Card>
 
-          <Card className="mt-4 p-3">
+          <Card
+            className="mt-4 p-3"
+            style={{
+              minHeight: "300px",
+            }}
+          >
             <Card.Title className="px-4 fw-bold">Comments</Card.Title>
 
-            <Row className="px-4 mt-4 flex-nowrap w-100">
+            <div className="px-4 mt-4 d-flex w-100">
               <img
                 src={data?.profile_image_url}
                 alt=""
                 className="blog-card__user-img"
                 style={{
                   maxWidth: "48px",
+                  width: "48px",
                   height: "48px",
                 }}
               />
 
               <ReactQuill
-                className="mx-2 me-4 pe-5"
+                className="mx-2 w-100"
                 theme="snow"
                 // value={content}
                 // onChange={
@@ -178,74 +187,246 @@ const PostView = () => {
                 formats={formats}
                 placeholder="Add comment"
               ></ReactQuill>
-            </Row>
+            </div>
 
-            {
-              data && comments?.map((comment, index) => (
-                <Row key={index} className="mt-5 px-4 align-items-center flex-nowrap w-100">
-                  <img
-                    src={comment?.profile_image_url}
-                    alt=""
-                    className="blog-card__user-img me-4 mt-2"
-                    style={{
-                      maxWidth: "48px",
-                      height: "48px",
-                    }}
-                  />
+            {/* {data &&
+              comments?.comments.map((comment, index) => (
+                
+              ))} */}
 
-                  <Card.Text className="flex-grow-1 card-comment w-75 py-3 mt-2">
-                    <Row className="flex-nowrap align-items-center w-100">
-                      <Link className="fw-semibold text-decoration-none" style={{
-                        width: "fit-content",
-                      }}>
-                        {comment?.author}
-                        </Link>
-                      <small className="pm-0 p-0 fw-semibold">{new Date(comment?.createdAt).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })}</small>
-                    </Row>
-                    <span className="ms-2" dangerouslySetInnerHTML={{__html: comment?.content}}></span>
-                  </Card.Text>
-                </Row>
-              ))
-            }
-          </Card>
+            {data &&
+              comments?.comments
+                // Step 1: Filter out parent comments
+                .filter((comment) => !comment.reply_to)
+                .map((parentComment, index) => (
+                  <div key={index} className="position-relative mt-5">
+                    <div className=" px-4 align-items-center d-flex">
+                      <img
+                        src={parentComment?.profile_image_url}
+                        alt=""
+                        className="blog-card__user-img me-4 mt-2"
+                        style={{
+                          maxWidth: "48px",
+                          width: "48px",
+                          height: "48px",
+                        }}
+                      />
+                      <Card.Text className="flex-grow-1 card-comment p-3 mt-2">
+                        <div className="d-flex align-items-center">
+                          <h6
+                            className="fw-semibold text-decoration-none m-0 me-1"
+                            style={{
+                              width: "fit-content",
+                            }}
+                          >
+                            {parentComment?.user_name}
+                          </h6>
+                          <small className="m-0 p-0 fw-semibold">
+                            •{" "}
+                            {new Date(
+                              parentComment?.createdAt
+                            ).toLocaleDateString(undefined, {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </small>
+                        </div>
+                        <span
+                          className="ms-2"
+                          dangerouslySetInnerHTML={{
+                            __html: parentComment?.content,
+                          }}
+                        ></span>
+                      </Card.Text>
+                    </div>
+                    {activeReply === parentComment._id && (
+                      <Button
+                        style={{
+                          borderRadius: "14px",
+                          padding: "4px",
+                          backgroundColor: "#f8f9fa",
+                          color: "#000",
+                          borderColor: "#f8f9fa",
+                          display: "flex",
+                          alignItems: "center",
+                          marginLeft: "100px",
+                        }}
+                        onClick={() => handleReplyClick(parentComment._id)}
+                      >
+                        <FontAwesomeIcon icon={faHandsBubbles} />
+                        <span
+                          className="ms-2"
+                          style={{
+                            fontSize: "14px",
+                          }}
+                        >
+                          Reply
+                        </span>
+                      </Button>
+                    )}
 
-          <Card className="mt-4 p-3">
-            <Card.Title className="px-4 fw-bold">Read next</Card.Title>
+                    {!activeReply === parentComment._id && (
+                      <div className="mt-3">
+                        <ReactQuill
+                          style={{
+                            marginLeft: "70px",
+                            width: "calc(100% - 100px)",
+                          }}
+                          theme="snow"
+                          // value={content}
+                          // onChange={
+                          //   handleChange
+                          // }
+                          modules={modules}
+                          formats={formats}
+                          placeholder="Add comment"
+                        />
 
-            <Row className="px-4 mt-4 flex-nowrap w-100">
-              <img
-                src={data?.profile_image_url}
-                alt=""
-                className="blog-card__user-img"
-                style={{
-                  maxWidth: "48px",
-                  height: "48px",
-                }}
-              />
+                        <div className="d-flex gap-2 mt-2 justify-content-end me-4">
+                          <Button
+                            style={{
+                              fontSize: "14px",
+                              borderRadius: "14px",
+                            }}
+                          >
+                            Comment
+                          </Button>
+                          <Button
+                            variant="dark"
+                            style={{
+                              fontSize: "14px",
+                              borderRadius: "14px",
+                            }}
+                            onClick={handleCommetEdit}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
-              <ReactQuill
-                className="mx-2 me-4 pe-5 flex-grow-1"
-                theme="snow"
-                // value={content}
-                // onChange={
-                //   handleChange
-                // }
-                modules={modules}
-                formats={formats}
-                placeholder="Add comment"
-              ></ReactQuill>
-            </Row>
+                    {comments?.comments
+                      .filter((reply) => reply.reply_to === parentComment._id) // Assuming _id is the identifier for comments
+                      .map((reply, replyIndex) => (
+                        <div key={replyIndex} className="position-relative">
+                          <div className="mt-2 px-4 ms-5 align-items-center d-flex">
+                            <img
+                              src={reply?.profile_image_url}
+                              alt=""
+                              className="blog-card__user-img me-4 mt-2"
+                              style={{
+                                maxWidth: "48px",
+                                width: "48px",
+                                height: "48px",
+                              }}
+                            />
+                            <Card.Text className="flex-grow-1 card-comment p-3 mt-2">
+                              <div className="d-flex align-items-center">
+                                <h6
+                                  className="fw-semibold text-decoration-none m-0 me-1"
+                                  style={{
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  {reply?.user_name}
+                                </h6>
+                                <small className="m-0 p-0 fw-semibold">
+                                  •Hello{" "}
+                                  {new Date(
+                                    reply?.createdAt
+                                  ).toLocaleDateString(undefined, {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
+                                </small>
+                              </div>
+                              <span
+                                className="ms-2"
+                                dangerouslySetInnerHTML={{
+                                  __html: reply?.content,
+                                }}
+                              ></span>
+                            </Card.Text>
+                          </div>
+                          {!isReplyEdit && <Button
+                            style={{
+                              borderRadius: "14px",
+                              padding: "4px",
+                              backgroundColor: "#f8f9fa",
+                              color: "#000",
+                              borderColor: "#f8f9fa",
+                              display: "flex",
+                              alignItems: "center",
+                              position: "absolute",
+                              left: "20%",
+                            }}
+                            onClick={handleReplyEdit}
+                          >
+                            <FontAwesomeIcon icon={faHandsBubbles} />
+                            <span
+                              className="ms-2"
+                              style={{
+                                fontSize: "14px",
+                              }}
+                            >
+                              Reply
+                            </span>
+                          </Button>}
+
+                          {isReplyEdit && (
+                            <div className="mt-3">
+                              <ReactQuill
+                                style={{
+                                  marginLeft: "70px",
+                                  width: "calc(100% - 100px)",
+                                }}
+                                theme="snow"
+                                // value={content}
+                                // onChange={
+                                //   handleChange
+                                // }
+                                modules={modules}
+                                formats={formats}
+                                placeholder="Add comment"
+                              />
+
+                              <div className="d-flex gap-2 mt-2 justify-content-end me-4">
+                                <Button
+                                  style={{
+                                    fontSize: "14px",
+                                    borderRadius: "14px",
+                                  }}
+                                >
+                                  Comment
+                                </Button>
+                                <Button
+                                  variant="dark"
+                                  style={{
+                                    fontSize: "14px",
+                                    borderRadius: "14px",
+                                  }}
+                                  onClick={handleReplyEdit}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                ))}
           </Card>
         </Col>
 
         <Col className="col-3">
-          <Card className="card-more-from-user mt-3">
+          <Card className="card-more-from-more">
             <Card.Body>
               <Card.Title className="px-0 mb-3">
                 More from
-                <span className="fw-semibold ms-1">
-                  {data?.author}
-                </span>
+                <span className="fw-semibold ms-1">{data?.author}</span>
               </Card.Title>
               {posts?.posts
                 ?.filter((post) => post?._id !== data?._id)

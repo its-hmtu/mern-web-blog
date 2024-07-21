@@ -97,7 +97,7 @@ const postSchema = new mongoose.Schema({
     }
   ],
 
-  publishedAt: {
+  publishAt: {
     type: Date,
     default: Date.now()
   },

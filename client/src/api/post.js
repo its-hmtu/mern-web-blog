@@ -15,7 +15,7 @@ export const getPostComments = async ({ queryKey }) => {
     //   throw new Error(data.message);
     // }
 
-    return data.comments;
+    return data;
   } catch (e) {
     const { message } = e.response.data;
     console.log(message);
@@ -51,7 +51,7 @@ export const getPosts = async ({ queryKey }) => {
     const { data } = await axios.get(
       `${
         ENDPOINTS.getPosts
-      }?page=${page}&limit=${limit}&order=${order}&category=${category}&postIds=${postIds}${
+      }?${page === "" ? "" : `page=${page}`}${limit === "" ? "" : `&limit=${limit}`}${order===""?"":`&order=${order}`}${category===""?"":`&category=${category}`}${postIds===""?"":`&postIds=${postIds}`}${
         currentUserId === "" ? "" : `&currentUserId=${currentUserId}`
       }`
     );

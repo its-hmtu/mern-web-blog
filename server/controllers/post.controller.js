@@ -43,6 +43,7 @@ const createPost = asyncHandler(async (req, res, next) => {
       10
     );
     console.log(relatedPosts);
+    const likes_count = 1;
 
     const post = await Post.create({
       user_id,
@@ -52,10 +53,10 @@ const createPost = asyncHandler(async (req, res, next) => {
       category_id: category._id,
       category_name: category_name,
       main_image,
-      images: contentImages,
       read_time,
       related_posts: relatedPosts.map((post) => post._id),
       profile_image_url: user.profile_image_url,
+      likes_count,
     });
 
     // update user posts count and add post to user posts list
@@ -214,13 +215,14 @@ const getPosts = asyncHandler(async (req, res, next) => {
       postIds,
       searchTerm,
       currentUserId,
+      publishAt,
     } = req.query;
 
     const postIdsArray = postIds ? postIds.split(",") : [];
-    const _page = Math.max(1, parseInt(page)) || 1;
-    const _limit = parseInt(limit) || 10;
+    const _page = Math.max(1, parseInt(page));
+    const _limit = parseInt(limit);
     let startIndex = (_page - 1) * _limit;
-
+    const publishAtDate = publishAt ? new Date(publishAt) : null;
     let queryConditions = {
       ...(userId && { user_id: userId }),
       ...(category && { category_name: category }),
@@ -233,6 +235,7 @@ const getPosts = asyncHandler(async (req, res, next) => {
           { content: { $regex: searchTerm, $options: "i" } },
         ],
       }),
+      ...(publishAtDate && { publishAt: { $lte: publishAtDate } }),
     };
 
     if (currentUserId && currentUserId.trim() !== "") {

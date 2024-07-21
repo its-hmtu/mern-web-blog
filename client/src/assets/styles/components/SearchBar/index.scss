@@ -1,0 +1,38 @@
+.search-bar {
+  border-radius: 0.375rem;
+  padding-left: 40px;
+  padding-right: 142px;
+  min-width: 500px;
+
+  &::placeholder {
+    font-size: 1rem;
+  }
+}
+.search-results {
+  border-radius: 8px;
+  border: 1px solid $gray-border;
+
+  .search-result {
+    li {
+      div {
+        font-size: 12px;
+        color: gray;
+      }
+      strong {
+        // hide text overflow
+        
+        font-size: 16px;
+      }
+      white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.05);
+      padding: 8px;
+      &:hover {
+        background-color: $gray-hover;
+      }
+    }
+  }
+}

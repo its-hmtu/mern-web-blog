@@ -17,6 +17,7 @@ import { faBell as faBellSolid } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useQueryClient } from "react-query";
 import { getCurrentUserQuery, useLogoutUser } from "hooks/user";
 import { AuthContext } from "contexts/AuthContext";
+import SearchBar from "components/SearchBar/SearchBar";
 
 const Header = ({ admin = false }) => {
   const navigate = useNavigate();
@@ -45,12 +46,16 @@ const Header = ({ admin = false }) => {
               Admin Dashboard
             </h4>
           </Link> :
-            <Link
-              to="/"
-              className="d-flex text-decoration-none align-items-center gap-3"
-            >
-              <img className="main-layout__header-logo" src={logo} alt="DEV" />
-            </Link>
+            (<div className="d-flex gap-3">
+              <Link
+                to="/"
+                className="d-flex text-decoration-none align-items-center gap-3"
+              >
+                <img className="main-layout__header-logo" src={logo} alt="DEV" />
+              </Link>
+
+              <SearchBar />
+            </div>)
           }
         </Navbar.Brand>
         <Nav className="me-auto">{/* {Search bar} */}</Nav>

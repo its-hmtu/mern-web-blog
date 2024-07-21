@@ -112,18 +112,12 @@ const CreatePage = () => {
   }, [title]);
 
   const handleSubmit = async () => {    
-    setPostInfo({
-      title: title,
-      category: categoryName,
-      content: content,
-      image: mainImage,
+    mutate({
+      title,
+      category_name: categoryName,
+      content,
+      main_image: mainImage,
     });
-    
-    await mutate(postInfo);
-
-    if (!isCreatingPost) {
-      navigate("")
-    }
   };
 
   return (
@@ -191,7 +185,10 @@ const CreatePage = () => {
                 <Form.Group controlId="category" className="mb-3">
                   <Form.Label>Category</Form.Label>
                   <Form.Select
-                    onChange={(e) => setCategoryName(e.target.value)}
+                    onChange={(e) => {
+                      setCategoryName(e.target.value)
+                      console.log(e.target.value)
+                    }}
                     value={categoryName}
                   >
                     <option>Select category</option>

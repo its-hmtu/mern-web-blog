@@ -113,8 +113,8 @@ const BlogCard = ({ data, hide = false }) => {
 
           <Col>
             <span className="read-time">{data.read_time} min read</span>
-            {user?._id === data.user_id ||
-              (!hide && (
+            {(user?._id === data.user_id ||
+              !hide) && (
                 <Button
                   className="btn-bookmark"
                   onClick={() =>
@@ -125,7 +125,7 @@ const BlogCard = ({ data, hide = false }) => {
                     icon={added ? faBookmark : faBookmarkOutline}
                   />
                 </Button>
-              ))}
+              )}
           </Col>
         </Row>
       </Card.Body>
