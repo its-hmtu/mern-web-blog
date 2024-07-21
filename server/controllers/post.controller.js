@@ -15,6 +15,7 @@ import fs from "fs";
 
 import { deleteFileByUrl, uploadFile } from "../config/firebase.js";
 import Category from "../models/category.model.js";
+import { sendNotification } from "./notification.controller.js";
 
 function calculateReadTime(content) {
   const text = content.replace(/(<([^>]+)>)/gi, "");
@@ -26,33 +27,9 @@ function calculateReadTime(content) {
 
 const createPost = asyncHandler(async (req, res, next) => {
   try {
-    const { title, content, category_name, main_image, content_images } =
-      req.body;
+    const { title, content, category_name, main_image } = req.body;
     // const auth = await authorize();
     const user = req.user;
-
-    console.log("Request body:", req.body);
-    console.log("Request files:", req.files);
-
-    // let mainImage = null;
-    // if (req.files["main_image"]) {
-    //   const mainImageFile = req.files["main_image"][0];
-    //   const response = await uploadFile(mainImageFile.path);
-    //   mainImage = response
-    //   fs.unlinkSync(mainImageFile.path);
-    // }
-
-    // const contentImages = [];
-    // if (req.files["content_images"]) {
-    //   const contentImagesFiles = req.files["content_images"];
-    //   for (const file of contentImagesFiles) {
-    //     const response = await uploadFile(file.path);
-    //     contentImages.push({
-    //       url: response,
-    //     });
-    //     fs.unlinkSync(file.path);
-    //   }
-    // }
 
     const user_id = user._id;
 
@@ -71,11 +48,11 @@ const createPost = asyncHandler(async (req, res, next) => {
       user_id,
       author,
       title,
-      content,
+      content: content,
       category_id: category._id,
       category_name: category_name,
       main_image,
-      images: content_images,
+      images: contentImages,
       read_time,
       related_posts: relatedPosts.map((post) => post._id),
       profile_image_url: user.profile_image_url,
@@ -101,7 +78,7 @@ const deletePost = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = req.user;
-    if (user.posts.includes(id) || user.role === "admin") {
+    if (user.posts.includes(id) || user.role !== "user") {
       const post = await Post.findById(id);
       if (!post) {
         next(new NotFound(`Post with id ${id} not found`));
@@ -148,6 +125,24 @@ const deletePost = asyncHandler(async (req, res, next) => {
       }
       await Post.deleteOne({ _id: id });
 
+      // if post deleted by admin, remove post from all users reading list or liked post list
+
+      const users = await User.find({
+        $or: [{ reading_list: { $in: [id] } }, { liked_post: { $in: [id] } }],
+      });
+
+      for (const user of users) {
+        user.reading_list = user.reading_list.filter(
+          (p) => p.toString() !== id
+        );
+        user.liked_post = user.liked_post.filter((p) => p.toString() !== id);
+        await user.save();
+      }
+
+      if (user.role !== "user") {
+        await sendNotification(post.user_id, "Your post has been deleted");
+      }
+
       res.status(200).json({
         status: "success",
         message: "Post deleted",
@@ -169,7 +164,7 @@ const updatePost = asyncHandler(async (req, res, next) => {
     const user = req.user;
 
     if (user.posts.includes(id)) {
-      const { title, content, category_name } = req.body;
+      const { title, content, category_name, main_image } = req.body;
 
       const post = await Post.findById(id);
       const category = await Category.findOne({ name: category_name });
@@ -179,36 +174,12 @@ const updatePost = asyncHandler(async (req, res, next) => {
         return;
       }
 
-      if (req.files["main_image"]) {
-        const mainImageFile = req.files["main_image"][0];
-        await deleteFileByUrl(post.main_image);
-        const response = await uploadFile(mainImageFile.path);
-        post.main_image = response;
-        fs.unlinkSync(mainImageFile.path);
-      } else {
-        post.main_image = post.main_image;
-      }
-
-      if (req.files["content_images"]) {
-        const contentImagesFiles = req.files["content_images"];
-        for (const image of post.images) {
-          await deleteFileByUrl(image.url);
-        }
-        for (const file of contentImagesFiles) {
-          const response = await uploadFile(file.path);
-          post.images.push({
-            url: response,
-          });
-          fs.unlinkSync(file.path);
-        }
-      } else {
-        post.images = post.images;
-      }
 
       post.title = title || post.title;
       post.content = content || post.content;
       post.category_id = category._id || post.category_id;
       post.category_name = category_name || post.category_name;
+      post.main_image = main_image || post.main_image;
 
       const read_time = calculateReadTime(post.content);
 
@@ -455,14 +426,26 @@ const getReadingList = asyncHandler(async (req, res, next) => {
   try {
     const user = req.user;
 
-    const posts = await Post.find({
-      _id: { $in: user.reading_list },
-    });
+    let posts = [];
 
-    res.status(200).json({
-      status: "success",
-      data: posts,
-    });
+    if (!user || !user.reading_list || user.reading_list.length === 0) {
+      return res.status(200).json({
+        status: "success",
+        data: posts,
+      });
+    } else {
+      for (const id of user.reading_list) {
+        const post = await Post.findById(id);
+        if (post) {
+          posts.push(post);
+        }
+      }
+
+      res.status(200).json({
+        status: "success",
+        data: posts,
+      })
+    }
   } catch (e) {
     next(new InternalServerError(e.message));
   }

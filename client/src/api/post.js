@@ -155,3 +155,19 @@ export const getUserComments = async ({ queryKey }) => {
   }
 }
 
+export const getReadingList = async () => {
+  try {
+    const { data } = await axiosInstance.get(ENDPOINTS.getReadingList);
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}
+

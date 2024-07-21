@@ -10,7 +10,7 @@ export const uploadFileToFirebase = asyncHandler(async (req, res, next) => {
   try {
     const file = req.file;
     if (!file) {
-      next(new BadRequest("No file uploaded"));
+      return next(new BadRequest("Please upload a file"));
     } else {
       const url = await uploadFile(file.path);
       fs.unlinkSync(file.path);

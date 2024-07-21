@@ -24,6 +24,7 @@ import AdminUsers from "pages/AdminPage/pages/AdminUsers";
 import AdminUsersTeam from "pages/AdminPage/pages/AdminUsersTeam";
 import UserShow from "pages/AdminPage/pages/components/UserShow";
 import UserEdit from "pages/AdminPage/pages/components/UserEdit";
+import UserCreate from "pages/AdminPage/pages/components/UserCreate";
 import EmailVerified from "pages/EmailVerified";
 
 const RouteList = () => {
@@ -54,6 +55,7 @@ const RouteList = () => {
           <Route path="users" element={<AdminUsers />}/>
           <Route path="users/:id" element={<UserShow />} />
           <Route path="users/:id/edit" element={<UserEdit />} />
+          <Route path="users/create" element={<UserCreate />} />
           <Route path="admin-users" element={<AdminUsersTeam />} />
           <Route path="admin-users/:id" element={<UserShow />} />
           <Route path="admin-users/:id/edit" element={<UserEdit />} />

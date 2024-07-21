@@ -20,19 +20,22 @@ export const ENDPOINTS = {
   deleteUser: `${BASE}/users`,
   getUser: `${BASE}/users/profile`,
   getCurrentUserComments: `${BASE}/comments/me`,
-  getAllUsers: `${BASE}/users/all`,
   getUserPosts: `${BASE}/posts/user`,
   getUserComments: `${BASE}/comments/user`,
-
+  
   getPosts: `${BASE}/posts`,
   getSinglePost: `${BASE}/posts`,
   createPost: `${BASE}/posts/create`,
   addToReadingList: `${BASE}/posts/reading-list`,
   getPostComments: `${BASE}/comments`,
-
-
+  
+  
   getCategories: `${BASE}/categories`,
+  getAllUsers: `${BASE}/admin/all`,
+  getReadingList: `${BASE}/posts/reading-list`,
 
   deleteUserAdmin: `${BASE}/admin/delete-user`,
   deletePostAdmin: `${BASE}/admin/delete-post`,
+
+  upload: `${BASE}/upload`,
 }

@@ -26,10 +26,7 @@ const PostView = () => {
     getUserQuery(data?.user_id)
   );
   const { data: comments, isLoading: commentsLoading } = useQuery(
-    getPostCommentsQuery(data?._id, {
-      enabled: !!data?._id
-      }
-    )
+    getPostCommentsQuery(data?._id)
   );
   const [paramsPost, setParamsPost] = useState({
     page: 1,
@@ -246,13 +243,13 @@ const PostView = () => {
             <Card.Body>
               <Card.Title className="px-0 mb-3">
                 More from
-                <Link to="/user" className="fw-semibold ms-1">
+                <span className="fw-semibold ms-1">
                   {data?.author}
-                </Link>
+                </span>
               </Card.Title>
               {posts?.posts
-                .filter((post) => post?._id !== data?._id)
-                .map((post, index) => (
+                ?.filter((post) => post?._id !== data?._id)
+                ?.map((post, index) => (
                   <Card.Text key={index} className="mt-2 border-bottom pb-3">
                     <Link
                       to={`/post/${post.slug}`}

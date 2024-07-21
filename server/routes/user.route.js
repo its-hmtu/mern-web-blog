@@ -9,7 +9,7 @@ import {
   changeAvatar,
   followUser,
   blockUser,
-  getAllUsers,
+  reportUser
 } from "../controllers/user.controller.js";
 import { verifyToken, verifyRole } from "../middlewares/auth.middleware.js";
 import { upload } from "../config/firebase.js";
@@ -43,6 +43,6 @@ router.delete("/:id", verifyToken, deleteUser)
 // block a user 
 router.put("/block/:id", verifyToken, blockUser)
 
-router.get("/all", getAllUsers);
+router.post("/report/:id", verifyToken, reportUser)
 
 export default router;

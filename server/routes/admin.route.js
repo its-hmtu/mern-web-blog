@@ -7,7 +7,7 @@ import {
   Forbidden,
 } from "../errors/index.js";
 import { verifyToken, verifyRole } from "../middlewares/auth.middleware.js";
-import { deleteUserAdmin, deletePostAdmin, updateUserAdmin } from "../controllers/admin.controller.js";
+import { deleteUserAdmin, deletePostAdmin, updateUserAdmin, getAllUsers } from "../controllers/admin.controller.js";
 import express from 'express'
 
 const router = express.Router()
@@ -18,5 +18,6 @@ router.delete('/delete-post', verifyToken, verifyRole(['admin']), deletePostAdmi
 
 router.put('/update-user/:id', verifyToken, verifyRole(['admin']), updateUserAdmin)
 
+router.get("/all", getAllUsers);
 
 export default router

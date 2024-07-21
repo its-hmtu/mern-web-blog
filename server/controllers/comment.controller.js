@@ -11,6 +11,7 @@ import {
 } from "../errors/index.js";
 
 import { sendEmailNotification } from "../utils/mailer.js";
+import { sendNotification } from "./notification.controller.js";
 
 const createComment = asyncHandler(async (req, res, next) => {
   try {
@@ -43,7 +44,7 @@ const createComment = asyncHandler(async (req, res, next) => {
       await parentComment.save();
 
       // const parentCommentUser = await User.findById(parentComment.user_id);
-
+      await sendNotification(parentComment.user_id, `You have a new reply on your comment: ${parentComment.content}`);
       req.io.emit('newReply', {
         reply: comment,
         comment: parentComment,
@@ -80,7 +81,7 @@ const createComment = asyncHandler(async (req, res, next) => {
       // };
 
       // await sendEmailNotification(options);
-
+      await sendNotification(postAuthor._id, `You have a new comment on your post: ${post.title}`);
       req.io.emit('newComment', {
         comment: comment,
         post: post,
@@ -176,6 +177,9 @@ const deleteComment = asyncHandler(async (req, res, next) => {
 
       // if it is an admin or moderator deleting the comment, notify the user
       if (isAdmin || isModerator) {
+
+        sendNotification(comment.user_id, `Your comment on ${post.title} has been deleted by ${isAdmin ? 'an admin' : 'a moderator'}`);
+
         req.io.emit('commentDeleted', {
           comment: comment,
           post: post,

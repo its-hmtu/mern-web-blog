@@ -18,7 +18,7 @@ import { getAllUsersQuery } from "hooks/user";
 import { useDeleteUserAdmin } from "hooks/admin";
 
 const UserEdit = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const [paramsPost, setParamsPost] = useState({
   //   page: 1,
   //   limit: 10,
@@ -49,6 +49,7 @@ const UserEdit = () => {
   // );
   const { mutate, isLoading: isDeleteLoading } = useDeleteUserAdmin(() => {
     setIsShow(false);
+    navigate("/admin/dashboard/users");
   });
 
   const handleDeleteUsers = () => {

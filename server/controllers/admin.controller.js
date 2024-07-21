@@ -223,6 +223,44 @@ export const updateUserAdmin = asyncHandler(async (req, res, next) => {
   }
 })
 
+export const getAllUsers = asyncHandler(async (req, res, next) => {
+  try {
+    // filter and pagination
+    const { page, limit, order } = req.query;
+    const sortDirection = order === "asc" ? 1 : -1;
+    const users = await User.find()
+      .select("-password -__v -refresh_token -access_token")
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: sortDirection });
+
+      const totalUsers = await User.countDocuments();
+
+    res.status(200).json({
+      status: "success",
+      message: "Users found",
+      data: users,
+      totalUsers,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+});
+
+export const getReportedUsers = asyncHandler(async (req, res, next) => {
+  try {
+    const users = await User.find({ is_reported: true });
+
+    res.status(200).json({
+      status: "success",
+      message: "Reported users found",
+      data: users,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+})
+
     
 
     

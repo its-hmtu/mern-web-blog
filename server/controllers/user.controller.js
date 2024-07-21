@@ -348,26 +348,31 @@ export const blockUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-export const getAllUsers = asyncHandler(async (req, res, next) => {
+export const reportUser = asyncHandler(async (req, res, next) => {
   try {
-    // filter and pagination
-    const { page, limit, order } = req.query;
-    const sortDirection = order === "asc" ? 1 : -1;
-    const users = await User.find()
-      .select("-password -__v -refresh_token -access_token")
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .sort({ createdAt: sortDirection });
+    const user = req.user;
 
-      const totalUsers = await User.countDocuments();
+    const { id } = req.params;
 
+    const { reason } = req.body;
+
+    const userToReport = await User.findById(id);
+
+    if (!userToReport) {
+      return next(new NotFound("User not found"));
+    }
+    
+    await user.save();
+  
     res.status(200).json({
       status: "success",
-      message: "Users found",
-      data: users,
-      totalUsers,
+      message: "User reported",
+      data: {
+        user: userToReport,
+        reason,
+      },
     });
   } catch (e) {
     next(new InternalServerError(e.message));
-  }
-});
+  } 
+})

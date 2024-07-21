@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getSinglePost, getUserComments, getUserPosts } from "api/post";
+import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getReadingList, getSinglePost, getUserComments, getUserPosts } from "api/post";
 import { userQueryKey } from "./user";
 
 export const postQueryKey = "posts"
@@ -37,8 +37,13 @@ export const useCreatePost = (success = () => {}, error = () => {}) => {
   const queryClient = useQueryClient()
 
   return useMutation(createPost, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(postQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
+    },
+    onSettled: (data) => {
+      queryClient.invalidateQueries(postQueryKey);
+      queryClient.invalidateQueries(userQueryKey);
       success(data);
     },
     onError: (error) => {
@@ -70,4 +75,9 @@ export const getUserPostsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
 export const getUserCommentsQuery = (id, page = 1, limit = 5, order = 'desc') => ({
   queryKey: [userCommentsQueryKey, { id, page, limit, order }],
   queryFn: getUserComments,
+})
+
+export const getReadingListQuery = () => ({
+  queryKey: ["reading-list"],
+  queryFn: getReadingList,
 })

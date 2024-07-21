@@ -23,6 +23,23 @@ export const useRegisterUser = (succes = () => {}, error = () => {}) => {
   })
 }
 
+export const useRegisterUserAdmin = (succes = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation(registerUser, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(allUsersKey);
+    },
+    onSettled: (data) => {
+      queryClient.invalidateQueries(allUsersKey);
+      succes(data);
+    },
+    onError: (err) => {
+      error(err.response.data.message);
+    }
+  })
+}
+
 export const useLoginUser = (succes = () => {}, error = () => {}) => {
   const queryClient = useQueryClient();
 
@@ -74,6 +91,9 @@ export const getCurrentUserCommentsQuery = (page = 1, limit = 5, order = 'desc')
 })
 
 export const getAllUsersQuery = (page = 1, limit = 5, order = 'desc') => ({
-  queryKey: ["all-users", { page, limit, order }],
+  queryKey: [allUsersKey, { page, limit, order }],
   queryFn: getAllUsers,
+  // disable caching,
+
+  staleTime: 0
 })

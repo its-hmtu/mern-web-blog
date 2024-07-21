@@ -89,7 +89,7 @@ export const emailConfirmation = asyncHandler(async (req, res, next) => {
 
 export const register = asyncHandler(async (req, res, next) => {
   try {
-    const { full_name, user_name, email, password } = req.body;
+    const { full_name, user_name, email, password, role } = req.body;
 
     const isEmailUsed = await User.findOne({ email });
     const isUserNameUsed = await User.findOne({ user_name });
@@ -108,6 +108,7 @@ export const register = asyncHandler(async (req, res, next) => {
       user_name,
       email,
       password,
+      role: role || "user",
     });
 
     res.status(201).json({

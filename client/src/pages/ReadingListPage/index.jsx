@@ -6,7 +6,7 @@ import PostCard from "./components/PostCard";
 import SideBarNavigate from "pages/HomePage/components/SideBarNavigate";
 import { AuthContext } from "contexts/AuthContext";
 import { useQuery } from "react-query";
-import { getPostsQuery } from "hooks/post";
+import { getPostsQuery, getReadingListQuery } from "hooks/post";
 
 
 const ReadingListPage = () => {
@@ -24,32 +24,13 @@ const ReadingListPage = () => {
   // ]);
   const {user} = useContext(AuthContext);
 
-  const [paramsPost, setParamsPost] = useState({
-    page: 1,
-    limit: 10,
-    order: "desc",
-    category: "",
-    postIds: "",
-  });
+  const { data, isLoading } = useQuery(
+    getReadingListQuery(),
+  );
 
   useEffect(() => {
-    if (user && user?.reading_list) {
-      setParamsPost((prevParams) => ({
-        ...prevParams,
-        postIds: user?.reading_list.join(","),
-      }));
-    }
-  }, [user]);
 
-  const { data, isLoading } = useQuery(
-    getPostsQuery(
-      paramsPost.page,
-      paramsPost.limit,
-      paramsPost.order,
-      paramsPost.category,
-      paramsPost.postIds
-    )
-  );
+  })
 
   return (
     <Container fluid className="reading-list-page__container">
@@ -78,18 +59,19 @@ const ReadingListPage = () => {
             <SideBarNavigate />
           </Col>
           <Col className="col-5 flex-grow-1 col-post">
-            <Row>
-              <h2 className="fw-bold">Reading list ({data?.posts.length})</h2>
+            <Row className="border-bottom">
+              <h2 className="fw-bold">Reading list ({data?.posts?.length})</h2>
 
               {/* Search bar */}
             </Row>
-            <Card className="mt-4">
+            {data?.posts ? <Card className="mt-4">
               <Card.Body>
-                {data?.posts.map((post, index) => (
+                {data?.posts?.map((post, index) => (
                   <PostCard key={index} data={post} />
                 ))}
               </Card.Body>
             </Card>
+            : <h3 className="mt-4">You haven't saved any posts!</h3>}  
           </Col>
         </Row>
       </Row>

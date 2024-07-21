@@ -1,10 +1,17 @@
 import NodeCache from "node-cache";
 
-const cache = new NodeCache()
+const cache = new NodeCache();
 
 export const cacheMiddleware = (req, res, next) => {
   const key = req.originalUrl || req.url;
-  if (req.method !== 'GET' || key.startsWith('/auth') || key === "/v1/users/refresh-token" || key.startsWith('/admin') || key === "/v1/users/me") {
+  if (
+    req.method !== "GET" ||
+    key.startsWith("/auth") ||
+    key === "/v1/users/refresh-token" ||
+    key.startsWith("/admin") ||
+    key === "/v1/users/me" ||
+    key === "/v1/users/all"
+  ) {
     return next();
   }
   const cacheResponse = cache.get(key);
@@ -18,7 +25,7 @@ export const cacheMiddleware = (req, res, next) => {
   res.json = (body) => {
     cache.set(key, body, duration);
     res.sendResponse(body);
-  }
+  };
 
-  next()
-}
+  next();
+};

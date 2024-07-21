@@ -22,6 +22,8 @@ import bcrypt from "bcryptjs";
 import User from "./models/user.model.js";
 import Post from "./models/post.model.js";
 import Comment from "./models/comment.model.js";
+import Category from "./models/category.model.js";
+import Notification from "./models/notification.model.js";
 import mongoose from "mongoose";
 // import { adminJsConfig } from "./views/adminjs.js";
 import { ComponentLoader } from "adminjs";
@@ -40,12 +42,11 @@ AdminJS.registerAdapter({
   Database: AdminJSMongoose.Database,
 });
 
-const componentLoader = new
- ComponentLoader();
-
-const Components = {
-  DeleteComment: componentLoader.add('DeleteComment', './views/components/DeleteComment'),
-}
+const canModifyUsers = ({ currentAdmin }) => currentAdmin && (currentAdmin.role === "admin" || currentAdmin.role === "moderator");
+const canModifyPosts = ({ currentAdmin }) => currentAdmin && (currentAdmin.role === "admin" || currentAdmin.role === "editor");
+const canModifyComments = ({ currentAdmin }) => currentAdmin && (currentAdmin.role === "admin" || currentAdmin.role === "moderator");
+const canModifyCategories = ({ currentAdmin }) => currentAdmin && (currentAdmin.role === "admin" || currentAdmin.role === "moderator");
+const canModifyNotifications = ({ currentAdmin }) => currentAdmin && (currentAdmin.role === "admin" || currentAdmin.role === "moderator");
 
 export const adminJsConfig = {
   assets: {
@@ -80,6 +81,17 @@ export const adminJsConfig = {
             isVisible: { list: false, show: true, edit: true, filter: true },
           },
         },
+        actions: {
+          new: {
+            isAccessible: canModifyUsers,
+          },
+          edit: {
+            isAccessible: canModifyUsers,
+          },
+          delete: {
+            isAccessible: canModifyUsers,
+          },
+        },
       },
     },
     {
@@ -98,9 +110,6 @@ export const adminJsConfig = {
           content: {
             isVisible: { list: false, show: true, edit: true, filter: true },
             type: "richtext",
-            // components: {
-            //   show: AdminJS.bundle("./components/PostContent"),
-            // },
           },
           slug: {
             isVisible: { list: false, show: true, edit: true, filter: true },
@@ -113,6 +122,17 @@ export const adminJsConfig = {
           },
           category_name: {
             isVisible: { list: false, show: true, edit: true, filter: true },
+          },
+        },
+        actions: {
+          new: {
+            isAccessible: canModifyPosts,
+          },
+          edit: {
+            isAccessible: canModifyPosts,
+          },
+          delete: {
+            isAccessible: canModifyPosts,
           },
         },
       },
@@ -133,28 +153,50 @@ export const adminJsConfig = {
           },
         },
         actions: {
+          new: {
+            isAccessible: canModifyComments,
+          },
+          edit: {
+            isAccessible: canModifyComments,
+          },
           delete: {
-            // component: Components.DeleteComment,
-            isVisible: true,
-            handler: async (request, response, context) => {
-              const { record } = context;
-              if (!record) {
-                throw new Error('Record not found');
-              }
-              await record.delete();
-              return {
-                record: record.toJSON(context.currentAdmin),
-                notice: {
-                  message: 'Comment deleted successfully',
-                  type: 'success',
-                },
-              };
-            },
-            component: Components.DeleteComment, 
-          }
+            isAccessible: canModifyComments,
+          },
         },
       },
     },
+    {
+      resource: Category,
+      options: {
+        actions: {
+          new: {
+            isAccessible: canModifyCategories,
+          },
+          edit: {
+            isAccessible: canModifyCategories,
+          },
+          delete: {
+            isAccessible: canModifyCategories,
+          },
+        },
+      },
+    },
+    {
+      resource: Notification,
+      options: {
+        actions: {
+          new: {
+            isAccessible: canModifyNotifications,
+          },
+          edit: {
+            isAccessible: canModifyNotifications,
+          },
+          delete: {
+            isAccessible: canModifyNotifications,
+          },
+        },
+      },
+    }
   ],
 };
 
@@ -163,7 +205,10 @@ export const adminJs = new AdminJS(adminJsConfig);
 const authenticate = async (email, password) => {
   const user = await User.findOne({ email });
   const matched = user && (await bcrypt.compare(password, user.password));
-  if (matched && user.role === "admin") return user;
+  if (matched && 
+    // if role is admin or moderator or editor
+    (user.role === "admin" || user.role === "moderator" || user.role === "editor")
+  ) return user;
   return false;
 };
 

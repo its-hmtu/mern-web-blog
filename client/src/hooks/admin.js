@@ -21,7 +21,7 @@ export const useDeletePostAdmin = (success = () => {}, error = () => {}) => {
 
   return useMutation(deletePostAdmin, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries("user-info");
+      queryClient.invalidateQueries(allUsersKey);
       success(data);
     },
     onError: (error) => {
