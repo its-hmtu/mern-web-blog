@@ -1,12 +1,13 @@
 import { useMutation, useQueryClient } from "react-query";
-import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getReadingList, getSinglePost, getUserComments, getUserPosts } from "api/post";
+import { addToReadingList, createPost, getCategories, getPostComments, getPosts, getReadingList, getSinglePost, getUserComments, getUserPosts, updateViewsCount } from "api/post";
 import { userQueryKey } from "./user";
 
-export const postQueryKey = "posts"
+export const postsQueryKey = "posts"
 export const categoryQueryKey = "categories"
 export const postCommentsQueryKey = "post-comments"
 export const userCommentsQueryKey = "user-comments"
 export const userPostsQueryKey = "user-posts"
+export const postQueryKey = "post"
 
 // Post comments
 export const getPostCommentsQuery = (postId) => ({
@@ -24,7 +25,7 @@ export const getCategoriesQuery = () => ({
 // Posts
 
 export const getPostsQuery = (page = 0, limit = 10, order = 'asc', category = '', postIds = '', currentUserId = '') => ({
-  queryKey: [postQueryKey, { page, limit, order, category, postIds, currentUserId}],
+  queryKey: [postsQueryKey, { page, limit, order, category, postIds, currentUserId}],
   queryFn: getPosts,
 })
 
@@ -38,11 +39,11 @@ export const useCreatePost = (success = () => {}, error = () => {}) => {
 
   return useMutation(createPost, {
     onSuccess: () => {
-      queryClient.invalidateQueries(postQueryKey);
+      queryClient.invalidateQueries(postsQueryKey);
       queryClient.invalidateQueries(userQueryKey);
     },
     onSettled: (data) => {
-      queryClient.invalidateQueries(postQueryKey);
+      queryClient.invalidateQueries(postsQueryKey);
       queryClient.invalidateQueries(userQueryKey);
       success(data);
     },
@@ -57,7 +58,7 @@ export const useAddReadingList = (success = () => {}, error = () => {}) => {
 
   return useMutation(addToReadingList, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries(postQueryKey);
+      queryClient.invalidateQueries(postsQueryKey);
       queryClient.invalidateQueries(userQueryKey);
       success(data);
     },
@@ -81,3 +82,21 @@ export const getReadingListQuery = () => ({
   queryKey: ["reading-list"],
   queryFn: getReadingList,
 })
+
+export const useUpdateViewsCount = (success = () => {}, error = () => {}) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(updateViewsCount, {
+    onSuccess: (data) => {
+      queryClient.setQueryData(postQueryKey, data.data);
+      success(data)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(postsQueryKey);
+      queryClient.invalidateQueries(postQueryKey);
+    },
+    onError: (error) => {
+      console.log(error.response.data.message);
+    }
+  })
+}

@@ -24,9 +24,17 @@ const ReadingListPage = () => {
   // ]);
   const {user} = useContext(AuthContext);
 
+  const userReadingList = user?.reading_list.join(",");
+
   const { data, isLoading } = useQuery(
-    getReadingListQuery(),
-  );
+    getPostsQuery(
+      "",
+      "",
+      "",
+      "",
+      userReadingList
+    )
+  )
 
   useEffect(() => {
 
@@ -64,7 +72,7 @@ const ReadingListPage = () => {
 
               {/* Search bar */}
             </Row>
-            {data?.posts ? <Card className="mt-4">
+            {data?.posts && user?.reading_list.length > 0 ? <Card className="mt-4">
               <Card.Body>
                 {data?.posts?.map((post, index) => (
                   <PostCard key={index} data={post} />

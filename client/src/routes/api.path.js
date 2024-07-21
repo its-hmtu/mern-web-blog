@@ -1,6 +1,3 @@
-import { getCategories } from "api/post"
-import { getAllUsers } from "api/user"
-
 const BASE = 'http://localhost:5000/v1'
 
 export const ENDPOINTS = {
@@ -28,7 +25,7 @@ export const ENDPOINTS = {
   createPost: `${BASE}/posts/create`,
   addToReadingList: `${BASE}/posts/reading-list`,
   getPostComments: `${BASE}/comments`,
-  
+  updateViewsCount: `${BASE}/posts/views-count`,
   
   getCategories: `${BASE}/categories`,
   getAllUsers: `${BASE}/admin/all`,

@@ -26,6 +26,7 @@ import UserShow from "pages/AdminPage/pages/components/UserShow";
 import UserEdit from "pages/AdminPage/pages/components/UserEdit";
 import UserCreate from "pages/AdminPage/pages/components/UserCreate";
 import EmailVerified from "pages/EmailVerified";
+import SearchResults from "pages/SearchResults";
 
 const RouteList = () => {
   return (
@@ -38,6 +39,7 @@ const RouteList = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="terms-of-use" element={<TermsAndConditions />} />
+        <Route path="search-results" element={<SearchResults />} />
         <Route path="post/:path" element={<PostView />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="about" element={<About />} />

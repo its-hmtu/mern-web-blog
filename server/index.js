@@ -263,7 +263,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(cookieParser());
-app.use(cacheMiddleware);
+// app.use(cacheMiddleware);
 
 app.use(`${BASE_URL}/auth`, authRoutes);
 app.use(`${BASE_URL}/users`, userRoutes);

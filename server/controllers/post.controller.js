@@ -313,6 +313,7 @@ const likePost = asyncHandler(async (req, res, next) => {
     const { like } = req.query;
 
     const post = await Post.findById(id);
+    const author = await User.findById(post.user_id);
 
     if (!post) {
       next(new NotFound(`Post with id ${id} not found`));
@@ -348,6 +349,11 @@ const likePost = asyncHandler(async (req, res, next) => {
       user.liked_post.push(post._id);
       await user.save();
 
+      await sendNotification( author._id, `${user.full_name} liked your post`);
+
+      author.total_likes += 1;
+      await author.save();
+
       res.status(200).json({
         status: "success",
         message: "Post liked",
@@ -362,6 +368,12 @@ const likePost = asyncHandler(async (req, res, next) => {
 
       user.liked_post = user.liked_post.filter((p) => p.toString() !== id);
       await user.save();
+
+      author.total_likes -= 1;
+      if (author.total_likes <= 0) {
+        author.total_likes = 0;
+      }
+      await author.save();
 
       res.status(200).json({
         status: "success",
@@ -535,6 +547,30 @@ const getUserPosts = asyncHandler(async (req, res, next) => {
   }
 });
 
+const updateViewsCount = asyncHandler(async (req, res, next) => {
+  try {
+    const {id} = req.body;
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      next(new NotFound(`Post with id ${id} not found`));
+      return;
+    }
+
+    post.views_count += 1;
+    await post.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Views count updated",
+      data: post,
+    });
+  } catch (e) {
+    next(new InternalServerError(e.message));
+  }
+})
+
 export {
   createPost,
   deletePost,
@@ -546,4 +582,5 @@ export {
   getReadingList,
   disableComment,
   getUserPosts,
+  updateViewsCount
 };

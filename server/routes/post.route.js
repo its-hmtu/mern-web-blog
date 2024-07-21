@@ -9,7 +9,8 @@ import {
   addToReadingList,
   getReadingList,
   disableComment,
-  getUserPosts
+  getUserPosts,
+  updateViewsCount,
 } from "../controllers/post.controller.js";
 import {
   verifyToken, verifyRole
@@ -45,4 +46,5 @@ router.put("/disable-comment/:id", verifyToken, verifyRole(["admin", "editor", "
 
 router.get("/user/:id", verifyToken, verifyRole(["user", "admin", "editor", "moderator"]), getUserPosts);
 
+router.post("/views-count", updateViewsCount);
 export default router;

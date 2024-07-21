@@ -43,11 +43,9 @@ const SideBarPost = () => {
               <li key={index}>
                 <Link to={`/post/${item.slug}`}>
                   <h6 className="side-bar-post__title">{item?.title}</h6>
-                  <p className="side-bar-post__comment">
+                  <p className="side-bar-post__comment m-0">
                     {item?.comments_count} comments
                   </p>
-
-                  <p className="side-bar-post__comment">{item?.author}</p>
                 </Link>
               </li>
             ))}

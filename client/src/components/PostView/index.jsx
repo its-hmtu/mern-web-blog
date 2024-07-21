@@ -2,6 +2,7 @@ import {
   getPostCommentsQuery,
   getPostsQuery,
   getSinglePostQuery,
+  useUpdateViewsCount,
 } from "hooks/post";
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
@@ -18,6 +19,7 @@ import "styles/index.scss";
 import { getUserQuery } from "hooks/user";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { updateViewsCount } from "api/post";
 
 const PostView = () => {
   const { path } = useParams();
@@ -60,12 +62,18 @@ const PostView = () => {
     )
   );
 
+  const { mutate: updateViewsCountMutation } = useUpdateViewsCount();
   useEffect(() => {
     // console.log(data);
     // console.log(path);
     // console.log(posts);
     // console.log(comments);
     // window.scrollTo(0, 0);
+
+    if (data?._id) {
+      updateViewsCountMutation(data?._id);
+    }
+
   }, []);
 
   const handleCommetEdit = () => {

@@ -157,7 +157,9 @@ export const getUserComments = async ({ queryKey }) => {
 
 export const getReadingList = async () => {
   try {
-    const { data } = await axiosInstance.get(ENDPOINTS.getReadingList);
+    const { data } = await axiosInstance.get(ENDPOINTS.getReadingList, {
+      withCredentials: true,
+    });
     if (data.status !== "success") {
       console.log(data.message);
       return data.message;
@@ -171,3 +173,18 @@ export const getReadingList = async () => {
   }
 }
 
+export const updateViewsCount = async (id) => {
+  try {
+    const { data } = await axios.post(`${ENDPOINTS.updateViewsCount}`, {id});
+    if (data.status !== "success") {
+      console.log(data.message);
+      return data.message;
+    }
+
+    return data.data;
+  } catch (e) {
+    const { message } = e.response.data;
+    console.log(message);
+    return message;
+  }
+}

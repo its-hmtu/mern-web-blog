@@ -8,7 +8,11 @@ const PostCard = ({ data }) => {
     <div className="d-flex gap-3">
       <img src={data.profile_image_url} alt="" />
       <div>
-        <Card.Title>{data.title}</Card.Title>
+        <Card.Title>
+          <Link to={
+            `/post/:path`.replace(":path", data.slug)
+          } className="text-decoration-none">{data.title}</Link>
+        </Card.Title>
         <Card.Text>
           <Link to="/user" className="">
             <span className="fw-semibold">{data.author}</span>

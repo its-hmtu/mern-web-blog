@@ -72,6 +72,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    total_likes: {
+      type: Number,
+      default: 0,
+    },
     following_categories: [
       {
         type: mongoose.Schema.Types.ObjectId,
