@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { useQuery } from "react-query";
-import { getPostsQuery } from "hooks/post";
-import { AuthContext } from "contexts/AuthContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { getPostsQuery } from 'hooks/post';
+import { AuthContext } from 'contexts/AuthContext';
 
 const SideBarPost = () => {
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [paramsPost, setParamsPost] = useState({
     page: 1,
     limit: 10,
-    order: "desc",
-    category: "Discussion",
-    postIds: "",
+    order: 'desc',
+    category: 'Discussion',
+    postIds: '',
   });
   const { data, isLoading } = useQuery(
     getPostsQuery(

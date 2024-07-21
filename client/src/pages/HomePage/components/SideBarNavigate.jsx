@@ -5,18 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
   faBook,
-  faPodcast,
-  faVideo,
   faTags,
-  faLightbulb,
-  faShoppingCart,
-  faHeart,
-  faTrophy,
-  faStar,
   faInfoCircle,
   faEnvelope,
   faBookOpen,
-  faBalanceScale,
   faThumbsUp,
   faShieldAlt,
   faEye,
@@ -34,7 +26,7 @@ import 'styles/index.scss';
 import { AuthContext } from 'contexts/AuthContext';
 
 const SideBarNavigate = () => {
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <Nav className="side-bar-navigate flex-column">
@@ -45,23 +37,35 @@ const SideBarNavigate = () => {
             <span>Home</span>
           </Link>
         </li>
-        {user && <li>
-          <Link to="/reading-list" className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faBook} className="me-2 icon-reading-list" />
-            <span className='d-flex '>Reading List 
-              <Badge bg="primary" className="ms-2 d-flex justify-content-center align-items-center" style={{
-                maxHeight: '20px',
-              }}>{user?.reading_list.length}</Badge>
-            </span>
-          </Link>
-        </li>}
+        {user && (
+          <li>
+            <Link to="/reading-list" className="d-flex align-items-center">
+              <FontAwesomeIcon
+                icon={faBook}
+                className="me-2 icon-reading-list"
+              />
+              <span className="d-flex ">
+                Reading List
+                <Badge
+                  bg="primary"
+                  className="ms-2 d-flex justify-content-center align-items-center"
+                  style={{
+                    maxHeight: '20px',
+                  }}
+                >
+                  {user?.reading_list.length}
+                </Badge>
+              </span>
+            </Link>
+          </li>
+        )}
         <li>
           <Link to="/categories" className="d-flex align-items-center">
             <FontAwesomeIcon icon={faTags} className="me-2 icon-tags" />
             <span>Categories</span>
           </Link>
         </li>
-       
+
         <li>
           <Link to="/about" className="d-flex align-items-center">
             <FontAwesomeIcon icon={faInfoCircle} className="me-2 icon-about" />

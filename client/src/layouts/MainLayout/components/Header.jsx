@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Navbar,
   Nav,
@@ -8,24 +8,24 @@ import {
   Col,
   Dropdown,
   Badge,
-} from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import logo from "images/logo.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
-import { faBell as faBellSolid } from "@fortawesome/free-solid-svg-icons";
-import { useQuery, useQueryClient } from "react-query";
-import { getCurrentUserQuery, useLogoutUser } from "hooks/user";
-import { AuthContext } from "contexts/AuthContext";
+} from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import logo from 'images/logo.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { faBell as faBellSolid } from '@fortawesome/free-solid-svg-icons';
+import { useQuery, useQueryClient } from 'react-query';
+import { getCurrentUserQuery, useLogoutUser } from 'hooks/user';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Header = ({ admin = false }) => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const { mutate, data, isLoading } = useLogoutUser(() => {
-    queryClient.invalidateQueries("user-info");
+    queryClient.invalidateQueries('user-info');
     setUser(null);
-    navigate("/", { replace: true });
+    navigate('/', { replace: true });
   });
 
   const handleLogout = () => {
@@ -36,22 +36,24 @@ const Header = ({ admin = false }) => {
     <header className="main-layout__header">
       <Navbar>
         <Navbar.Brand>
-          {admin ? <Link
-            to="/admin/dashboard"
-            className="d-flex text-decoration-none align-items-center gap-3"
-          >
-            <img className="main-layout__header-logo" src={logo} alt="DEV" />
-            <h4 className="text-black fw-bold border-start ps-3">
-              Admin Dashboard
-            </h4>
-          </Link> :
+          {admin ? (
+            <Link
+              to="/admin/dashboard"
+              className="d-flex text-decoration-none align-items-center gap-3"
+            >
+              <img className="main-layout__header-logo" src={logo} alt="DEV" />
+              <h4 className="text-black fw-bold border-start ps-3">
+                Admin Dashboard
+              </h4>
+            </Link>
+          ) : (
             <Link
               to="/"
               className="d-flex text-decoration-none align-items-center gap-3"
             >
               <img className="main-layout__header-logo" src={logo} alt="DEV" />
             </Link>
-          }
+          )}
         </Navbar.Brand>
         <Nav className="me-auto">{/* {Search bar} */}</Nav>
 
@@ -78,8 +80,11 @@ const Header = ({ admin = false }) => {
                     />
                   </Link>
                 ) : (
-                  <p className="mx-3 fw-semibold mb-0">{user?.full_name}
-                    <Badge bg="primary" className="ms-2">{user?.role}</Badge>
+                  <p className="mx-3 fw-semibold mb-0">
+                    {user?.full_name}
+                    <Badge bg="primary" className="ms-2">
+                      {user?.role}
+                    </Badge>
                   </p>
                 )}
                 <div className="main-layout__header-user p-1">
@@ -97,8 +102,12 @@ const Header = ({ admin = false }) => {
                         <>
                           <Dropdown.Item>
                             <Link to="/profile">
-                              <p className="fw-semibold m-0">{user?.full_name}</p>
-                              <p className="user-name m-0">@{user?.user_name}</p>
+                              <p className="fw-semibold m-0">
+                                {user?.full_name}
+                              </p>
+                              <p className="user-name m-0">
+                                @{user?.user_name}
+                              </p>
                             </Link>
                           </Dropdown.Item>
                           <hr />
@@ -118,11 +127,13 @@ const Header = ({ admin = false }) => {
                         </>
                       )}
 
-                      {admin && <Dropdown.Item onClick={handleLogout}>
-                        <Link to={"/"}>Go to blog page</Link>
-                      </Dropdown.Item>}
+                      {admin && (
+                        <Dropdown.Item onClick={handleLogout}>
+                          <Link to={'/'}>Go to blog page</Link>
+                        </Dropdown.Item>
+                      )}
                       <Dropdown.Item onClick={handleLogout}>
-                        <Link to={!admin ? "/" : "/admin/login"}>Sign out</Link>
+                        <Link to={!admin ? '/' : '/admin/login'}>Sign out</Link>
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>

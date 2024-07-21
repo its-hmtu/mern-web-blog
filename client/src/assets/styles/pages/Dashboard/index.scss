@@ -1,0 +1,68 @@
+.dashboard {
+  padding: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      font-size: 2rem;
+    }
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+
+    .stat-item {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+
+      h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 1rem;
+        color: #666;
+      }
+    }
+  }
+
+  .posts {
+    .post-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+
+      .post-title {
+        color: #007bff;
+        cursor: pointer;
+      }
+
+      .badge {
+        background-color: #ffc107;
+        color: #fff;
+      }
+
+      .actions {
+        display: flex;
+
+        button {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

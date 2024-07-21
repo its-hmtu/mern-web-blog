@@ -1,7 +1,7 @@
 import React from 'react';
 import MiniPostList from '../MiniPostList/MiniPostList';
 import SkeletonPostList from '../Skeleton/SkeletonPostList';
-import './RightSideBar.css';
+import 'styles/index.scss';
 
 const RightSideBar = ({ tags, isLoading }) => {
   const newsTag = tags.filter((tag) => tag.name === 'news')[0];
@@ -9,16 +9,16 @@ const RightSideBar = ({ tags, isLoading }) => {
   const webdevTag = tags.filter((tag) => tag.name === 'webdev')[0];
 
   return (
-    <div className='sidebar sidebar--right'>
+    <div className="sidebar sidebar--right">
       {isLoading ? (
-        <SkeletonPostList type='mini' />
+        <SkeletonPostList type="mini" />
       ) : (
         <>
-          {newsTag && <MiniPostList tag='news' posts={newsTag.posts} />}
+          {newsTag && <MiniPostList tag="news" posts={newsTag.posts} />}
           {discussTag && (
-            <MiniPostList tag='discuss' posts={discussTag.posts} />
+            <MiniPostList tag="discuss" posts={discussTag.posts} />
           )}
-          {webdevTag && <MiniPostList tag='webdev' posts={webdevTag.posts} />}
+          {webdevTag && <MiniPostList tag="webdev" posts={webdevTag.posts} />}
         </>
       )}
     </div>

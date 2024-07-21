@@ -2,20 +2,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #f8f9fa;
+  height: 100%;
+  position: relative;
+  flex-direction: column;
+  background-color: #000000;
+  align-items: stretch;
+  min-height: 100vh;
 }
 
 .not-found-content {
   text-align: center;
-  padding: 20px;
+  font-weight: 700;
+  padding: 200px;
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: #000000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .not-found-image {
   max-width: 200px;
   margin: auto;
+}
+
+.not-found-content-text {
+  color: #fff;
 }

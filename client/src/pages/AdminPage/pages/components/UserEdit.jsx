@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Badge,
   Breadcrumb,
@@ -9,13 +9,13 @@ import {
   Form,
   Pagination,
   Modal,
-} from "react-bootstrap";
-import { useQuery } from "react-query";
-import { getUserQuery } from "hooks/user";
-import { getUserCommentsQuery, getUserPostsQuery } from "hooks/post";
-import { getPaginationItems } from "utils/getPaginationItems";
-import { getAllUsersQuery } from "hooks/user";
-import { useDeleteUserAdmin } from "hooks/admin";
+} from 'react-bootstrap';
+import { useQuery } from 'react-query';
+import { getUserQuery } from 'hooks/user';
+import { getUserCommentsQuery, getUserPostsQuery } from 'hooks/post';
+import { getPaginationItems } from 'utils/getPaginationItems';
+import { getAllUsersQuery } from 'hooks/user';
+import { useDeleteUserAdmin } from 'hooks/admin';
 
 const UserEdit = () => {
   // const navigate = useNavigate();
@@ -80,14 +80,14 @@ const UserEdit = () => {
           <Link to="/admin/dashboard">Dashboard</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          {data?.user.role !== "user" ? (
+          {data?.user.role !== 'user' ? (
             <Link to="/admin/dashboard/admin-users">Admin users</Link>
           ) : (
             <Link to="/admin/dashboard/users">Users</Link>
           )}
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          {data?.user.role !== "user" ? (
+          {data?.user.role !== 'user' ? (
             <Link to={`/admin/dashboard/admin-users/${id}`}>{id}</Link>
           ) : (
             <Link to={`/admin/dashboard/users/${id}`}>{id}</Link>
@@ -102,8 +102,8 @@ const UserEdit = () => {
           fluid
           className="p-4 border show-container"
           style={{
-            border: "1px solid #dee2e6",
-            boxShadow: "0 .5rem 1rem rgba(0,0,0,.15)",
+            border: '1px solid #dee2e6',
+            boxShadow: '0 .5rem 1rem rgba(0,0,0,.15)',
           }}
         >
           <Form>
@@ -266,7 +266,7 @@ const UserEdit = () => {
                       variant="outline-danger"
                       className="ms-3"
                       style={{
-                        height: "fit-content",
+                        height: 'fit-content',
                       }}
                     >
                       Delete
@@ -320,7 +320,7 @@ const UserEdit = () => {
                       variant="outline-danger"
                       className="ms-3"
                       style={{
-                        height: "fit-content",
+                        height: 'fit-content',
                       }}
                     >
                       Delete
@@ -347,7 +347,7 @@ const UserEdit = () => {
                       variant="outline-danger"
                       className="ms-3"
                       style={{
-                        height: "fit-content",
+                        height: 'fit-content',
                       }}
                     >
                       Delete
@@ -374,7 +374,7 @@ const UserEdit = () => {
                       variant="outline-danger"
                       className="ms-3"
                       style={{
-                        height: "fit-content",
+                        height: 'fit-content',
                       }}
                     >
                       Delete
@@ -401,7 +401,7 @@ const UserEdit = () => {
                       variant="outline-danger"
                       className="ms-3"
                       style={{
-                        height: "fit-content",
+                        height: 'fit-content',
                       }}
                     >
                       Delete
@@ -422,7 +422,7 @@ const UserEdit = () => {
               Save
             </Button>
 
-            {data?.user.role !== "admin" && (
+            {data?.user.role !== 'admin' && (
               <Button variant="outline-danger" onClick={handleShow}>
                 Delete
               </Button>
@@ -444,7 +444,7 @@ const UserEdit = () => {
               {isLoading ? (
                 <Spinner animation="border" role="status" />
               ) : (
-                "Delete"
+                'Delete'
               )}
             </Button>
 
